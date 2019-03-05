@@ -11,6 +11,7 @@ public class Utilities {
         DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
         String formattedDate = dateFormat.format(date);
         return formattedDate;
+
     }
 
     public static String getCurrentDate() {
