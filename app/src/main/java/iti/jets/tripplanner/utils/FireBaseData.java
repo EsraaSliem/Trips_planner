@@ -43,7 +43,6 @@ public class FireBaseData {
             }
         });
 
-
     }
 
     public boolean verifyUser(final String email, final String password) {
