@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "816442432158",
+    "firebase_url": "https://trips-planner-27544.firebaseio.com",
+    "project_id": "trips-planner-27544",
+    "storage_bucket": "trips-planner-27544.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816442432158:android:d30ba4ca34357888",
+        "android_client_info": {
+          "package_name": "iti.jets.tripplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816442432158-lmuj65k1gj6pa3qpgnea1le44p5oogl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxvpbGxMy83krqcKaIfYfqjzyu18EVVas"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
