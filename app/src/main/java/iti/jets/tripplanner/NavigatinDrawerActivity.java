@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 public class NavigatinDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -26,7 +27,8 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         setContentView(R.layout.activity_navigatin_drawer);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        FireBaseData f = new FireBaseData(this);
+        f.writeNewUser("1", "2", "w@w.com", "123456", "q");
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
