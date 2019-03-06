@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Trip Planner</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="addTripFragment_tripName">Trip Name</string>
+    <string name="addTripFragment_startPoint">Start Point</string>
+    <string name="addTripFragment_endPoint">End Point</string>
+    <string name="addTripFragment_dateTrip">Date</string>
+    <string name="addTripFragment_timeTrip">Time</string>
+    <string name="addTripFragment__tripType">Trip Type</string>
+    <string name="addTripFragment__addTrip">add Trip</string>
+
+    <string-array name="addTripFragment_spnTripType">
+        <item>One Direction</item>
+        <item>Round</item>
+    </string-array>
 </resources>
