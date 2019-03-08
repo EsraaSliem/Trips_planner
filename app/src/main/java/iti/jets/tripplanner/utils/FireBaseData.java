@@ -45,7 +45,6 @@ public class FireBaseData {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     context.startActivity(new Intent(context, NavigatinDrawerActivity.class));
-
                 } else {
                     Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
                 }

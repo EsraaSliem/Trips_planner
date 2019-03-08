@@ -108,7 +108,7 @@ public class SignUpFragment extends Fragment {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
-    private Bitmap base64ToBitmap(String b64) {
+    private Bitmap convertBase64ToBitmap(String b64) {
         byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
     }
