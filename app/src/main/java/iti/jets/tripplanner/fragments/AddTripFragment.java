@@ -36,9 +36,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 public class AddTripFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final String LOG_TAG = "Google Places Autocomplete";
+    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
+    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
+    private static final String OUT_JSON = "/json";
+    private static final String API_KEY = "AIzaSyD12pWp4Qe-ta3WXsV5WT9cv8pKEHnaR9w";
+    String tripName;
+    String tripDate;
+    String tripTime;
+    int tripType;
     private String mAM_PM;
     private EditText addTripFragment_edtTripName;
     private EditText addTripFragment_edtTripDate;
@@ -46,123 +56,7 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
     private Spinner addTripFragment_spnTripType;
     private Button addTripFragment_btnAddTrip;
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private static final String LOG_TAG = "Google Places Autocomplete";
-    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
-    private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
-    private static final String OUT_JSON = "/json";
 
-    private static final String API_KEY = "AIzaSyD12pWp4Qe-ta3WXsV5WT9cv8pKEHnaR9w";
-
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_add_trip, container, false);
-        addTripFragment_edtTripName = view.findViewById(R.id.addTripFragment_edtTripName);
-        //addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
-        //addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
-        addTripFragment_edtTripDate = view.findViewById(R.id.addTripFragment_edtTripDate);
-        addTripFragment_edtTripTime = view.findViewById(R.id.addTripFragment_edtTripTime);
-        addTripFragment_spnTripType = view.findViewById(R.id.addTripFragment_spnTripType);
-        addTripFragment_btnAddTrip = view.findViewById(R.id.addTripFragment_btnAddTrip);
-
-        ArrayAdapter<? extends String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.addTripFragment_spnTripType));
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        addTripFragment_spnTripType.setAdapter(adapter);
-        Toast.makeText(getActivity(), addTripFragment_spnTripType.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-
-
-        addTripFragment_edtTripDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get Current Time
-                final Calendar c = Calendar.getInstance();
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-                mMonth = c.get(Calendar.MONTH);
-                mYear = c.get(Calendar.YEAR);
-                Toast.makeText(getContext(), "Date", Toast.LENGTH_SHORT).show();
-                // Launch Time Picker Dialog
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-                                addTripFragment_edtTripDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-
-        });
-
-        addTripFragment_edtTripTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get Current Time
-                final Calendar c = Calendar.getInstance();
-                mHour = c.get(Calendar.HOUR_OF_DAY);
-                mMinute = c.get(Calendar.MINUTE);
-                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
-                // Launch Time Picker Dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
-                        new TimePickerDialog.OnTimeSetListener() {
-
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay,
-                                                  int minute) {
-                                if (hourOfDay > 12) {
-                                    mAM_PM = "PM";
-                                    hourOfDay = hourOfDay - 12;
-                                } else {
-                                    mAM_PM = "AM";
-                                }
-                                addTripFragment_edtTripTime.setText(hourOfDay + ":" + minute + " " + mAM_PM);
-                            }
-                        }, mHour, mMinute, false);
-                timePickerDialog.show();
-            }
-
-        });
-        AutoCompleteTextView addTripFragment_edtTripStartPoint = (AutoCompleteTextView) view.findViewById(R.id.addTripFragment_edtTripStartPoint);
-        AutoCompleteTextView addTripFragment_edtTripEndPoint = (AutoCompleteTextView) view.findViewById(R.id.addTripFragment_edtTripEndPoint);
-
-        addTripFragment_edtTripStartPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
-        addTripFragment_edtTripStartPoint.setOnItemClickListener(this);
-        addTripFragment_edtTripEndPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
-        addTripFragment_edtTripEndPoint.setOnItemClickListener(this);
-
-        addTripFragment_btnAddTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = new AddNoteFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.viewContainerFragment, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
-
-        return view;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String str = (String) adapterView.getItemAtPosition(position);
-        Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
-    }
     public static ArrayList autocomplete(String input) {
         ArrayList resultList = null;
 
@@ -185,7 +79,7 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
                 jsonResults.append(buff, 0, read);
             }
         } catch (MalformedURLException e) {
-          //  Log.e(LOG_TAG, "Error processing Places API URL", e);
+            //  Log.e(LOG_TAG, "Error processing Places API URL", e);
             return resultList;
         } catch (IOException e) {
             //Log.e(LOG_TAG, "Error connecting to Places API", e);
@@ -209,10 +103,131 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
             }
         } catch (JSONException e) {
-           // Log.e(LOG_TAG, "Cannot process JSON results", e);
+            // Log.e(LOG_TAG, "Cannot process JSON results", e);
         }
 
         return resultList;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+        addTripFragment_edtTripName = view.findViewById(R.id.addTripFragment_edtTripName);
+        //addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
+        //addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
+        addTripFragment_edtTripDate = view.findViewById(R.id.addTripFragment_edtTripDate);
+        addTripFragment_edtTripTime = view.findViewById(R.id.addTripFragment_edtTripTime);
+        addTripFragment_spnTripType = view.findViewById(R.id.addTripFragment_spnTripType);
+        addTripFragment_btnAddTrip = view.findViewById(R.id.addTripFragment_btnAddTrip);
+
+        ArrayAdapter<? extends String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.addTripFragment_spnTripType));
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        addTripFragment_spnTripType.setAdapter(adapter);
+        //Trip_Type
+        if (addTripFragment_spnTripType.getSelectedItem().toString().equalsIgnoreCase("one dirction")) {
+            tripType = 1;
+        } else {
+            tripType = 2;
+        }
+
+        //Trip_Date
+        addTripFragment_edtTripDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get Current Time
+                final Calendar c = Calendar.getInstance();
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+                mMonth = c.get(Calendar.MONTH);
+                mYear = c.get(Calendar.YEAR);
+                Toast.makeText(getContext(), "Date", Toast.LENGTH_SHORT).show();
+                // Launch Time Picker Dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                addTripFragment_edtTripDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                tripDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+
+        });
+
+        final FireBaseData fireBaseData = new FireBaseData(getActivity());
+
+        //Trip_Time
+        addTripFragment_edtTripTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get Current Time
+                final Calendar c = Calendar.getInstance();
+                mHour = c.get(Calendar.HOUR_OF_DAY);
+                mMinute = c.get(Calendar.MINUTE);
+                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                // Launch Time Picker Dialog
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+                        new TimePickerDialog.OnTimeSetListener() {
+
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay,
+                                                  int minute) {
+                                if (hourOfDay > 12) {
+                                    mAM_PM = "PM";
+                                    hourOfDay = hourOfDay - 12;
+                                } else {
+                                    mAM_PM = "AM";
+                                }
+                                addTripFragment_edtTripTime.setText(hourOfDay + ":" + minute + " " + mAM_PM);
+                                tripTime = hourOfDay + ":" + minute + " " + mAM_PM;
+                            }
+                        }, mHour, mMinute, false);
+                timePickerDialog.show();
+            }
+
+        });
+
+        AutoCompleteTextView addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
+        AutoCompleteTextView addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
+
+        addTripFragment_edtTripStartPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
+        addTripFragment_edtTripStartPoint.setOnItemClickListener(this);
+        addTripFragment_edtTripEndPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
+        addTripFragment_edtTripEndPoint.setOnItemClickListener(this);
+
+        addTripFragment_btnAddTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fireBaseData.addTrip(tripName, tripDate, tripTime, "", "", tripType, 1);
+                Fragment fragment = new AddNoteFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.viewContainerFragment, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String str = (String) adapterView.getItemAtPosition(position);
+        Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
     }
 
     class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Filterable {

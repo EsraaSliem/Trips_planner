@@ -95,10 +95,10 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_camera:
-//                fragmentClass = FirstFragment.class;
-                break;
-            case R.id.nav_gallery:
 //                fragmentClass = SecondFragment.class;
+                break;
+            case R.id.nav_trip:
+                fragmentClass = AddTripFragment.class;
                 break;
             case R.id.nav_slideshow:
 //                fragmentClass = SecondFragment.class;

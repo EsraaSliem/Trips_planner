@@ -108,8 +108,6 @@ public class TripPojo {
         } else {
             throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
         }
-
-
     }
 
     public int getTripStatues() {

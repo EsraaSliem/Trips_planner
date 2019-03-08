@@ -38,7 +38,6 @@ public class SignInFragment extends Fragment {
                 fireBaseData.loginUser(email, password);
             }
         });
-
         return view;
     }
 
