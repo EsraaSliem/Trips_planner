@@ -1,6 +1,6 @@
 package iti.jets.tripplanner.pojos;
 
-public class UserPojo {
+public class User {
     String userId;
     String fName;
     String lName;
@@ -8,10 +8,10 @@ public class UserPojo {
     String password;
     String image;
 
-    public UserPojo() {
+    public User() {
     }
 
-    public UserPojo(String userId, String fName, String lName, String email, String password, String image) {
+    public User(String userId, String fName, String lName, String email, String password, String image) {
         this.userId = userId;
         this.fName = fName;
         this.lName = lName;

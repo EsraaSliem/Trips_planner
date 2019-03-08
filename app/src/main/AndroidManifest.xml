@@ -22,9 +22,7 @@
         <activity
             android:name=".NavigatinDrawerActivity"
             android:label="@string/title_activity_navigatin_drawer"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity"></activity>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyD12pWp4Qe-ta3WXsV5WT9cv8pKEHnaR9w"/>
     </application>

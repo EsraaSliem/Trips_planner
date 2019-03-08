@@ -52,7 +52,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <EditText
-            android:id="@+id/signIn_edtPassword"
+            android:id="@+id/signUp_edtPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -67,7 +67,7 @@
 
 
         <Button
-            android:id="@+id/signIn_btnSingIn"
+            android:id="@+id/signUp_btnSingUp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -81,7 +81,7 @@
             app:layout_constraintEnd_toEndOf="@+id/signIn_edtEmail"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/signIn_edtEmail"
-            app:layout_constraintTop_toBottomOf="@+id/signIn_edtPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/signUp_edtPassword" />
 
 
         <android.support.constraint.ConstraintLayout
@@ -91,7 +91,7 @@
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="@+id/signIn_edtEmail"
             app:layout_constraintStart_toStartOf="@+id/signIn_edtEmail"
-            app:layout_constraintTop_toBottomOf="@+id/signIn_btnSingIn">
+            app:layout_constraintTop_toBottomOf="@+id/signUp_btnSingUp">
 
             <Button
                 android:id="@+id/singIn_btnSingUp"
