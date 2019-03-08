@@ -1,135 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@drawable/background_color"
-
-    tools:context="iti.jets.tripplanner.MainActivity"
-    android:id="@+id/addTripFragment">
+    tools:context="iti.jets.tripplanner.MainActivity">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="40dp">
+        android:id="@+id/addTripFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/linearContainer"
-            style="@style/linearForm">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="40dp">
 
-            <LinearLayout style="@style/linearForm">
-           <android.support.v7.widget.AppCompatAutoCompleteTextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment_tripName" />
+            <LinearLayout
+                android:id="@+id/linearContainer"
+                style="@style/linearForm">
 
-                <EditText
-                    android:id="@+id/addTripFragment_edtTripName"
-                    style="@style/editText"
-                    android:inputType="textEmailAddress"
-                    tools:ignore="LabelFor" />
-            </LinearLayout>
+                <LinearLayout style="@style/linearForm">
 
-            <LinearLayout style="@style/linearForm">
+                    <android.support.v7.widget.AppCompatAutoCompleteTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment_startPoint" />
-                <AutoCompleteTextView
-                    android:id="@+id/addTripFragment_edtTripStartPoint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Please enter your start point"
-                    style="@style/editText"
-                    android:inputType="text"
-                    tools:ignore="LabelFor">
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment_tripName" />
 
-                    <requestFocus />
-                </AutoCompleteTextView>
+                    <EditText
+                        android:id="@+id/addTripFragment_edtTripName"
+                        style="@style/editText"
+                        android:inputType="textEmailAddress"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
 
-                <!--<EditText-->
+                <LinearLayout style="@style/linearForm">
+
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment_startPoint" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/addTripFragment_edtTripStartPoint"
+                        style="@style/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Please enter your start point"
+                        android:inputType="text"
+                        tools:ignore="LabelFor">
+
+                        <requestFocus />
+                    </AutoCompleteTextView>
+
+                    <!--<EditText-->
                     <!--android:id="@+id/addTripFragment_edtTripStartPoint"-->
                     <!--style="@style/editText"-->
                     <!--android:inputType="text"-->
                     <!--tools:ignore="LabelFor" />-->
-            </LinearLayout>
+                </LinearLayout>
 
-            <LinearLayout style="@style/linearForm">
+                <LinearLayout style="@style/linearForm">
 
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment_endPoint" />
-                <AutoCompleteTextView
-                    android:id="@+id/addTripFragment_edtTripEndPoint"
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment_endPoint" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/addTripFragment_edtTripEndPoint"
 
 
-                    android:hint="Please enter your end point"
-                    style="@style/editText"
-                    android:inputType="text"
-                    tools:ignore="LabelFor">
+                        style="@style/editText"
+                        android:hint="Please enter your end point"
+                        android:inputType="text"
+                        tools:ignore="LabelFor">
 
-                    <requestFocus />
-                </AutoCompleteTextView>
-                <!--<EditText-->
+                        <requestFocus />
+                    </AutoCompleteTextView>
+                    <!--<EditText-->
                     <!--android:id="@+id/addTripFragment_edtTripEndPoint"-->
                     <!--style="@style/editText"-->
                     <!--android:inputType="text"-->
                     <!--tools:ignore="LabelFor" />-->
+                </LinearLayout>
+
+                <LinearLayout style="@style/linearForm">
+
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment_dateTrip" />
+
+
+                    <EditText
+                        android:id="@+id/addTripFragment_edtTripDate"
+                        style="@style/editText"
+                        android:inputType="date"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/linearForm">
+
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment_timeTrip" />
+
+                    <EditText
+                        android:id="@+id/addTripFragment_edtTripTime"
+                        style="@style/editText"
+                        android:inputType="time"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/linearForm">
+
+                    <TextView
+                        style="@style/labelField"
+                        android:text="@string/addTripFragment__tripType" />
+
+                    <Spinner
+                        android:id="@+id/addTripFragment_spnTripType"
+                        style="@style/spinner"
+                        android:entries="@array/addTripFragment_spnTripType"
+                        android:spinnerMode="dialog" />
+                </LinearLayout>
+
             </LinearLayout>
 
-            <LinearLayout style="@style/linearForm">
+            <Button
+                android:id="@+id/addTripFragment_btnAddTrip"
+                style="@style/styleButton"
+                android:layout_below="@id/linearContainer"
+                android:text="@string/addTripFragment__addTrip" />
+        </RelativeLayout>
 
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment_dateTrip" />
-
-
-
-                <EditText
-                    android:id="@+id/addTripFragment_edtTripDate"
-                    style="@style/editText"
-                    android:inputType="date"
-                    tools:ignore="LabelFor" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearForm">
-
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment_timeTrip" />
-
-                <EditText
-                    android:id="@+id/addTripFragment_edtTripTime"
-                    style="@style/editText"
-                    android:inputType="time"
-                    tools:ignore="LabelFor" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/linearForm">
-
-                <TextView
-                    style="@style/labelField"
-                    android:text="@string/addTripFragment__tripType" />
-
-                <Spinner
-                    android:id="@+id/addTripFragment_spnTripType"
-                    style="@style/spinner"
-                    android:entries="@array/addTripFragment_spnTripType"
-                    android:spinnerMode="dialog" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/addTripFragment_btnAddTrip"
-            style="@style/styleButton"
-            android:layout_below="@id/linearContainer"
-            android:text="@string/addTripFragment__addTrip" />
     </RelativeLayout>
-
-</RelativeLayout>
+</ScrollView>

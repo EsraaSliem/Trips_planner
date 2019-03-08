@@ -1,9 +1,10 @@
 package iti.jets.tripplanner;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 
@@ -23,18 +26,24 @@ import iti.jets.tripplanner.fragments.ShowNotesFragment;
 public class NavigatinDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     FragmentTransaction fragmentTransaction;
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigatin_drawer);
+        context = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
+                fragmentTransaction.add(R.id.content, new AddTripFragment(), "Frag_One_tag");
+                fragmentTransaction.commit();
             }
         });
 
@@ -43,15 +52,8 @@ public class NavigatinDrawerActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-        fragmentTransaction.add(R.id.content, new AddTripFragment(), "Frag_One_tag");
-        fragmentTransaction.commit();
-
-
-
     }
 
     @Override
@@ -92,12 +94,13 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment fragment = null;
         Class fragmentClass = null;
+        boolean isToFragment = true;
 
         switch (item.getItemId()) {
             case R.id.nav_camera:
 //                fragmentClass = SecondFragment.class;
                 break;
-            case R.id.nav_trip:
+            case R.id.nav_addTrip:
                 fragmentClass = AddTripFragment.class;
                 break;
             case R.id.nav_slideshow:
@@ -107,10 +110,14 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 //                fragmentClass = ThirdFragment.class;
                 break;
             case R.id.nav_manage:
-//                fragmentClass = ThirdFragment.class;
-                break;
-            case R.id.nav_send:
                 fragmentClass = ShowNotesFragment.class;
+                break;
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(context, AuthenticationActivity.class);
+                startActivity(intent);
+                isToFragment = false;
+                finish();
                 break;
         }
         try {
@@ -119,10 +126,11 @@ public class NavigatinDrawerActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
-
+        if (isToFragment) {
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
+        }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
