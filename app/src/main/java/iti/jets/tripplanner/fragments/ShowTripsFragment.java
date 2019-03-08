@@ -26,5 +26,4 @@ public class ShowTripsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_show_trips, container, false);
         return view;
     }
-
 }
