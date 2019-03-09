@@ -3,6 +3,8 @@ package iti.jets.tripplanner.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -10,8 +12,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.pojos.Trip;
@@ -27,6 +37,7 @@ public class FireBaseData {
     private FirebaseAuth mAuth;
     private DatabaseReference mRefDatabase;
     private Context context;
+    List<Trip> trips;
 
     //Firebase Connect
     public FireBaseData(Context context) {
@@ -41,6 +52,14 @@ public class FireBaseData {
             uid = mCurrentUser.getUid();
             Toast.makeText(context, "IF " + uid, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String getUserId() {
+        return uid;
+    }
+
+    public void setUserId(String uid) {
+        this.uid = uid;
     }
 
     public void writeNewUser(final User user) {
@@ -99,5 +118,34 @@ public class FireBaseData {
         Toast.makeText(context, "User UID " + user.getUserId(), Toast.LENGTH_SHORT).show();
         mRefDatabase.child(uid).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+    }
+
+    public List<Trip> getUpComingTrip(){
+        trips =new ArrayList<>();
+        Query query=mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("fffffffffffff",dataSnapshot.getChildren().iterator().next().getValue().toString());
+                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                if(iterator.hasNext()){
+                    DataSnapshot next = iterator.next();
+                    Iterator<DataSnapshot> iterator1 = next.getChildren().iterator();
+                    while (iterator1.hasNext()){
+                        Trip trip = iterator1.next().getValue(Trip.class);
+                        Log.e("fffffffffffff1111",trip.getTripName());
+                        trips.add(trip);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return trips;
     }
 }

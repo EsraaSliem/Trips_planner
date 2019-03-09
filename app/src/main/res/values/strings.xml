@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Trip Planner</string>
+    <string name="facebook_app_id">700391843711254</string>
+    <string name="fb_login_protocol_scheme">fb700391843711254</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="addTripFragment_tripName">Trip Name</string>
@@ -37,4 +39,6 @@
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
+    <string name="done">Done</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

@@ -19,8 +19,8 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import iti.jets.tripplanner.fragments.AddNoteFragment;
 import iti.jets.tripplanner.fragments.AddTripFragment;
+import iti.jets.tripplanner.fragments.HistoryFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 
@@ -29,13 +29,12 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     FragmentTransaction fragmentTransaction;
     Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigatin_drawer);
-        context = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
+        context = this;
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
 
@@ -49,7 +48,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.replace(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
+                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
                 fragmentTransaction.commit();
             }
         });
@@ -104,19 +103,19 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         boolean isToFragment = true;
 
         switch (item.getItemId()) {
-            case R.id.nav_camera:
+            case R.id.nav_profile:
                 fragmentClass = UpcomingTripFragment.class;
                 break;
-            case R.id.nav_addTrip:
-                fragmentClass = AddTripFragment.class;
+            case R.id.nav_upComing:
+                fragmentClass = UpcomingTripFragment.class;
                 break;
-            case R.id.nav_addNote:
-                fragmentClass = AddNoteFragment.class;
+            case R.id.nav_history:
+                fragmentClass = HistoryFragment.class;
                 break;
-            case R.id.nav_share:
+            case R.id.nav_setting:
                 fragmentClass = ShowNotesFragment.class;
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_about:
                 fragmentClass = ShowNotesFragment.class;
                 break;
             case R.id.nav_logout:
