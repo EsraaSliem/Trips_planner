@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
 
 public class AddTripFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -48,6 +49,8 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
     String tripDate;
     String tripTime;
     int tripType;
+    String startPoint;
+    String endPoint;
     private AutoCompleteTextView addTripFragment_edtTripStartPoint;
     private AutoCompleteTextView addTripFragment_edtTripEndPoint;
     private String mAM_PM;
@@ -210,8 +213,14 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
             @Override
             public void onClick(View v) {
                 tripName = addTripFragment_edtTripName.getText().toString();
+                Trip trip = new Trip();
+                trip.setTripName(tripName);
+                trip.setTripDate(tripDate);
+                trip.setTripTime(tripTime);
+                trip.setTripTime(tripTime);
+                trip.setStartPoint(startPoint);
                 //addTrip
-                fireBaseData.addTrip(tripName, tripDate, tripTime, "oo", "oo", tripType, 1);
+                fireBaseData.addTrip(trip);
 //                Fragment fragment = new AddNoteFragment();
 //                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -232,6 +241,8 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         String str = (String) adapterView.getItemAtPosition(position);
+        startPoint = str;
+        endPoint = str;
         Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
     }
 
