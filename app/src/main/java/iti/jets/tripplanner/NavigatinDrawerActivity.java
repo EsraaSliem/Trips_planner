@@ -38,13 +38,18 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
+
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_One_tag");
+        fragmentTransaction.commit();
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
+                fragmentTransaction.replace(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
                 fragmentTransaction.commit();
             }
         });
@@ -131,7 +136,10 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         if (isToFragment) {
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.mainContainerView, fragment).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mainContainerView, fragment, "Frag_One_tag")
+                    .addToBackStack("Container").commit();
+
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

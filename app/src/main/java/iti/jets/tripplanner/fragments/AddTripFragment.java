@@ -215,8 +215,8 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
 //                Fragment fragment = new AddNoteFragment();
 //                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.mainContainerView, new AddNoteFragment());
-                fragmentTransaction.addToBackStack("");
+                fragmentTransaction.replace(R.id.mainContainerView, new AddNoteFragment());
+                fragmentTransaction.addToBackStack("NoteTrip");
                 fragmentTransaction.commit();
             }
         });
