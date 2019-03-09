@@ -31,7 +31,7 @@ public class Trip {
         } else if (tripType == 2) {
             this.tripType = tripType;
         } else {
-            throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
+           // throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
         }
         this.tripStatues = tripStatues;
     }
