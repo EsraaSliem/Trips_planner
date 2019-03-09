@@ -13,6 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,6 +31,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
@@ -44,6 +54,9 @@ public class SignInFragment extends Fragment {
     FireBaseData fireBaseData;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
+    CallbackManager callbackManager;
+    LoginButton btnFacebook;
+    private static final String EMAIL = "email";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,8 +103,35 @@ public class SignInFragment extends Fragment {
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
+//        FacebookSdk.sdkInitialize(context);
+//        AppEventsLogger.activateApp(context);
+        callbackManager = CallbackManager.Factory.create();
+        btnFacebook = view.findViewById(R.id.signIn_btnFacebook);
+        btnFacebook.setReadPermissions(Arrays.asList(EMAIL));
+        // If you are using in a fragment, call loginButton.setFragment(this);
+
+        // Callback registration
+        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(context, "onSuccess", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(context, "onCancel", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Toast.makeText(context, "onError", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         return view;
     }
+
 
     @Override
     public void onStart() {
@@ -111,6 +151,7 @@ public class SignInFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
@@ -125,7 +166,11 @@ public class SignInFragment extends Fragment {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+//            setResult(Resource.forSuccess(createIdpResponse(account)));
+            Toast.makeText(context, ""+account.getEmail()+"\n"+account.getServerAuthCode()+"\n"+account.getServerAuthCode()+"\n"+account.getIdToken(), Toast.LENGTH_SHORT).show();
+//            Log.i("account",account.getServerAuthCode());
+            Log.i("account",account.getDisplayName());
+//            Log.i("account",account.getIdToken());
             context.startActivity(new Intent(context, NavigatinDrawerActivity.class));
 
 
@@ -133,6 +178,7 @@ public class SignInFragment extends Fragment {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            e.printStackTrace();
             Toast.makeText(context, "this acount does not exist", Toast.LENGTH_SHORT).show();
         }
     }
