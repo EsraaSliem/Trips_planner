@@ -48,7 +48,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
         holder.addNoteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertLayout = inflater.inflate(R.layout.fragment_add_note, null);
+                alertLayout = inflater.inflate(R.layout.add_note_layout, null);
                 final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
 
                 alert.setTitle("Details");
