@@ -29,13 +29,12 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     FragmentTransaction fragmentTransaction;
     Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigatin_drawer);
-        context = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
+        context = this;
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
 
@@ -49,7 +48,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.replace(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
+                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
                 fragmentTransaction.commit();
             }
         });

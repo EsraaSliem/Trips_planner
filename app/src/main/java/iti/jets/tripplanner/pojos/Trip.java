@@ -13,10 +13,7 @@ public class Trip {
     int tripStatues;
 
     public Trip() {
-        this.tripDate = Utilities.getCurrentDate();
-        this.tripTime = Utilities.getCurrentTime();
-        this.tripType = 1;
-        this.tripStatues = 1;
+
     }
 
     public Trip(String tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) {
@@ -98,13 +95,11 @@ public class Trip {
         return tripType;
     }
 
-    public void setTripType(int tripType) throws Exception {
+    public void setTripType(int tripType) {
         if (tripType == 1) {
             this.tripType = tripType;
         } else if (tripType == 2) {
             this.tripType = tripType;
-        } else {
-            //throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
         }
     }
 
@@ -112,7 +107,7 @@ public class Trip {
         return tripStatues;
     }
 
-    public void setTripStatues(int tripStatues) {
+    public void setTripStatues(int tripStatues) throws Exception {
         if (tripStatues == 1) {
             this.tripStatues = tripStatues;
         } else if (tripStatues == -1) {
@@ -120,7 +115,7 @@ public class Trip {
         } else if (tripStatues == 0) {
             this.tripStatues = tripStatues;
         } else {
-            //throw new Exception("invalid input you must enter -1 or 0 or 1  ya ahraf");
+            throw new Exception("invalid input you must enter -1 or 0 or 1  ya ahraf");
         }
 
 

@@ -33,7 +33,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
     public TripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.upcoming_trip_card, parent, false);
-
         return new MyViewHolder(view);
     }
 
@@ -50,7 +49,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
             public void onClick(View v) {
                 alertLayout = inflater.inflate(R.layout.add_note_layout, null);
                 final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-
                 alert.setTitle("Details");
                 alert.setView(alertLayout);
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -81,7 +79,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         public TextView titleTxt, startPointTxt, endPointTxt, timeTxt, durationTxt;
         public ImageButton addNoteBtn;
-
         public MyViewHolder(View view) {
             super(view);
             inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -98,7 +95,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v,
                                         ContextMenu.ContextMenuInfo menuInfo) {
-
             menu.add(Menu.NONE, R.id.action_settings,
                     Menu.NONE, R.string.action_settings);
             menu.add(Menu.NONE, R.id.action_settings,
