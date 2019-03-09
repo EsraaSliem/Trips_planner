@@ -1,9 +1,10 @@
 package iti.jets.tripplanner;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,13 +20,9 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 
 import iti.jets.tripplanner.fragments.AddNoteFragment;
-
-import iti.jets.tripplanner.fragments.ShowNotesFragment;
-import iti.jets.tripplanner.fragments.UpcomingTripFragment;
-import iti.jets.tripplanner.utils.FireBaseData;
-
 import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
+import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 
 
 public class NavigatinDrawerActivity extends AppCompatActivity
