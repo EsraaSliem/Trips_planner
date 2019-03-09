@@ -19,8 +19,8 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import iti.jets.tripplanner.fragments.AddNoteFragment;
 import iti.jets.tripplanner.fragments.AddTripFragment;
+import iti.jets.tripplanner.fragments.HistoryFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 
@@ -104,19 +104,19 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         boolean isToFragment = true;
 
         switch (item.getItemId()) {
-            case R.id.nav_camera:
+            case R.id.nav_profile:
                 fragmentClass = UpcomingTripFragment.class;
                 break;
-            case R.id.nav_addTrip:
-                fragmentClass = AddTripFragment.class;
+            case R.id.nav_upComing:
+                fragmentClass = UpcomingTripFragment.class;
                 break;
-            case R.id.nav_addNote:
-                fragmentClass = AddNoteFragment.class;
+            case R.id.nav_history:
+                fragmentClass = HistoryFragment.class;
                 break;
-            case R.id.nav_share:
+            case R.id.nav_setting:
                 fragmentClass = ShowNotesFragment.class;
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_about:
                 fragmentClass = ShowNotesFragment.class;
                 break;
             case R.id.nav_logout:

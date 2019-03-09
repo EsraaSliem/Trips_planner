@@ -39,4 +39,6 @@
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
+    <string name="done">Done</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

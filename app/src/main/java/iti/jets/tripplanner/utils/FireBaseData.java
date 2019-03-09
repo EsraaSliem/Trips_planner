@@ -42,6 +42,14 @@ public class FireBaseData {
         }
     }
 
+    public String getUserId() {
+        return uid;
+    }
+
+    public void setUserId(String uid) {
+        this.uid = uid;
+    }
+
     public void writeNewUser(final User user) {
         mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
             @Override
