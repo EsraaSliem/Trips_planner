@@ -10,14 +10,14 @@ import android.widget.TextView;
 import java.util.List;
 
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.pojos.NotePojo;
+import iti.jets.tripplanner.pojos.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<NotePojo> noteList;
+    private List<Note> noteList;
 
-    public NoteAdapter(Context mContext, List<NotePojo> noteList) {
+    public NoteAdapter(Context mContext, List<Note> noteList) {
         this.mContext = mContext;
         this.noteList = noteList;
     }
@@ -32,7 +32,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        NotePojo note = noteList.get(position);
+        Note note = noteList.get(position);
         holder.title.setText(note.getNoteName());
         holder.count.setText(note.getNoteDescription());
     }

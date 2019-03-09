@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,12 +48,16 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
     String tripDate;
     String tripTime;
     int tripType;
+    private AutoCompleteTextView addTripFragment_edtTripStartPoint;
+    private AutoCompleteTextView addTripFragment_edtTripEndPoint;
     private String mAM_PM;
     private EditText addTripFragment_edtTripName;
     private EditText addTripFragment_edtTripDate;
     private EditText addTripFragment_edtTripTime;
     private Spinner addTripFragment_spnTripType;
     private Button addTripFragment_btnAddTrip;
+    private Button addTripFragment_btnTripDate;
+    private Button addTripFragment_btnTripTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
 
     public static ArrayList autocomplete(String input) {
@@ -114,11 +117,12 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+
         addTripFragment_edtTripName = view.findViewById(R.id.addTripFragment_edtTripName);
-        //addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
-        //addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
         addTripFragment_edtTripDate = view.findViewById(R.id.addTripFragment_edtTripDate);
+        addTripFragment_btnTripDate = view.findViewById(R.id.addTripFragment_btnTripDate);
         addTripFragment_edtTripTime = view.findViewById(R.id.addTripFragment_edtTripTime);
+        addTripFragment_btnTripTime = view.findViewById(R.id.addTripFragment_btnTripTime);
         addTripFragment_spnTripType = view.findViewById(R.id.addTripFragment_spnTripType);
         addTripFragment_btnAddTrip = view.findViewById(R.id.addTripFragment_btnAddTrip);
 
@@ -129,14 +133,14 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addTripFragment_spnTripType.setAdapter(adapter);
         //Trip_Type
-        if (addTripFragment_spnTripType.getSelectedItem().toString().equalsIgnoreCase("one dirction")) {
+        if (addTripFragment_spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
             tripType = 1;
         } else {
             tripType = 2;
         }
 
         //Trip_Date
-        addTripFragment_edtTripDate.setOnClickListener(new View.OnClickListener() {
+        addTripFragment_btnTripDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get Current Time
@@ -144,7 +148,6 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
                 mDay = c.get(Calendar.DAY_OF_MONTH);
                 mMonth = c.get(Calendar.MONTH);
                 mYear = c.get(Calendar.YEAR);
-                Toast.makeText(getContext(), "Date", Toast.LENGTH_SHORT).show();
                 // Launch Time Picker Dialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
@@ -165,7 +168,7 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
         final FireBaseData fireBaseData = new FireBaseData(getActivity());
 
         //Trip_Time
-        addTripFragment_edtTripTime.setOnClickListener(new View.OnClickListener() {
+        addTripFragment_btnTripTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get Current Time
@@ -195,8 +198,8 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
 
         });
 
-        AutoCompleteTextView addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
-        AutoCompleteTextView addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
+        addTripFragment_edtTripStartPoint = view.findViewById(R.id.addTripFragment_edtTripStartPoint);
+        addTripFragment_edtTripEndPoint = view.findViewById(R.id.addTripFragment_edtTripEndPoint);
 
         addTripFragment_edtTripStartPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
         addTripFragment_edtTripStartPoint.setOnItemClickListener(this);
@@ -206,12 +209,14 @@ public class AddTripFragment extends Fragment implements AdapterView.OnItemClick
         addTripFragment_btnAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fireBaseData.addTrip(tripName, tripDate, tripTime, "", "", tripType, 1);
-                Fragment fragment = new AddNoteFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.viewContainerFragment, fragment);
-                fragmentTransaction.addToBackStack(null);
+                tripName = addTripFragment_edtTripName.getText().toString();
+                //addTrip
+                fireBaseData.addTrip(tripName, tripDate, tripTime, "oo", "oo", tripType, 1);
+//                Fragment fragment = new AddNoteFragment();
+//                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.mainContainerView, new AddNoteFragment());
+                fragmentTransaction.addToBackStack("");
                 fragmentTransaction.commit();
             }
         });

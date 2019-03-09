@@ -1,11 +1,11 @@
 package iti.jets.tripplanner.pojos;
 
-public class NotePojo {
+public class Note {
     int noteId;
     String noteName;
     String noteDescription;
 
-    public NotePojo(String noteName, String noteDescription) {
+    public Note(String noteName, String noteDescription) {
         this.noteName = noteName;
         this.noteDescription = noteDescription;
     }

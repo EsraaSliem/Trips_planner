@@ -9,26 +9,36 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
-import iti.jets.tripplanner.pojos.TripPojo;
+import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
-    private DatabaseReference mDatabase;
+    String uid;
+    //Firebase Auth and DataBase
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
+    private DatabaseReference mRefDatabase;
     private Context context;
 
+    //Firebase Connect
     public FireBaseData(Context context) {
         this.context = context;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance();
+        mRefDatabase = mDatabase.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-            //.child("Users").child(mAuth.getCurrentUser().getUid())
+        mCurrentUser = mAuth.getCurrentUser();
+
+        if (mCurrentUser != null) {
+            mRefDatabase = mDatabase.getReference();
+            uid = mCurrentUser.getUid();
+            Toast.makeText(context, "IF " + uid, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -37,8 +47,8 @@ public class FireBaseData {
             @Override
             public void onComplete(Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    user.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    mDatabase.child("Users").child(user.getUserId()).setValue(user);
+                    user.setUserId(mCurrentUser.getUid());
+                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
                 }
             }
         });
@@ -49,7 +59,9 @@ public class FireBaseData {
             @Override
             public void onComplete(Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    context.startActivity(new Intent(context, NavigatinDrawerActivity.class));
+                    Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(main_intent);
                 } else {
                     Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
                 }
@@ -64,7 +76,13 @@ public class FireBaseData {
 
     public void addTrip(String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) {
         User user = new User();
-        TripPojo trip = new TripPojo();
+        Trip trip = new Trip();
+
+        mRefDatabase = mDatabase.getReference("Trips");
+        String key = mRefDatabase.push().getKey();
+
+        trip.setTripId(key);
+
         trip.setTripName(tripName);
         trip.setTripDate(tripDate);
         trip.setTripTime(tripTime);
@@ -76,6 +94,9 @@ public class FireBaseData {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mDatabase.child("Trips").child(user.getUserId()).push().setValue(trip);
+        Toast.makeText(context, "UID " + uid, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "User UID " + user.getUserId(), Toast.LENGTH_SHORT).show();
+        mRefDatabase.child(uid).child(key).setValue(trip);
+        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 }

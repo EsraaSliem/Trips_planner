@@ -26,7 +26,6 @@ public class SignInFragment extends Fragment {
 
     Button btnLogin;
     EditText edtEmail, edtPassword;
-    FireBaseData fireBaseData;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
 
@@ -37,7 +36,7 @@ public class SignInFragment extends Fragment {
         btnLogin = view.findViewById(R.id.signUp_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
-        fireBaseData = new FireBaseData(getActivity());
+        final FireBaseData fireBaseData = new FireBaseData(getContext());
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -51,10 +50,7 @@ public class SignInFragment extends Fragment {
                 String email = edtEmail.getText().toString();
                 String password = edtPassword.getText().toString();
                 fireBaseData.loginUser(email, password);
-                Intent main_intent = new Intent(getActivity(), NavigatinDrawerActivity.class);
-                main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(main_intent);
-                getActivity().finish();
+
             }
         });
         return view;

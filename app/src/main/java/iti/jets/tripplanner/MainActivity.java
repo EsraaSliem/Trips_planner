@@ -4,17 +4,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import iti.jets.tripplanner.fragments.AddTripFragment;
-
 public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-        fragmentTransaction.add(R.id.viewContainerFragment, new AddTripFragment(), "Frag_One_tag");
-        fragmentTransaction.commit();
+        //setContentView(R.layout.activity_main);
+//        fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
+//        fragmentTransaction.add(R.id.viewContainerFragment, new AddTripFragment(), "Frag_One_tag");
+//        fragmentTransaction.commit();
     }
 }

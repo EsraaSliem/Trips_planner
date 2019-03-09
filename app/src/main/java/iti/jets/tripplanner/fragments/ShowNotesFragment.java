@@ -16,7 +16,7 @@ import java.util.List;
 
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.adapters.NoteAdapter;
-import iti.jets.tripplanner.pojos.NotePojo;
+import iti.jets.tripplanner.pojos.Note;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +25,7 @@ public class ShowNotesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
-    private List<NotePojo> noteList;
+    private List<Note> noteList;
 
     public ShowNotesFragment() {
         // Required empty public constructor
@@ -41,17 +41,17 @@ public class ShowNotesFragment extends Fragment {
 
         noteList = new ArrayList<>();
         adapter = new NoteAdapter(getContext(), noteList);
-        NotePojo a = new NotePojo("True Romance", "True Romance");
+        Note a = new Note("True Romance", "True Romance");
         noteList.add(a);
-        a = new NotePojo("True Romance", "True Romance");
+        a = new Note("True Romance", "True Romance");
         noteList.add(a);
-        a = new NotePojo("True Romance", "True Romance");
+        a = new Note("True Romance", "True Romance");
         noteList.add(a);
-        a = new NotePojo("True Romance", "True Romance");
+        a = new Note("True Romance", "True Romance");
         noteList.add(a);
-        a = new NotePojo("True Romance", "True Romance");
+        a = new Note("True Romance", "True Romance");
         noteList.add(a);
-        a = new NotePojo("True Romance", "True Romance");
+        a = new Note("True Romance", "True Romance");
         noteList.add(a);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);

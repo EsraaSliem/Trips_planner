@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import iti.jets.tripplanner.fragments.AddNoteFragment;
 import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 
@@ -42,7 +43,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.add(R.id.content, new AddTripFragment(), "Frag_One_tag");
+                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
                 fragmentTransaction.commit();
             }
         });
@@ -98,16 +99,16 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_camera:
-//                fragmentClass = SecondFragment.class;
+                fragmentClass = AddTripFragment.class;
                 break;
             case R.id.nav_addTrip:
                 fragmentClass = AddTripFragment.class;
                 break;
-            case R.id.nav_slideshow:
-//                fragmentClass = SecondFragment.class;
+            case R.id.nav_addNote:
+                fragmentClass = AddNoteFragment.class;
                 break;
             case R.id.nav_share:
-//                fragmentClass = ThirdFragment.class;
+                fragmentClass = ShowNotesFragment.class;
                 break;
             case R.id.nav_manage:
                 fragmentClass = ShowNotesFragment.class;
@@ -129,7 +130,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         if (isToFragment) {
             // Insert the fragment by replacing any existing fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.mainContainerView, fragment).commit();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

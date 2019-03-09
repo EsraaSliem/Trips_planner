@@ -2,8 +2,8 @@ package iti.jets.tripplanner.pojos;
 
 import iti.jets.tripplanner.utils.Utilities;
 
-public class TripPojo {
-    int tripId;
+public class Trip {
+    String tripId;
     String tripName;
     String tripDate;
     String tripTime;
@@ -12,14 +12,14 @@ public class TripPojo {
     int tripType;
     int tripStatues;
 
-    public TripPojo() {
+    public Trip() {
         this.tripDate = Utilities.getCurrentDate();
         this.tripTime = Utilities.getCurrentTime();
         this.tripType = 1;
         this.tripStatues = 1;
     }
 
-    public TripPojo(int tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) throws Exception {
+    public Trip(String tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) throws Exception {
         this.tripId = tripId;
         this.tripName = tripName;
         this.tripDate = tripDate;
@@ -36,7 +36,7 @@ public class TripPojo {
         this.tripStatues = tripStatues;
     }
 
-    public TripPojo(int tripId, String tripName, String startPoint, String endPoint) {
+    public Trip(String tripId, String tripName, String startPoint, String endPoint) {
         this.tripId = tripId;
         this.tripName = tripName;
         this.startPoint = startPoint;
@@ -48,11 +48,11 @@ public class TripPojo {
 
     }
 
-    public int getTripId() {
+    public String getTripId() {
         return tripId;
     }
 
-    public void setTripId(int tripId) {
+    public void setTripId(String tripId) {
         this.tripId = tripId;
     }
 
