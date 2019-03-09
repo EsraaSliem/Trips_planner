@@ -19,7 +19,7 @@ public class TripPojo {
         this.tripStatues = 1;
     }
 
-    public TripPojo(int tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) throws Exception {
+    public TripPojo(int tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) {
         this.tripId = tripId;
         this.tripName = tripName;
         this.tripDate = tripDate;
@@ -31,7 +31,7 @@ public class TripPojo {
         } else if (tripType == 2) {
             this.tripType = tripType;
         } else {
-            throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
+           // throw new Exception("invalid input you must enter 1 or 2 ya ahraf");
         }
         this.tripStatues = tripStatues;
     }
