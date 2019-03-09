@@ -3,7 +3,6 @@ package iti.jets.tripplanner.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -16,24 +15,23 @@ import android.widget.TextView;
 import java.util.List;
 
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.pojos.NotePojo;
-import iti.jets.tripplanner.pojos.TripPojo;
+import iti.jets.tripplanner.pojos.Trip;
 
-public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder>  {
-    private Context mContext;
+public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> {
     LayoutInflater inflater;
-    private List<TripPojo> tripList;
-    private View alertLayout;
     View view;
+    private Context mContext;
+    private List<Trip> tripList;
+    private View alertLayout;
 
-    public TripAdapter(Context mContext, List<TripPojo> tripList) {
+    public TripAdapter(Context mContext, List<Trip> tripList) {
         this.mContext = mContext;
         this.tripList = tripList;
     }
 
     @Override
     public TripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
-         view = LayoutInflater.from(parent.getContext())
+        view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.upcoming_trip_card, parent, false);
 
         return new MyViewHolder(view);
@@ -41,7 +39,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(TripAdapter.MyViewHolder holder, int position) {
-        TripPojo trip = tripList.get(position);
+        Trip trip = tripList.get(position);
         holder.titleTxt.setText(trip.getTripName());
         holder.startPointTxt.setText(trip.getStartPoint());
         holder.endPointTxt.setText(trip.getEndPoint());
@@ -49,7 +47,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
         holder.timeTxt.setText(trip.getTripTime());
         holder.addNoteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View v) {
+            public void onClick(View v) {
                 alertLayout = inflater.inflate(R.layout.fragment_add_note, null);
                 final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
 
@@ -72,8 +70,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
                 dialog.show();
             }
         });
-
-
     }
 
 
@@ -82,8 +78,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
         return tripList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        public TextView titleTxt, startPointTxt,endPointTxt,timeTxt,durationTxt;
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        public TextView titleTxt, startPointTxt, endPointTxt, timeTxt, durationTxt;
         public ImageButton addNoteBtn;
 
         public MyViewHolder(View view) {
@@ -92,12 +88,13 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
             titleTxt = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
             startPointTxt = view.findViewById(R.id.txtStartPoint_tripCardView);
             endPointTxt = view.findViewById(R.id.txtEndPoint_tripCardView);
-            timeTxt= view.findViewById(R.id.txtTime_tripCardView);
-            durationTxt=view.findViewById(R.id.txtDuration_tripCardView);
-            addNoteBtn=view.findViewById(R.id.imgBtn_addNote_upcomingTripCard);
+            timeTxt = view.findViewById(R.id.txtTime_tripCardView);
+            durationTxt = view.findViewById(R.id.txtDuration_tripCardView);
+            addNoteBtn = view.findViewById(R.id.imgBtn_addNote_upcomingTripCard);
             view.setOnCreateContextMenuListener(this);
 
         }
+
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v,
                                         ContextMenu.ContextMenuInfo menuInfo) {
