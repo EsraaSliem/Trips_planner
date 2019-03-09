@@ -53,7 +53,7 @@ public class SignInFragment extends Fragment {
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
-        final FireBaseData fireBaseData = new FireBaseData(getContext());
+        fireBaseData = new FireBaseData(getContext());
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -61,7 +61,7 @@ public class SignInFragment extends Fragment {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         }
         edtPassword = view.findViewById(R.id.signIn_edtPassword);
-        fireBaseData = new FireBaseData(getActivity());
+//        fireBaseData = new FireBaseData(getActivity());
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
