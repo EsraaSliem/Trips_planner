@@ -82,7 +82,7 @@ public class FireBaseData {
         return task.isSuccessful();
     }
 
-    public void addTrip(String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) {
+    public void addTrip(Trip t) {
         User user = new User();
         Trip trip = new Trip();
 
@@ -91,14 +91,14 @@ public class FireBaseData {
 
         trip.setTripId(key);
 
-        trip.setTripName(tripName);
-        trip.setTripDate(tripDate);
-        trip.setTripTime(tripTime);
-        trip.setStartPoint(startPoint);
-        trip.setEndPoint(endPoint);
+        trip.setTripName(t.getTripName());
+        trip.setTripDate(t.getTripDate());
+        trip.setTripTime(t.getTripTime());
+        trip.setStartPoint(t.getStartPoint());
+        trip.setEndPoint(t.getEndPoint());
         try {
-            trip.setTripType(tripType);
-            trip.setTripStatues(tripStatues);
+            trip.setTripType(t.getTripType());
+            trip.setTripStatues(t.getTripStatues());
         } catch (Exception e) {
             e.printStackTrace();
         }
