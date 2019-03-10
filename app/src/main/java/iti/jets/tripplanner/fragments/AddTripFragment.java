@@ -226,7 +226,7 @@ public class AddTripFragment extends Fragment {
                 //addTrip
                 fireBaseData.addTrip(trip);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.mainContainerView, new AddNoteFragment());
+                fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
                 fragmentTransaction.addToBackStack("NoteTrip");
                 fragmentTransaction.commit();
             }

@@ -39,13 +39,6 @@ public class AddNoteFragment extends Fragment {
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                 View mView = getActivity().getLayoutInflater().inflate(R.layout.add_note_layout, null);
                 mBuilder.setTitle("Add Note To Trip");
-
-//                FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-//                String uId = current_user.getUid();
-
-                //Firebase Database
-//                mDatabase = FirebaseDatabase.getInstance().getReference().child("AddNote").child(uId).push();
-
                 final EditText addNoteName = mView.findViewById(R.id.addNote_edtAddNoteName);
                 final EditText addNoteDescription = mView.findViewById(R.id.addNote_edtAddNoteDescription);
 
@@ -55,11 +48,6 @@ public class AddNoteFragment extends Fragment {
 
                         noteName = addNoteName.getText().toString();
                         noteDescription = addNoteDescription.getText().toString();
-
-//                        HashMap<String, String> userMap = new HashMap<>();
-//                        userMap.put("Note", noteName);
-//                        userMap.put("Note", noteDescription);
-//                        mDatabase.setValue(userMap);
                         dialogInterface.dismiss();
                     }
                 });

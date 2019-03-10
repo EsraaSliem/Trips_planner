@@ -9,13 +9,17 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> {
     LayoutInflater inflater;
@@ -23,6 +27,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     private Context mContext;
     private List<Trip> tripList;
     private View alertLayout;
+    private String noteDescription, noteName;
+
 
     public UpComingTripAdapter(Context mContext, List<Trip> tripList) {
         this.mContext = mContext;
@@ -49,8 +55,26 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             public void onClick(View v) {
                 alertLayout = inflater.inflate(R.layout.add_note_layout, null);
                 final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-                alert.setTitle("Details");
+                alert.setTitle("Add Note To Trip");
+                final EditText addNoteName = alertLayout.findViewById(R.id.addNote_edtAddNoteName);
+                final EditText addNoteDescription = alertLayout.findViewById(R.id.addNote_edtAddNoteDescription);
                 alert.setView(alertLayout);
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final FireBaseData fireBaseData = new FireBaseData(mContext);
+                        final Note note = new Note();
+                        String key = trip.getTripId();
+                        Toast.makeText(mContext, "Trip Id " + key, Toast.LENGTH_SHORT).show();
+                        noteName = addNoteName.getText().toString();
+                        noteDescription = addNoteDescription.getText().toString();
+                        note.setNoteName(noteName);
+                        note.setNoteDescription(noteDescription);
+                        fireBaseData.addNote(note);
+                        dialog.dismiss();
+                    }
+                });
+
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
