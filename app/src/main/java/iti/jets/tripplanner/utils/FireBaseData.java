@@ -33,7 +33,6 @@ import iti.jets.tripplanner.pojos.User;
 
 public class FireBaseData {
     String uid;
-
     //Firebase Auth and DataBase
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;

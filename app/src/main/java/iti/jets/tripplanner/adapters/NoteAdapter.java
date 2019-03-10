@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,8 +34,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Note note = noteList.get(position);
-        holder.title.setText(note.getNoteName());
-        holder.count.setText(note.getNoteDescription());
+        holder.noteName.setText(note.getNoteName());
+        holder.noteDesc.setText(note.getNoteDescription());
+
     }
 
     @Override
@@ -43,12 +45,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count;
+        public TextView noteName, noteDesc;
+        public LinearLayout parentLayout;
 
         public MyViewHolder(View view) {
             super(view);
-            title = view.findViewById(R.id.name);
-            count = view.findViewById(R.id.desc);
+            noteName = view.findViewById(R.id.name);
+            noteDesc = view.findViewById(R.id.desc);
+            parentLayout = view.findViewById(R.id.addNoteLayout);
         }
     }
 }
