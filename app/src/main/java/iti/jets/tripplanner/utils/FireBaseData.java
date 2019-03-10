@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
+import iti.jets.tripplanner.adapters.HistoryTripAdapter;
+import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
 
@@ -120,32 +123,36 @@ public class FireBaseData {
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 
-    public List<Trip> getUpComingTrip(){
-        trips =new ArrayList<>();
-        Query query=mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
+    public void getTrips(final RecyclerView recyclerView, final int status) {
+        trips = new ArrayList<>();
+        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("fffffffffffff",dataSnapshot.getChildren().iterator().next().getValue().toString());
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-                if(iterator.hasNext()){
+                if (iterator.hasNext()) {
                     DataSnapshot next = iterator.next();
                     Iterator<DataSnapshot> iterator1 = next.getChildren().iterator();
-                    while (iterator1.hasNext()){
+                    while (iterator1.hasNext()) {
                         Trip trip = iterator1.next().getValue(Trip.class);
-                        Log.e("fffffffffffff1111",trip.getTripName());
-                        trips.add(trip);
+                        if (trip.getTripStatues() == status) {
+                            trips.add(trip);
+                        }
                     }
+                }
+                if (status == Trip.STATUS_UP_COMING) {
+                    UpComingTripAdapter adapter = new UpComingTripAdapter(context, trips);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    HistoryTripAdapter adapter = new HistoryTripAdapter(context, trips);
+                    recyclerView.setAdapter(adapter);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.e("fffff", databaseError.toString());
             }
         });
-
-
-        return trips;
     }
 }
