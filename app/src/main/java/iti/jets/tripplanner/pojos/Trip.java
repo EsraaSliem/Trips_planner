@@ -1,47 +1,21 @@
 package iti.jets.tripplanner.pojos;
 
-import iti.jets.tripplanner.utils.Utilities;
-
 public class Trip {
-    String tripId;
-    String tripName;
-    String tripDate;
-    String tripTime;
-    String startPoint;
-    String endPoint;
-    int tripType;
-    int tripStatues;
+    public static final int STATUS_UP_COMING = 1;
+    public static final int STATUS_DONE = 0;
+    public static final int STATUS_CANCELLED = -1;
+    public static final int TYPE_ONE_DIRECTION = 1;
+    public static final int TYPE_ROUND = 2;
 
-    public Trip() {
+    private String tripId;
+    private String tripName;
+    private String tripDate;
+    private String tripTime;
+    private String startPoint;
+    private String endPoint;
+    private int tripType;
+    private int tripStatues;
 
-    }
-
-    public Trip(String tripId, String tripName, String tripDate, String tripTime, String startPoint, String endPoint, int tripType, int tripStatues) {
-        this.tripId = tripId;
-        this.tripName = tripName;
-        this.tripDate = tripDate;
-        this.tripTime = tripTime;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
-        if (tripType == 1) {
-            this.tripType = tripType;
-        } else if (tripType == 2) {
-            this.tripType = tripType;
-        }
-        this.tripStatues = tripStatues;
-    }
-
-    public Trip(String tripId, String tripName, String startPoint, String endPoint) {
-        this.tripId = tripId;
-        this.tripName = tripName;
-        this.startPoint = startPoint;
-        this.endPoint = endPoint;
-        this.tripDate = Utilities.getCurrentDate();
-        this.tripTime = Utilities.getCurrentTime();
-        this.tripType = 1;
-        this.tripStatues = 1;
-
-    }
 
     public String getTripId() {
         return tripId;
@@ -96,28 +70,14 @@ public class Trip {
     }
 
     public void setTripType(int tripType) {
-        if (tripType == 1) {
-            this.tripType = tripType;
-        } else if (tripType == 2) {
-            this.tripType = tripType;
-        }
+        this.tripType = tripType;
     }
 
     public int getTripStatues() {
         return tripStatues;
     }
 
-    public void setTripStatues(int tripStatues) throws Exception {
-        if (tripStatues == 1) {
-            this.tripStatues = tripStatues;
-        } else if (tripStatues == -1) {
-            this.tripStatues = tripStatues;
-        } else if (tripStatues == 0) {
-            this.tripStatues = tripStatues;
-        } else {
-            throw new Exception("invalid input you must enter -1 or 0 or 1  ya ahraf");
-        }
-
-
+    public void setTripStatues(int tripStatues) {
+        this.tripStatues = tripStatues;
     }
 }

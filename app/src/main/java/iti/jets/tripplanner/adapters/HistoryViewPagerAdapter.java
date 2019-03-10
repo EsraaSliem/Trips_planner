@@ -1,6 +1,5 @@
 package iti.jets.tripplanner.adapters;
 
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -34,9 +33,9 @@ public class HistoryViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         String title = null;
         if (position == 0) {
-            title = "Tab-1";
+            title = "Done";
         } else if (position == 1) {
-            title = "Tab-2";
+            title = "Cancelled";
         }
         return title;
     }

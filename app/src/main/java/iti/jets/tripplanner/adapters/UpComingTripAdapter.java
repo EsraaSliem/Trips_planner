@@ -17,27 +17,27 @@ import java.util.List;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Trip;
 
-public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> {
+public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> {
     LayoutInflater inflater;
     View view;
     private Context mContext;
     private List<Trip> tripList;
     private View alertLayout;
 
-    public TripAdapter(Context mContext, List<Trip> tripList) {
+    public UpComingTripAdapter(Context mContext, List<Trip> tripList) {
         this.mContext = mContext;
         this.tripList = tripList;
     }
 
     @Override
-    public TripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+    public UpComingTripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.upcoming_trip_card, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(TripAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
         Trip trip = tripList.get(position);
         holder.titleTxt.setText(trip.getTripName());
         holder.startPointTxt.setText(trip.getStartPoint());
@@ -79,6 +79,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.MyViewHolder> 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         public TextView titleTxt, startPointTxt, endPointTxt, timeTxt, durationTxt;
         public ImageButton addNoteBtn;
+
         public MyViewHolder(View view) {
             super(view);
             inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
