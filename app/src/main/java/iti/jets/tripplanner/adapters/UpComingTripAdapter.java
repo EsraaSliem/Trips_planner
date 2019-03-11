@@ -28,6 +28,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     private List<Trip> tripList;
     private View alertLayout;
     private String noteDescription, noteName;
+    Trip trip;
 
 
     public UpComingTripAdapter(Context mContext, List<Trip> tripList) {
@@ -44,7 +45,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 
     @Override
     public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
-        Trip trip = tripList.get(position);
+        trip = tripList.get(position);
         holder.titleTxt.setText(trip.getTripName());
         holder.startPointTxt.setText(trip.getStartPoint());
         holder.endPointTxt.setText(trip.getEndPoint());

@@ -45,11 +45,13 @@ public class FireBaseData {
     //Firebase Connect
     public FireBaseData(Context context) {
         this.context = context;
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        mDatabase = FirebaseDatabase.getInstance();
-        mRefDatabase = mDatabase.getReference();
-        mAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mAuth.getCurrentUser();
+        if (mDatabase == null) {
+//            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            mDatabase = FirebaseDatabase.getInstance();
+            mRefDatabase = mDatabase.getReference();
+            mAuth = FirebaseAuth.getInstance();
+            mCurrentUser = mAuth.getCurrentUser();
+        }
 
         if (mCurrentUser != null) {
             mRefDatabase = mDatabase.getReference();
