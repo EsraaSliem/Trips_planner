@@ -3,7 +3,6 @@ package iti.jets.tripplanner.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,6 +25,7 @@ import java.util.List;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
+import iti.jets.tripplanner.adapters.NoteAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
@@ -35,6 +35,7 @@ import iti.jets.tripplanner.pojos.User;
 public class FireBaseData {
     String uid;
     List<Trip> trips;
+    List<Note> notes;
     //Firebase Auth and DataBase
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
@@ -124,16 +125,35 @@ public class FireBaseData {
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
 
-    public void addNote(Note note) {
-        User user = new User();
-        Trip trip = new Trip();
-        mRefDatabase = mDatabase.getReference("Trips").child(uid).child(trip.getTripId());
+    public void addNote(Note note, Trip trip) {
+        mRefDatabase = mRefDatabase.child("Notes").child(trip.getTripId());
         String key = mRefDatabase.push().getKey();
-
+        Toast.makeText(context, "Trip Id " + trip.getTripId(), Toast.LENGTH_SHORT).show();
         note.setNoteId(key);
         note.setNoteName(note.getNoteName());
         note.setNoteDescription(note.getNoteDescription());
-        mRefDatabase.child("Notes").child(key).setValue(note);
+        mRefDatabase.child(key).setValue(note);
+    }
+
+    public void getNotes(final RecyclerView recyclerView, Trip trip) {
+        notes = new ArrayList<>();
+        Query query = mRefDatabase.child("Notes").child("-L_gF1jKEA-Sq52ZZbnM");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Note note = snapshot.getValue(Note.class);
+                    Log.e("Note ID", note.getNoteId() + " " + note.getNoteName());
+                    notes.add(note);
+                }
+                NoteAdapter adapter = new NoteAdapter(context, notes);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
 
@@ -142,7 +162,7 @@ public class FireBaseData {
         Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                 if (iterator.hasNext()) {
                     DataSnapshot next = iterator.next();
@@ -164,7 +184,7 @@ public class FireBaseData {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
                 Log.e("fffff", databaseError.toString());
             }
         });

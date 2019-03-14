@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -65,13 +64,13 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     public void onClick(DialogInterface dialog, int which) {
                         final FireBaseData fireBaseData = new FireBaseData(mContext);
                         final Note note = new Note();
-                        String key = trip.getTripId();
-                        Toast.makeText(mContext, "Trip Id " + key, Toast.LENGTH_SHORT).show();
+//                        String key = trip.getTripId();
+                        trip.setTripId(trip.getTripId());
                         noteName = addNoteName.getText().toString();
                         noteDescription = addNoteDescription.getText().toString();
                         note.setNoteName(noteName);
                         note.setNoteDescription(noteDescription);
-                        fireBaseData.addNote(note);
+                        fireBaseData.addNote(note, trip);
                         dialog.dismiss();
                     }
                 });
