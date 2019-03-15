@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -48,61 +49,69 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     @Override
     public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
         trip = tripList.get(position);
-        holder.titleTxt.setText(trip.getTripName());
-        holder.startPointTxt.setText(trip.getStartPoint());
-        holder.endPointTxt.setText(trip.getEndPoint());
-        holder.durationTxt.setText(trip.getTripDate());
-        holder.timeTxt.setText(trip.getTripTime());
+        holder.txtTitle.setText(trip.getTripName());
+        holder.txtStartPoint.setText(trip.getStartPoint());
+        holder.txtEndPoint.setText(trip.getEndPoint());
+        holder.txtDate.setText(trip.getTripDate());
+        holder.txtTime.setText(trip.getTripTime());
         holder.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPopup(v);
             }
         });
-        holder.addNoteBtn.setOnClickListener(new View.OnClickListener() {
+        holder.btnAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertLayout = inflater.inflate(R.layout.add_note_layout, null);
-                final AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setTitle("Add Note To Trip");
-                final EditText addNoteName = alertLayout.findViewById(R.id.addNote_edtAddNoteName);
-                final EditText addNoteDescription = alertLayout.findViewById(R.id.addNote_edtAddNoteDescription);
-                alert.setView(alertLayout);
-                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        final FireBaseData fireBaseData = new FireBaseData(context);
-                        final Note note = new Note();
-//                        String key = trip.getTripId();
-                        trip.setTripId(trip.getTripId());
-                        noteName = addNoteName.getText().toString();
-                        noteDescription = addNoteDescription.getText().toString();
-                        note.setNoteName(noteName);
-                        note.setNoteDescription(noteDescription);
-                        fireBaseData.addNote(note, trip);
-                        dialog.dismiss();
-                    }
-                });
+                addTrip();
+            }
+        });
+        holder.btnStartTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMap();
+            }
+        });
+    }
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (view != null) {
-                            ViewGroup parent = (ViewGroup) view.getParent();
-                            if (parent != null) {
-                                parent.removeAllViews();
-                                dialog.cancel();
-                                dialog.dismiss();
-                            }
-                        }
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+    private void addTrip() {
+        alertLayout = inflater.inflate(R.layout.add_note_layout, null);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Add Note To Trip");
+        final EditText addNoteName = alertLayout.findViewById(R.id.addNote_edtAddNoteName);
+        final EditText addNoteDescription = alertLayout.findViewById(R.id.addNote_edtAddNoteDescription);
+        alert.setView(alertLayout);
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final FireBaseData fireBaseData = new FireBaseData(context);
+                final Note note = new Note();
+//                        String key = trip.getTripId();
+                trip.setTripId(trip.getTripId());
+                noteName = addNoteName.getText().toString();
+                noteDescription = addNoteDescription.getText().toString();
+                note.setNoteName(noteName);
+                note.setNoteDescription(noteDescription);
+                fireBaseData.addNote(note, trip);
+                dialog.dismiss();
             }
         });
 
-
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    if (parent != null) {
+                        parent.removeAllViews();
+                        dialog.cancel();
+                        dialog.dismiss();
+                    }
+                }
+            }
+        });
+        AlertDialog dialog = alert.create();
+        dialog.show();
     }
 
     public void showPopup(View v) {
@@ -114,10 +123,17 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.upComingMenu_start:
-                        String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        context.startActivity(intent);
+                    case R.id.upComingMenu_edit:
+                       
+                        return true;
+                    case R.id.upComingMenu_cancel:
+
+                        return true;
+                    case R.id.upComingMenu_remove:
+
+                        return true;
+                    case R.id.upComingMenu_showNotes:
+
                         return true;
                     default:
                         return false;
@@ -133,21 +149,28 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         return tripList.size();
     }
 
+    private void openMap() {
+        String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        context.startActivity(intent);
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView titleTxt, startPointTxt, endPointTxt, timeTxt, durationTxt;
-        public ImageButton addNoteBtn, btnMenu;
+        public TextView txtTitle, txtStartPoint, txtEndPoint, txtTime, txtDate;
+        public ImageButton btnMenu;
+        Button btnAddNote, btnStartTrip;
 
         public MyViewHolder(View view) {
             super(view);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            titleTxt = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
-            startPointTxt = view.findViewById(R.id.txtStartPoint_tripCardView);
-            endPointTxt = view.findViewById(R.id.txtEndPoint_tripCardView);
-            timeTxt = view.findViewById(R.id.txtTime_tripCardView);
-            durationTxt = view.findViewById(R.id.txtDuration_tripCardView);
-            addNoteBtn = view.findViewById(R.id.imgBtn_addNote_upcomingTripCard);
+            txtTitle = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
+            txtStartPoint = view.findViewById(R.id.txtStartPoint_tripCardView);
+            txtEndPoint = view.findViewById(R.id.txtEndPoint_tripCardView);
+            txtTime = view.findViewById(R.id.txtTime_tripCardView);
+            txtDate = view.findViewById(R.id.txtDuration_tripCardView);
+            btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
             btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
-
+            btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
         }
     }
 }

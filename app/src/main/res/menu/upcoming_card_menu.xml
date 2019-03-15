@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/upComingMenu_start"
-        android:title="@string/start" />
+        android:id="@+id/upComingMenu_showNotes"
+        android:title="@string/showNote" />
+    <item
+        android:id="@+id/upComingMenu_edit"
+        android:title="@string/edit" />
+    <item
+        android:id="@+id/upComingMenu_cancel"
+        android:title="@string/cancel" />
+    <item
+        android:id="@+id/upComingMenu_remove"
+        android:title="@string/remove" />
+
+
 </menu>

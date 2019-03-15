@@ -1,238 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="280dp"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/upcoming_trip_cardView"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="7dp"
+        android:layout_height="match_parent"
         android:elevation="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2dp"
+        android:orientation="vertical"
         card_view:cardBackgroundColor="@color/offWhite"
         card_view:cardCornerRadius="20dp">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="4">
+            android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/textView9"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".5"
-                android:background="@color/colorPrimary" />
+                android:layout_height="15dp"
+                android:background="@color/colorPrimary"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tripNameTxt_upcomingTrip_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/title"
+                android:textSize="20sp"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+            <ImageButton
+                android:id="@+id/upcomingTripCard_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_menu"
+                card_view:layout_constraintBottom_toBottomOf="@+id/tripNameTxt_upcomingTrip_card"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="@+id/tripNameTxt_upcomingTrip_card" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/map"
+                card_view:layout_constraintEnd_toEndOf="@+id/upcomingTripCard_menu"
+                card_view:layout_constraintTop_toTopOf="@+id/from" />
+
+            <TextView
+                android:id="@+id/from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/from"
+                card_view:layout_constraintStart_toStartOf="@+id/tripNameTxt_upcomingTrip_card"
+                card_view:layout_constraintTop_toTopOf="@+id/txtStartPoint_tripCardView" />
+
+            <TextView
+                android:id="@+id/txtStartPoint_tripCardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/from"
+                android:text="rwerwerlwekrkwehrkweljrklwerklweklrweklrwekljrwel"
+                card_view:layout_constraintEnd_toStartOf="@+id/imageView2"
+                card_view:layout_constraintStart_toEndOf="@+id/from"
+                card_view:layout_constraintTop_toBottomOf="@+id/tripNameTxt_upcomingTrip_card" />
+
+            <TextView
+                android:id="@+id/to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/to"
+                card_view:layout_constraintStart_toStartOf="@+id/from"
+                card_view:layout_constraintTop_toTopOf="@+id/txtEndPoint_tripCardView" />
+
+            <TextView
+                android:id="@+id/txtEndPoint_tripCardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="rwerwerlwekrkwehrkweljrklwerklweklrweklrwekljrwel"
+                card_view:layout_constraintEnd_toEndOf="@+id/txtStartPoint_tripCardView"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toStartOf="@+id/txtStartPoint_tripCardView"
+                card_view:layout_constraintTop_toBottomOf="@+id/txtStartPoint_tripCardView" />
+
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                card_view:layout_constraintStart_toStartOf="@+id/to"
+                card_view:layout_constraintTop_toTopOf="@+id/txtDuration_tripCardView" />
+
+            <TextView
+                android:id="@+id/txtDuration_tripCardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="j,hm.jlkhklhklhhkjhhjhjkhjkjhkjhlhjklhklhkl"
+                card_view:layout_constraintEnd_toEndOf="@+id/txtEndPoint_tripCardView"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toStartOf="@+id/txtEndPoint_tripCardView"
+                card_view:layout_constraintTop_toBottomOf="@+id/txtEndPoint_tripCardView" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time"
+                card_view:layout_constraintStart_toStartOf="@+id/duration"
+                card_view:layout_constraintTop_toTopOf="@+id/txtTime_tripCardView" />
+
+            <TextView
+                android:id="@+id/txtTime_tripCardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="kl;jdf;lgid;fiyeriypoeriyoperoierpoitpoy"
+                card_view:layout_constraintEnd_toEndOf="@+id/txtDuration_tripCardView"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toStartOf="@+id/txtDuration_tripCardView"
+                card_view:layout_constraintTop_toBottomOf="@+id/txtDuration_tripCardView" />
 
             <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_width="376dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                card_view:layout_constraintEnd_toEndOf="@+id/imageView2"
+                card_view:layout_constraintStart_toStartOf="@+id/time"
+                card_view:layout_constraintTop_toBottomOf="@+id/txtTime_tripCardView">
 
-                <TextView
-                    android:id="@+id/tripNameTxt_upcomingTrip_card"
+                <Button
+                    android:id="@+id/upcomingTripCard_btnStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="10dp"
-                    android:text="Title "
-                    android:textSize="20dp"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/upcomingTripCard_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_menu"
+                    android:layout_toEndOf="@id/upcomingTripCard_btnAddNote"
+                    android:background="@color/offWhite"
+                    android:text="@string/start"
+                    android:textColor="@color/colorPrimary"
                     card_view:layout_constraintBottom_toBottomOf="parent"
                     card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintVertical_bias="1.0" />
+
+                <Button
+                    android:id="@+id/upcomingTripCard_btnAddNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/offWhite"
+                    android:drawableEnd="@drawable/ic_action_name"
+                    android:text="@string/add_note"
+                    android:textColor="@color/colorPrimary"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintStart_toStartOf="parent"
                     card_view:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:weightSum="2">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5"
-                    android:orientation="vertical"
-                    android:weightSum="3">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:weightSum="2">
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <TextView
-                                android:id="@+id/from"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:padding="10dp"
-                                android:text="from :"
-                                android:textSize="10dp" />
-
-                            <TextView
-                                android:id="@+id/txtStartPoint_tripCardView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_toEndOf="@+id/from"
-                                android:padding="10dp"
-                                android:text="from :"
-                                android:textSize="10dp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:textAlignment="center"
-
-                            >
-
-                            <TextView
-                                android:id="@+id/to"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:padding="10dp"
-                                android:text="To :"
-                                android:textSize="10dp" />
-
-                            <TextView
-                                android:id="@+id/txtEndPoint_tripCardView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_toEndOf="@+id/to"
-                                android:padding="10dp"
-                                android:text="to"
-                                android:textSize="10dp" />
-                        </RelativeLayout>
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:textAlignment="center">
-
-                            <TextView
-                                android:id="@+id/duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:padding="10dp"
-                                android:text="@string/duration" />
-
-                            <TextView
-                                android:id="@+id/txtDuration_tripCardView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_toEndOf="@+id/duration"
-                                android:padding="10dp" />
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:textAlignment="center">
-
-                            <TextView
-                                android:id="@+id/time"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:padding="10dp"
-                                android:text="@string/time" />
-
-                            <TextView
-                                android:id="@+id/txtTime_tripCardView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_toEndOf="@+id/time"
-                                android:padding="10dp" />
-                        </RelativeLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight=".5"
-                    android:src="@drawable/map" />
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="10dp"
-
-                android:layout_weight=".5">
-
-                <ImageButton
-                    android:id="@+id/imgBtn_addNote_upcomingTripCard"
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-
-                    android:layout_gravity="right"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:src="@drawable/ic_action_name" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toStartOf="@id/imgBtn_addNote_upcomingTripCard"
-                    android:text="@string/add_note" />
-
-                <Button
-                    android:id="@+id/editTripBtn_upcomingTripCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/offWhite"
-                    android:text="@string/edit"
-                    android:textColor="@color/colorPrimary" />
-
-                <Button
-                    android:id="@+id/deleteTripBtn_upcomingTripCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/editTripBtn_upcomingTripCard"
-                    android:background="@color/offWhite"
-                    android:text="@string/remove"
-                    android:textColor="@color/colorPrimary" />
-            </RelativeLayout>
-
-        </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-</LinearLayout>
+</FrameLayout>
