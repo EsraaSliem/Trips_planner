@@ -41,5 +41,10 @@
     <string name="sign_up">Sign Up</string>
     <string name="done">Done</string>
     <string name="cancelled">Cancelled</string>
-    <string name="duration">duration</string>
+    <string name="duration">Duration :</string>
+    <string name="start">start</string>
+    <string name="time">Time :</string>
+    <string name="add_note">add note</string>
+    <string name="edit">edit</string>
+    <string name="remove">remove</string>
 </resources>

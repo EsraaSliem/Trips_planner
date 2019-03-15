@@ -33,9 +33,9 @@ import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
-    String uid;
-    List<Trip> trips;
-    List<Note> notes;
+    private String uid;
+    private List<Trip> trips;
+    private List<Note> notes;
     //Firebase Auth and DataBase
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
@@ -149,7 +149,6 @@ public class FireBaseData {
                 NoteAdapter adapter = new NoteAdapter(context, notes);
                 recyclerView.setAdapter(adapter);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
