@@ -27,23 +27,25 @@ import java.util.List;
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
+import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
     String uid;
+    List<Trip> trips;
     //Firebase Auth and DataBase
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
     private DatabaseReference mRefDatabase;
     private Context context;
-    List<Trip> trips;
 
     //Firebase Connect
     public FireBaseData(Context context) {
         this.context = context;
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mDatabase = FirebaseDatabase.getInstance();
         mRefDatabase = mDatabase.getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -96,23 +98,21 @@ public class FireBaseData {
         return task.isSuccessful();
     }
 
-    public void addTrip(Trip t) {
+    public void addTrip(Trip trip) {
         User user = new User();
-        Trip trip = new Trip();
-
         mRefDatabase = mDatabase.getReference("Trips");
         String key = mRefDatabase.push().getKey();
 
         trip.setTripId(key);
 
-        trip.setTripName(t.getTripName());
-        trip.setTripDate(t.getTripDate());
-        trip.setTripTime(t.getTripTime());
-        trip.setStartPoint(t.getStartPoint());
-        trip.setEndPoint(t.getEndPoint());
+        trip.setTripName(trip.getTripName());
+        trip.setTripDate(trip.getTripDate());
+        trip.setTripTime(trip.getTripTime());
+        trip.setStartPoint(trip.getStartPoint());
+        trip.setEndPoint(trip.getEndPoint());
         try {
-            trip.setTripType(t.getTripType());
-            trip.setTripStatues(t.getTripStatues());
+            trip.setTripType(trip.getTripType());
+            trip.setTripStatues(trip.getTripStatues());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,6 +121,19 @@ public class FireBaseData {
         mRefDatabase.child(uid).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
+
+    public void addNote(Note note) {
+        User user = new User();
+        Trip trip = new Trip();
+        mRefDatabase = mDatabase.getReference("Trips").child(uid).child(trip.getTripId());
+        String key = mRefDatabase.push().getKey();
+
+        note.setNoteId(key);
+        note.setNoteName(note.getNoteName());
+        note.setNoteDescription(note.getNoteDescription());
+        mRefDatabase.child("Notes").child(key).setValue(note);
+    }
+
 
     public void getTrips(final RecyclerView recyclerView, final int status) {
         trips = new ArrayList<>();
