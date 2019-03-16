@@ -34,6 +34,7 @@ public class AlertActivity extends AppCompatActivity {
 //                            Intent intent1 = new Intent(getApplicationContext(), NavigatinDrawerActivity.class);
 //                            startActivity(intent1);
                             AlertAdapterCommunicator communicator = new UpComingTripAdapter(AlertActivity.this);
+
                             communicator.callOpenMap(trip);
                         }
                     });
