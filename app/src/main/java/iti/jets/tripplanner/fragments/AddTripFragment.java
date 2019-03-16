@@ -1,8 +1,11 @@
 package iti.jets.tripplanner.fragments;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -17,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +34,17 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.adapters.GooglePlacesAutocompleteAdapter;
 import iti.jets.tripplanner.pojos.Trip;
+import iti.jets.tripplanner.recievers.MyReceiver;
 import iti.jets.tripplanner.utils.FireBaseData;
+import iti.jets.tripplanner.utils.Utilities;
+
+import static android.content.Context.ALARM_SERVICE;
+
 
 public class AddTripFragment extends Fragment {
 
@@ -60,6 +70,7 @@ public class AddTripFragment extends Fragment {
     private String tripTime;
     private String startPoint;
     private String endPoint;
+    private Date tripDateDateObject;
 
     public static ArrayList autocomplete(String input) {
         ArrayList resultList = null;
@@ -209,29 +220,78 @@ public class AddTripFragment extends Fragment {
         btnAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final FireBaseData fireBaseData = new FireBaseData(context);
                 String tripName = edtTripName.getText().toString();
                 Trip trip = new Trip();
                 trip.setTripName(tripName);
-                trip.setTripDate(tripDate);
                 trip.setTripTime(tripTime);
+                boolean isValidDate = trip.setTripDate(tripDate);
+                if (isValidDate) {
+                    Toast.makeText(getContext(), "Valide Date",
+                            Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getContext(), "Invalid Date and you must enter Valid Date ",
+                            Toast.LENGTH_LONG).show();
+                    edtTripDate.setText("");
+                }
+
+
                 trip.setTripStatues(Trip.STATUS_UP_COMING);
                 trip.setStartPoint(startPoint);
                 trip.setEndPoint(endPoint);
-                if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
-                    trip.setTripType(Trip.TYPE_ONE_DIRECTION);
+                if (!isTripFieldsEmpty()) {
+                    if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
+                        trip.setTripType(Trip.TYPE_ONE_DIRECTION);
+                    } else {
+                        trip.setTripType(Trip.TYPE_ROUND);
+                    }
+                    //addTrip
+                    fireBaseData.addTrip(trip);
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
+                    fragmentTransaction.addToBackStack("NoteTrip");
+                    fragmentTransaction.commit();
+                    //Start Listning for BroadCast Reciever
+                    tripDateDateObject = Utilities.convertStringToDateFormate(tripDate, tripTime);
+                    startAlert(tripDateDateObject, trip);
                 } else {
-                    trip.setTripType(Trip.TYPE_ROUND);
+                    Toast.makeText(getContext(), "You must Enter All Fields", Toast.LENGTH_LONG).show();
                 }
-                //addTrip
-                fireBaseData.addTrip(trip);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
-                fragmentTransaction.addToBackStack("NoteTrip");
-                fragmentTransaction.commit();
+
+
             }
         });
 
         return view;
+    }
+
+    //Start Timer To broadCast Reciever
+    public void startAlert(Date date, Trip trip) {
+        Toast.makeText(getContext(), "your trip Starts At " + date, Toast.LENGTH_LONG).show();
+        long millis = date.getTime();
+        int i = 0;// Integer.parseInt(text.getText().toString());
+        Intent intent = new Intent(getActivity(), MyReceiver.class);
+        intent.putExtra(Utilities.TRIP_OBJECT, trip);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getActivity().getApplicationContext(), 234324243, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
+        Toast.makeText(getContext(), "current " + System.currentTimeMillis() + " seconds",
+                Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Date " + millis + " seconds",
+                Toast.LENGTH_LONG).show();
+
+    }
+
+    public boolean isTripFieldsEmpty() {
+        if (Utilities.isEditTextEmpty(edtTripDate) ||
+                Utilities.isEditTextEmpty(edtTripEndPoint) ||
+                Utilities.isEditTextEmpty(edtTripTime) ||
+                Utilities.isEditTextEmpty(edtTripName) ||
+                Utilities.isEditTextEmpty(edtTripStartPoint))
+            return true;
+        else return false;
     }
 }

@@ -19,13 +19,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import iti.jets.tripplanner.AlertAdapterCommunicator;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.TripHeadService;
 
-public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> {
+public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> implements AlertAdapterCommunicator {
     LayoutInflater inflater;
     View view;
     private Context context;
@@ -34,6 +35,9 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     private String noteDescription, noteName;
     Trip trip;
 
+    public UpComingTripAdapter(Context context) {
+        this.context = context;
+    }
 
     public UpComingTripAdapter(Context context, List<Trip> tripList) {
         this.context = context;
@@ -134,7 +138,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 
                         return true;
                     case R.id.upComingMenu_showNotes:
-
                         return true;
                     default:
                         return false;
@@ -156,6 +159,14 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         context.startActivity(intent);
+    }
+
+    @Override
+    public void callOpenMap(Trip trip1) {
+        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        context.startActivity(intent);
+
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
