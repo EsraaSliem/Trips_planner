@@ -115,16 +115,14 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:textAlignment="center"
-
-                            >
+                            android:textAlignment="center">
 
                             <TextView
                                 android:id="@+id/duration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:padding="10dp"
-                                android:text="@string/duration"
+                                android:text="@string/date"
                                 android:textSize="10sp" />
 
                             <TextView
@@ -133,7 +131,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_toEndOf="@+id/duration"
                                 android:padding="10dp"
-                                android:text="@string/duration"
+                                android:text="@string/date"
                                 android:textSize="10dp" />
                         </RelativeLayout>
 
