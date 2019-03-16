@@ -137,7 +137,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 
                         return true;
                     case R.id.upComingMenu_showNotes:
-
                         return true;
                     default:
                         return false;
