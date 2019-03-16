@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utilities {
+    public static final String ALERT_MESSAGE = "alertmessage";
+    public static final String TRIP_OBJECT = "trip";
+
     public static String getCurrentTime() {
         Date date = new Date();
         String strDateFormat = "hh:mm a";

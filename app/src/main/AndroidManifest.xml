@@ -31,7 +31,7 @@
             android:name=".NavigatinDrawerActivity"
             android:label="@string/title_activity_navigatin_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".AlertActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

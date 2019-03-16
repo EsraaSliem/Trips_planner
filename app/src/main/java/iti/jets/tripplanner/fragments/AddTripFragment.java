@@ -255,7 +255,7 @@ public class AddTripFragment extends Fragment {
                     fragmentTransaction.commit();
                     //Start Listning for BroadCast Reciever
                     tripDateDateObject = Utilities.convertStringToDateFormate(tripDate, tripTime);
-                    startAlert(tripDateDateObject);
+                    startAlert(tripDateDateObject, trip);
                 } else {
                     Toast.makeText(getContext(), "You must Enter All Fields", Toast.LENGTH_LONG).show();
                 }
@@ -268,11 +268,12 @@ public class AddTripFragment extends Fragment {
     }
 
     //Start Timer To broadCast Reciever
-    public void startAlert(Date date) {
+    public void startAlert(Date date, Trip trip) {
         Toast.makeText(getContext(), "your trip Starts At " + date, Toast.LENGTH_LONG).show();
         long millis = date.getTime();
         int i = 0;// Integer.parseInt(text.getText().toString());
         Intent intent = new Intent(getActivity(), MyReceiver.class);
+        intent.putExtra(Utilities.TRIP_OBJECT, trip);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 getActivity().getApplicationContext(), 234324243, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
