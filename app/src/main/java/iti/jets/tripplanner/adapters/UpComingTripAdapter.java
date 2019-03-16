@@ -23,6 +23,7 @@ import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
+import iti.jets.tripplanner.utils.TripHeadService;
 
 public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> {
     LayoutInflater inflater;
@@ -124,7 +125,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.upComingMenu_edit:
-                       
+
                         return true;
                     case R.id.upComingMenu_cancel:
 
@@ -150,6 +151,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     }
 
     private void openMap() {
+
+        context.startService(new Intent(context, TripHeadService.class));
         String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         context.startActivity(intent);
