@@ -19,7 +19,6 @@ import iti.jets.tripplanner.utils.Utilities;
 public class AlertActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
     NotificationManager mNotificationManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
