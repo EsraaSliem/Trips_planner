@@ -4,6 +4,7 @@ public class Note {
     String noteId;
     String noteName;
     String noteDescription;
+    private String tripId;
 
     public Note(String noteName, String noteDescription) {
         this.noteName = noteName;
@@ -36,5 +37,13 @@ public class Note {
 
     public void setNoteDescription(String noteDescription) {
         this.noteDescription = noteDescription;
+    }
+
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 }

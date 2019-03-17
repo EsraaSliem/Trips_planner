@@ -16,8 +16,6 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,7 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
@@ -127,8 +124,6 @@ public class SignInFragment extends Fragment {
                 Toast.makeText(context, "onError", Toast.LENGTH_SHORT).show();
             }
         });
-
-
         return view;
     }
 

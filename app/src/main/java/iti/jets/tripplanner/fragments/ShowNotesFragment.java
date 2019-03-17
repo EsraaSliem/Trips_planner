@@ -12,20 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.interfaces.ObjectCarrier;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShowNotesFragment extends Fragment {
+public class ShowNotesFragment extends Fragment implements ObjectCarrier {
 
+    Trip trip;
     private RecyclerView recyclerView;
     private Context context;
-    public ShowNotesFragment() {
-        // Required empty public constructor
-    }
 
+    public ShowNotesFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +36,15 @@ public class ShowNotesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         context = getActivity();
         FireBaseData fireBaseData = new FireBaseData(context);
-        fireBaseData.getNotes(recyclerView, new Trip());
+        fireBaseData.getNotes(recyclerView, trip);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return view;
     }
 
+    @Override
+    public void sendTripId(Trip trip) {
+        this.trip = new Trip();
+        this.trip.setTripId(trip.getTripId());
+    }
 }

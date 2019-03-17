@@ -3,6 +3,7 @@ package iti.jets.tripplanner.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
@@ -74,24 +75,27 @@ public class FireBaseData {
             @Override
             public void onComplete(Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    user.setUserId(mCurrentUser.getUid());
-                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
+                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uId = current_user.getUid();
+                    //Firebase Database
+                    mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
+//                    user.setUserId(mAuth.getUid());
+                    user.setUserId(uId);
+//                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
+                    mRefDatabase.setValue(user);
                 }
             }
         });
     }
 
     public void loginUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
-                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    context.startActivity(main_intent);
-                } else {
-                    Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
-                }
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                context.startActivity(main_intent);
+            } else {
+                Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -102,7 +106,7 @@ public class FireBaseData {
     }
 
     public void addTrip(Trip trip) {
-        User user = new User();
+        //User user = new User();
         mRefDatabase = mDatabase.getReference("Trips");
         String key = mRefDatabase.push().getKey();
 
@@ -120,7 +124,6 @@ public class FireBaseData {
             e.printStackTrace();
         }
         Toast.makeText(context, "UID " + uid, Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, "User UID " + user.getUserId(), Toast.LENGTH_SHORT).show();
         mRefDatabase.child(uid).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
     }
@@ -135,26 +138,90 @@ public class FireBaseData {
         mRefDatabase.child(key).setValue(note);
     }
 
+    public void updateNote(final Note note) {
+        //mRefDatabase = mDatabase.getReference("Notes");
+        mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId());
+        Query applesQuery = mRefDatabase.child(note.getNoteId());
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mRefDatabase = mRefDatabase.child(note.getNoteId());
+                mRefDatabase.child("noteDescription").setValue(note.getNoteDescription());
+                mRefDatabase.child("noteName").setValue(note.getNoteName());
+//                mRefDatabase.setValue(note).addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        //progress dismiss if success
+//                        Toast.makeText(context, "Update Done", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(context, "Update Failed", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+                Toast.makeText(context, "Note Updated " + note.getNoteId(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void deleteNote(Note note) {
+        mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId());
+        Query applesQuery = mRefDatabase.child(note.getNoteId()).orderByChild("noteName");
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void deleteTrip(Trip trip) {
+        mRefDatabase = mDatabase.getReference("Trips").child(getUserId());
+        Query applesQuery = mRefDatabase.child(trip.getTripId()).orderByChild("tripName");
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+
+        });
+    }
+
     public void getNotes(final RecyclerView recyclerView, Trip trip) {
         notes = new ArrayList<>();
-        Query query = mRefDatabase.child("Notes").child("-L_gF1jKEA-Sq52ZZbnM");
+        Query query = mRefDatabase.child("Notes").child(trip.getTripId());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Note note = snapshot.getValue(Note.class);
-                    Log.e("Note ID", note.getNoteId() + " " + note.getNoteName());
+                    note.setTripId(trip.getTripId());
+                    Log.e("Note ID", note.getNoteId() + "  " + note.getNoteName());
                     notes.add(note);
                 }
                 NoteAdapter adapter = new NoteAdapter(context, notes);
                 recyclerView.setAdapter(adapter);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
-
 
     public void getTrips(final RecyclerView recyclerView, final int status) {
         trips = new ArrayList<>();
