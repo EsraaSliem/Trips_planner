@@ -210,7 +210,7 @@ public class FireBaseData {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Note note = snapshot.getValue(Note.class);
                     note.setTripId(trip.getTripId());
-                    Log.e("Note ID", note.getNoteId() + " " + note.getNoteName());
+                    Log.e("Note ID", note.getNoteId() + "  " + note.getNoteName());
                     notes.add(note);
                 }
                 NoteAdapter adapter = new NoteAdapter(context, notes);
