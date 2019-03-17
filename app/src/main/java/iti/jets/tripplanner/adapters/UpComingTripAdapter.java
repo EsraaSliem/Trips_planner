@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -27,6 +30,7 @@ import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.TripHeadService;
 
 public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> implements AlertAdapterCommunicator {
+    public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 100;
     LayoutInflater inflater;
     View view;
     private Context context;
@@ -154,11 +158,20 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     }
 
     private void openMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
 
-        context.startService(new Intent(context, TripHeadService.class));
-        String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        context.startActivity(intent);
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName()));
+            ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            context.startService(new Intent(context, TripHeadService.class));
+            String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            context.startActivity(intent);
+        }
+
     }
 
     @Override

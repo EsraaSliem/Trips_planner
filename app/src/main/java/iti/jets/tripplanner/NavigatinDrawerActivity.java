@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.HistoryFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
@@ -145,12 +146,11 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100) {
+        if (requestCode == UpComingTripAdapter.CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
             if (resultCode == RESULT_OK) {
                 context.startService(new Intent(context, TripHeadService.class));
             } else {
                 Toast.makeText(this, "Draw over other app permission not available. Closing the application.", Toast.LENGTH_SHORT).show();
-                finish();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

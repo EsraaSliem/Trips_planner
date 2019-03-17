@@ -90,6 +90,7 @@ public class TripHeadService extends Service {
                         } else {
                             params.x = 0;
                         }
+
                         break;
                     default:
                         return false;
