@@ -52,4 +52,7 @@
     <string name="from">from :</string>
     <string name="title">Title</string>
     <string name="showNote">Show Notes</string>
+    <string name="duration">duration</string>
+    <string name="note_title">Note Title</string>
+    <string name="update_note">Update Note</string>
 </resources>

@@ -9,20 +9,40 @@
     tools:context=".fragments.ShowNotesFragment">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="10dp">
 
-        <TextView
-            android:id="@+id/name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:padding="5dp"
-            android:paddingStart="5dp"
-            android:text="Note Title"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1.8"
+                android:padding="5dp"
+                android:paddingStart="5dp"
+                android:text="@string/note_title"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/editNoteCard_menu"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="2dp"
+                android:layout_weight=".2"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_menu" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/desc"

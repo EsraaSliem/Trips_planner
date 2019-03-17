@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import iti.jets.tripplanner.AlertAdapterCommunicator;
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
@@ -33,11 +36,11 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 100;
     LayoutInflater inflater;
     View view;
+    Trip trip;
     private Context context;
     private List<Trip> tripList;
     private View alertLayout;
     private String noteDescription, noteName;
-    Trip trip;
 
     public UpComingTripAdapter(Context context) {
         this.context = context;
@@ -139,9 +142,17 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 
                         return true;
                     case R.id.upComingMenu_remove:
-
+                        FireBaseData fireBaseData = new FireBaseData(context);
+                        fireBaseData.deleteTrip(trip);
                         return true;
                     case R.id.upComingMenu_showNotes:
+                        ShowNotesFragment showNotesFragment = new ShowNotesFragment();
+                        showNotesFragment.sendTripId(trip);
+                        FragmentManager manager = ((AppCompatActivity) context).getSupportFragmentManager();
+                        FragmentTransaction transaction = manager.beginTransaction();
+                        transaction.replace(R.id.mainContainerView, showNotesFragment, null);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                         return true;
                     default:
                         return false;
@@ -179,7 +190,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         context.startActivity(intent);
-
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
