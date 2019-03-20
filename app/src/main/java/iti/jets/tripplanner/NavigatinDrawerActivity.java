@@ -45,13 +45,15 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         FloatingActionButton fab = findViewById(R.id.fab);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_One_tag");
+        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_Home_tag").addToBackStack("One");
         fragmentTransaction.commit();
-
+        AddTripFragment addTripFragment = new AddTripFragment();
         fab.setOnClickListener(view -> {
-            fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-            fragmentTransaction.replace(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
             fragmentTransaction.commit();
+
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -33,14 +33,14 @@ import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
-    private String uid;
-    private List<Trip> trips;
-    private List<Note> notes;
     //Firebase Auth and DataBase
     static FirebaseUser mCurrentUser;
     static FirebaseDatabase mDatabase;
     static FirebaseAuth mAuth;
     static DatabaseReference mRefDatabase;
+    private String uid;
+    private List<Trip> trips;
+    private List<Note> notes;
     private Context context;
 
     //Firebase Connect
@@ -178,7 +178,6 @@ public class FireBaseData {
     }
 
     public void updateNote(final Note note) {
-        //mRefDatabase = mDatabase.getReference("Notes");
         mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId());
         Query applesQuery = mRefDatabase.child(note.getNoteId());
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -186,15 +185,14 @@ public class FireBaseData {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRefDatabase = mRefDatabase.child(note.getNoteId());
                 mRefDatabase.child("noteDescription").setValue(note.getNoteDescription());
-                mRefDatabase.child("noteName").setValue(note.getNoteName());
-//                mRefDatabase.setValue(note).addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        //progress dismiss if success
-//                        Toast.makeText(context, "Update Done", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(context, "Update Failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                mRefDatabase.child("noteName").setValue(note.getNoteName()).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        //progress dismiss if success
+                        Toast.makeText(context, "Update Done", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Update Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Toast.makeText(context, "Note Updated " + note.getNoteId(), Toast.LENGTH_SHORT).show();
             }
 
@@ -224,20 +222,8 @@ public class FireBaseData {
     }
 
     public void deleteTrip(Trip trip) {
-
         mRefDatabase = mDatabase.getReference("Trips").child(getUserId());
-        //Query applesQuery = mRefDatabase.child(trip.getTripId());
-        mRefDatabase.child(trip.getTripId()).getRef().removeValue();//.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                dataSnapshot.getRef().removeValue();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//
-//        });
+        mRefDatabase.child(trip.getTripId()).getRef().removeValue();
     }
 
     public void getNotes(final RecyclerView recyclerView, Trip trip) {
@@ -264,9 +250,7 @@ public class FireBaseData {
 
     public void getTrips(final RecyclerView recyclerView, final int status) {
         trips = new ArrayList<>();
-
         Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
-        //mRefDatabase.keepSynced(true);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -299,41 +283,4 @@ public class FireBaseData {
             }
         });
     }
-
-//    public void getTrips(final RecyclerView recyclerView, final int status) {
-//        trips = new ArrayList<>();
-//
-//        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
-//        //mRefDatabase.keepSynced(true);
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.i("TAG", "onDataChange: getTrip");
-//
-//                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-//
-//                if (iterator.hasNext()) {
-//                    DataSnapshot next = iterator.next();
-//                    for (DataSnapshot dataSnapshot1 : next.getChildren()) {
-//                        Trip trip = dataSnapshot1.getValue(Trip.class);
-//                        if (trip != null && trip.getTripStatues() == status) {
-//                            trips.add(trip);
-//                        }
-//                    }
-//                }
-//                if (status == Trip.STATUS_UP_COMING) {
-//                    UpComingTripAdapter adapter = new UpComingTripAdapter(context, trips);
-//                    recyclerView.setAdapter(adapter);
-//                } else {
-//                    HistoryTripAdapter adapter = new HistoryTripAdapter(context, trips);
-//                    recyclerView.setAdapter(adapter);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e("fffff", databaseError.toString());
-//            }
-//        });
-//    }
 }

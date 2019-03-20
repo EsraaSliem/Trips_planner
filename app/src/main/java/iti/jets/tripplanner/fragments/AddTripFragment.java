@@ -55,11 +55,17 @@ public class AddTripFragment extends Fragment {
     private String endPoint;
     private Date tripDateDateObject;
 
+    View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+//        View view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+        }
+
         context = getActivity();
 
         edtTripName = view.findViewById(R.id.addTripFragment_edtTripName);
@@ -192,7 +198,7 @@ public class AddTripFragment extends Fragment {
                 fragmentTransaction.addToBackStack("NoteTrip");
                 fragmentTransaction.commit();
                 //Start Listning for BroadCast Reciever
-                tripDateDateObject = Utilities.convertStringToDateFormate(tripDate, tripTime);
+                tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
                 startAlert(tripDateDateObject, trip);
             }
         }
@@ -217,9 +223,9 @@ public class AddTripFragment extends Fragment {
 
 
     private boolean isValidDateAndTime(String date, String time) {
-        Date currentDate = Utilities.convertStringToDateFormate(Utilities.getCurrentDate(), Utilities.getCurrentTime());
+        Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
         Long date1 = Utilities.convertDateToMilliSecond(currentDate);
-        Date inputDate = Utilities.convertStringToDateFormate(date, time);
+        Date inputDate = Utilities.convertStringToDateFormat(date, time);
 
         Long date2 = Utilities.convertDateToMilliSecond(inputDate);
 
