@@ -12,14 +12,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -63,9 +61,8 @@ public class AddTripFragment extends Fragment {
     private EditText edtTripTime;
     private Spinner spnTripType;
     private Button btnAddTrip;
-    private Button btnTripDate;
+    private ImageButton btnTripDate, btnTripTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private Button btnTripTime;
     private String tripDate;
     private String tripTime;
     private String startPoint;
@@ -147,121 +144,92 @@ public class AddTripFragment extends Fragment {
 
 
         //Trip_Date
-        btnTripDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get Current Time
-                final Calendar c = Calendar.getInstance();
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-                mMonth = c.get(Calendar.MONTH);
-                mYear = c.get(Calendar.YEAR);
-                // Launch Time Picker Dialog
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                        new DatePickerDialog.OnDateSetListener() {
+        btnTripDate.setOnClickListener(v -> {
+            // Get Current Time
+            final Calendar c = Calendar.getInstance();
 
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-                                edtTripDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                                tripDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+            mMonth = c.get(Calendar.MONTH);
+            mYear = c.get(Calendar.YEAR);
+            // Launch Time Picker Dialog
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                    (view1, year, monthOfYear, dayOfMonth) -> {
+                        edtTripDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                        tripDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                    }, mYear, mMonth, mDay);
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePickerDialog.show();
         });
 
         //Trip_Time
-        btnTripTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get Current Time
-                final Calendar c = Calendar.getInstance();
-                mHour = c.get(Calendar.HOUR_OF_DAY);
-                mMinute = c.get(Calendar.MINUTE);
-                // Launch Time Picker Dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
-                        new TimePickerDialog.OnTimeSetListener() {
-
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay,
-                                                  int minute) {
-                                if (hourOfDay > 12) {
-                                    mAM_PM = "PM";
-                                    hourOfDay = hourOfDay - 12;
-                                } else {
-                                    mAM_PM = "AM";
-                                }
-                                edtTripTime.setText(hourOfDay + ":" + minute + " " + mAM_PM);
-                                tripTime = hourOfDay + ":" + minute + " " + mAM_PM;
-                            }
-                        }, mHour, mMinute, false);
-                timePickerDialog.show();
-            }
-
+        btnTripTime.setOnClickListener(v -> {
+            // Get Current Time
+            final Calendar c = Calendar.getInstance();
+            mHour = c.get(Calendar.HOUR_OF_DAY);
+            mMinute = c.get(Calendar.MINUTE);
+            // Launch Time Picker Dialog
+            TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+                    (view12, hourOfDay, minute) -> {
+                        if (hourOfDay > 12) {
+                            mAM_PM = "PM";
+                            hourOfDay = hourOfDay - 12;
+                        } else {
+                            mAM_PM = "AM";
+                        }
+                        edtTripTime.setText(hourOfDay + ":" + minute + " " + mAM_PM);
+                        tripTime = hourOfDay + ":" + minute + " " + mAM_PM;
+                    }, mHour, mMinute, false);
+            timePickerDialog.show();
         });
 
 
         edtTripStartPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
-        edtTripStartPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startPoint = parent.getItemAtPosition(position).toString();
-            }
-        });
+        edtTripStartPoint.setOnItemClickListener((parent, view13, position, id) -> startPoint = parent.getItemAtPosition(position).toString());
         edtTripEndPoint.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(), R.layout.list_item));
-        edtTripEndPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                endPoint = parent.getItemAtPosition(position).toString();
+        edtTripEndPoint.setOnItemClickListener((parent, view14, position, id) -> endPoint = parent.getItemAtPosition(position).toString());
+
+        btnAddTrip.setOnClickListener(v -> {
+
+            final FireBaseData fireBaseData = new FireBaseData(context);
+            String tripName = edtTripName.getText().toString();
+            Trip trip = new Trip();
+            trip.setTripName(tripName);
+            trip.setTripTime(tripTime);
+            boolean isValidDate = trip.setTripDate(tripDate);
+            if (isValidDate) {
+                Toast.makeText(getContext(), "Valide Date",
+                        Toast.LENGTH_LONG).show();
+
+            } else {
+                Toast.makeText(getContext(), "Invalid Date and you must enter Valid Date ",
+                        Toast.LENGTH_LONG).show();
+                edtTripDate.setText("");
             }
-        });
 
-        btnAddTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                final FireBaseData fireBaseData = new FireBaseData(context);
-                String tripName = edtTripName.getText().toString();
-                Trip trip = new Trip();
-                trip.setTripName(tripName);
-                trip.setTripTime(tripTime);
-                boolean isValidDate = trip.setTripDate(tripDate);
-                if (isValidDate) {
-                    Toast.makeText(getContext(), "Valide Date",
-                            Toast.LENGTH_LONG).show();
-
+            trip.setTripStatues(Trip.STATUS_UP_COMING);
+            trip.setStartPoint(startPoint);
+            trip.setEndPoint(endPoint);
+            if (!isTripFieldsEmpty()) {
+                if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
+                    trip.setTripType(Trip.TYPE_ONE_DIRECTION);
                 } else {
-                    Toast.makeText(getContext(), "Invalid Date and you must enter Valid Date ",
-                            Toast.LENGTH_LONG).show();
-                    edtTripDate.setText("");
+                    trip.setTripType(Trip.TYPE_ROUND);
                 }
-
-
-                trip.setTripStatues(Trip.STATUS_UP_COMING);
-                trip.setStartPoint(startPoint);
-                trip.setEndPoint(endPoint);
-                if (!isTripFieldsEmpty()) {
-                    if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
-                        trip.setTripType(Trip.TYPE_ONE_DIRECTION);
-                    } else {
-                        trip.setTripType(Trip.TYPE_ROUND);
-                    }
-                    //addTrip
-                    fireBaseData.addTrip(trip);
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
-                    fragmentTransaction.addToBackStack("NoteTrip");
-                    fragmentTransaction.commit();
-                    //Start Listning for BroadCast Reciever
-                    tripDateDateObject = Utilities.convertStringToDateFormate(tripDate, tripTime);
-                    startAlert(tripDateDateObject, trip);
-                } else {
-                    Toast.makeText(getContext(), "You must Enter All Fields", Toast.LENGTH_LONG).show();
-                }
-
-
+                //addTrip
+                fireBaseData.addTrip(trip);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
+                fragmentTransaction.addToBackStack("NoteTrip");
+                fragmentTransaction.commit();
+                //Start Listning for BroadCast Reciever
+                tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
+                startAlert(tripDateDateObject, trip);
+            } else {
+                Toast.makeText(getContext(), "You must Enter All Fields", Toast.LENGTH_LONG).show();
             }
+
+
         });
 
         return view;
@@ -286,12 +254,10 @@ public class AddTripFragment extends Fragment {
     }
 
     public boolean isTripFieldsEmpty() {
-        if (Utilities.isEditTextEmpty(edtTripDate) ||
+        return Utilities.isEditTextEmpty(edtTripDate) ||
                 Utilities.isEditTextEmpty(edtTripEndPoint) ||
                 Utilities.isEditTextEmpty(edtTripTime) ||
                 Utilities.isEditTextEmpty(edtTripName) ||
-                Utilities.isEditTextEmpty(edtTripStartPoint))
-            return true;
-        else return false;
+                Utilities.isEditTextEmpty(edtTripStartPoint);
     }
 }

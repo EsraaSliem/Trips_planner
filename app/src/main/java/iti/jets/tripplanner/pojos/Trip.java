@@ -72,14 +72,14 @@ public class Trip implements Parcelable {
     }
 
     public boolean setTripDate(String tripDate) {
-        Date currentDate = Utilities.convertStringToDateFormate(Utilities.getCurrentDate(), Utilities.getCurrentTime());
+        Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
 
         Long date1 = Utilities.convertDateToMilliSecond(currentDate);
         Date inputDate;
         if (getTripTime() != null) {
-            inputDate = Utilities.convertStringToDateFormate(tripDate, getTripTime());
+            inputDate = Utilities.convertStringToDateFormat(tripDate, getTripTime());
         } else {
-            inputDate = Utilities.convertStringToDateFormate(tripDate, "00:00 AM");
+            inputDate = Utilities.convertStringToDateFormat(tripDate, "00:00 AM");
         }
         Long date2 = Utilities.convertDateToMilliSecond(inputDate);
 

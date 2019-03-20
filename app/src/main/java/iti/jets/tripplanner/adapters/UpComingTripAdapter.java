@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,9 +23,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import iti.jets.tripplanner.AlertAdapterCommunicator;
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
+import iti.jets.tripplanner.interfaces.AlertAdapterCommunicator;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
@@ -37,6 +37,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     LayoutInflater inflater;
     View view;
     Trip trip;
+    FragmentManager manager;
+    FragmentTransaction transaction;
     private Context context;
     private List<Trip> tripList;
     private View alertLayout;
@@ -66,23 +68,12 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         holder.txtEndPoint.setText(trip.getEndPoint());
         holder.txtDate.setText(trip.getTripDate());
         holder.txtTime.setText(trip.getTripTime());
-        holder.btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup(v);
-            }
-        });
-        holder.btnAddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTrip();
-            }
-        });
-        holder.btnStartTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMap();
-            }
+        holder.btnMenu.setOnClickListener(v -> showPopup(v));
+        holder.btnAddNote.setOnClickListener(v -> addTrip());
+        holder.btnStartTrip.setOnClickListener(v -> {
+            FireBaseData fireBaseData = new FireBaseData(context);
+            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
+            openMap();
         });
     }
 
@@ -131,32 +122,37 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.upcoming_card_menu, popup.getMenu());
         // This activity implements OnMenuItemClickListener
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.upComingMenu_edit:
-
-                        return true;
-                    case R.id.upComingMenu_cancel:
-
-                        return true;
-                    case R.id.upComingMenu_remove:
-                        FireBaseData fireBaseData = new FireBaseData(context);
-                        fireBaseData.deleteTrip(trip);
-                        return true;
-                    case R.id.upComingMenu_showNotes:
-                        ShowNotesFragment showNotesFragment = new ShowNotesFragment();
-                        showNotesFragment.sendTripId(trip);
-                        FragmentManager manager = ((AppCompatActivity) context).getSupportFragmentManager();
-                        FragmentTransaction transaction = manager.beginTransaction();
-                        transaction.replace(R.id.mainContainerView, showNotesFragment, null);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        return true;
-                    default:
-                        return false;
-                }
+        popup.setOnMenuItemClickListener(item -> {
+            FireBaseData fireBaseData;
+            switch (item.getItemId()) {
+                case R.id.upComingMenu_edit:
+                    AddTripFragment addTripFragment = new AddTripFragment();
+                    //showNotesFragment.sendTripId(trip);
+                    manager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    transaction = manager.beginTransaction();
+                    transaction.replace(R.id.mainContainerView, addTripFragment, null);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                    return true;
+                case R.id.upComingMenu_cancel:
+                    fireBaseData = new FireBaseData(context);
+                    fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
+                    return true;
+                case R.id.upComingMenu_remove:
+                    fireBaseData = new FireBaseData(context);
+                    fireBaseData.deleteTrip(trip);
+                    return true;
+                case R.id.upComingMenu_showNotes:
+                    ShowNotesFragment showNotesFragment = new ShowNotesFragment();
+                    showNotesFragment.sendTripId(trip);
+                    manager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    transaction = manager.beginTransaction();
+                    transaction.replace(R.id.mainContainerView, showNotesFragment, null);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                    return true;
+                default:
+                    return false;
             }
         });
         popup.show();
