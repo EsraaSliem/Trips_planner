@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import iti.jets.tripplanner.R;
 
@@ -18,6 +19,7 @@ public class TripHeadService extends Service {
     WindowManager.LayoutParams params;
     private WindowManager mWindowManager;
     private View mTripHeadView;
+    boolean isExpand = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,7 +60,7 @@ public class TripHeadService extends Service {
         mWindowManager.addView(mTripHeadView, params);
 
 //        Drag and move floating view using user's touch action.
-        mTripHeadView.findViewById(R.id.tripHead_img).setOnTouchListener(new View.OnTouchListener() {
+        mTripHeadView.findViewById(R.id.tripHead_rootContainer).setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -99,11 +101,19 @@ public class TripHeadService extends Service {
                 return true;
             }
         });
-        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TripHeadService.this.stopSelf();
+        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> TripHeadService.this.stopSelf());
+        mTripHeadView.findViewById(R.id.tripHead_img).setOnClickListener(v -> {
+            Toast.makeText(TripHeadService.this, "po", Toast.LENGTH_SHORT).show();
+            if (!isExpand) {
+                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.VISIBLE);
+                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.VISIBLE);
+                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.VISIBLE);
+            } else {
+                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.GONE);
+                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.GONE);
+                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.GONE);
             }
+            isExpand = !isExpand;
         });
     }
 

@@ -3,10 +3,6 @@ package iti.jets.tripplanner.pojos;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
-import iti.jets.tripplanner.utils.Utilities;
-
 public class Trip implements Parcelable {
     public static final int STATUS_UP_COMING = 1;
     public static final int STATUS_DONE = 0;
@@ -71,25 +67,8 @@ public class Trip implements Parcelable {
         return tripDate;
     }
 
-    public boolean setTripDate(String tripDate) {
-        Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
-
-        Long date1 = Utilities.convertDateToMilliSecond(currentDate);
-        Date inputDate;
-        if (getTripTime() != null) {
-            inputDate = Utilities.convertStringToDateFormat(tripDate, getTripTime());
-        } else {
-            inputDate = Utilities.convertStringToDateFormat(tripDate, "00:00 AM");
-        }
-        Long date2 = Utilities.convertDateToMilliSecond(inputDate);
-
-        if (date1 < date2) {
-            this.tripDate = tripDate;
-            return true;
-        } else {
-            return false;
-        }
-
+    public void setTripDate(String tripDate) {
+        this.tripDate = tripDate;
     }
 
     public String getTripTime() {
