@@ -27,7 +27,6 @@ public class AlertActivity extends AppCompatActivity {
 
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intenntComingFromReciever = getIntent();
-
         int alertMessage = intenntComingFromReciever.getIntExtra(Utilities.ALERT_MESSAGE, -1);
         if (alertMessage != -1) {
             if (alertMessage == 3)
