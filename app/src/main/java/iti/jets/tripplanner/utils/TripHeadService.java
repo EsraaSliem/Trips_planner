@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -35,6 +36,7 @@ public class TripHeadService extends Service {
     boolean isExpand = false;
     String tripId;
     RecyclerView notesRecyclerView;
+    CardView notesCardView;
 
     public TripHeadService getService() {
         // Return this instance of LocalService so clients can call public methods
@@ -47,6 +49,7 @@ public class TripHeadService extends Service {
         mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
         tripId = intent.getStringExtra(Utilities.TRIP_ID);
         notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
+        notesCardView = mTripHeadView.findViewById(R.id.tripHead_cardView);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mRefDatabase = mDatabase.getReference();
@@ -107,6 +110,8 @@ public class TripHeadService extends Service {
             private int initialY;
             private float initialTouchX;
             private float initialTouchY;
+            long time_start = 0, time_end = 0;
+
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -118,6 +123,7 @@ public class TripHeadService extends Service {
                         //get the touch location
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
+                        time_start = System.currentTimeMillis();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         //Calculate the X and Y coordinates of the view.
@@ -130,11 +136,20 @@ public class TripHeadService extends Service {
                         mWindowManager.getDefaultDisplay().getMetrics(metrics);
                         int xInches = metrics.widthPixels;
                         if (params.x > xInches / 2) {
-                            params.x = xInches - v.getWidth();
+                            params.x = xInches - mTripHeadView.getWidth() - 10;
                         } else {
                             params.x = 0;
                         }
-
+                        time_end = System.currentTimeMillis();
+                        if (time_end - time_start < 300) {
+                            if (!isExpand) {
+                                notesCardView.setVisibility(View.VISIBLE);
+                                isExpand = !isExpand;
+                            } else {
+                                notesCardView.setVisibility(View.GONE);
+                                isExpand = !isExpand;
+                            }
+                        }
                         break;
                     default:
                         return false;
@@ -143,20 +158,11 @@ public class TripHeadService extends Service {
                 return true;
             }
         });
-        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> TripHeadService.this.stopSelf());
-        // mTripHeadView.findViewById(R.id.tripHead_img).setOnClickListener(v -> {
-//            Toast.makeText(TripHeadService.this, "po", Toast.LENGTH_SHORT).show();
-//            if (!isExpand) {
-//                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.VISIBLE);
-//                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.VISIBLE);
-//                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.VISIBLE);
-//            } else {
-//                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.GONE);
-//                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.GONE);
-//                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.GONE);
-//            }
-//            isExpand = !isExpand;
-        //   });
+        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> {
+            TripHeadService.this.stopSelf();
+            mWindowManager.removeView(mTripHeadView);
+        });
+
         return null;
     }
 
