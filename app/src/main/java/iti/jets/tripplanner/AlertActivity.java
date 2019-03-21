@@ -26,14 +26,14 @@ public class AlertActivity extends AppCompatActivity {
         mNotificationManager =
 
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intenntComingFromReciever = getIntent();
-        int alertMessage = intenntComingFromReciever.getIntExtra(Utilities.ALERT_MESSAGE, -1);
+        Intent intentComingFromReceiver = getIntent();
+        int alertMessage = intentComingFromReceiver.getIntExtra(Utilities.ALERT_MESSAGE, -1);
         if (alertMessage != -1) {
             if (alertMessage == 3)
                 mNotificationManager.cancelAll();
-            final Trip trip = intenntComingFromReciever.getParcelableExtra(Utilities.TRIP_OBJECT);
+            Trip trip = intentComingFromReceiver.getParcelableExtra(Utilities.TRIP_OBJECT);
             AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-            builder1.setMessage("You Have Trip, \"" + trip.getTripName() + "\" Now!");
+//            builder1.setMessage("You Have Trip, \"" + trip.getTripName() + "\" Now!");
             builder1.setCancelable(true);
 
             builder1.setPositiveButton(

@@ -36,7 +36,7 @@ public class ShowNotesFragment extends Fragment implements ObjectCarrier {
         recyclerView = view.findViewById(R.id.recycler_view);
         context = getActivity();
         FireBaseData fireBaseData = new FireBaseData(context);
-        fireBaseData.getNotes(recyclerView, trip);
+        fireBaseData.getNotes(recyclerView, trip.getTripId());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return view;

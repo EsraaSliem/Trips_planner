@@ -36,8 +36,8 @@ public class FireBaseData {
     //Firebase Auth and DataBase
     static FirebaseUser mCurrentUser;
     static FirebaseDatabase mDatabase;
-    static FirebaseAuth mAuth;
     static DatabaseReference mRefDatabase;
+    static FirebaseAuth mAuth;
     private String uid;
     private List<Trip> trips;
     private List<Note> notes;
@@ -226,16 +226,16 @@ public class FireBaseData {
         mRefDatabase.child(trip.getTripId()).getRef().removeValue();
     }
 
-    public void getNotes(final RecyclerView recyclerView, Trip trip) {
+    public void getNotes(final RecyclerView recyclerView, String tripId) {
         notes = new ArrayList<>();
-        Query query = mRefDatabase.child("Notes").child(trip.getTripId());
+        Query query = mRefDatabase.child("Notes").child(tripId);
         mRefDatabase.keepSynced(true);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Note note = snapshot.getValue(Note.class);
-                    note.setTripId(trip.getTripId());
+                    note.setTripId(tripId);
                     notes.add(note);
                 }
                 NoteAdapter adapter = new NoteAdapter(context, notes);
