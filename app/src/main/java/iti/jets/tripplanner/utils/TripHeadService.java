@@ -5,33 +5,75 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.adapters.HeadNoteAdapter;
+import iti.jets.tripplanner.pojos.Note;
 
 public class TripHeadService extends Service {
     WindowManager.LayoutParams params;
     private WindowManager mWindowManager;
     private View mTripHeadView;
     boolean isExpand = false;
+    String tripId;
+    RecyclerView notesRecyclerView;
+
+    public TripHeadService getService() {
+        // Return this instance of LocalService so clients can call public methods
+        return TripHeadService.this;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
         //Inflate the chat head layout we created
         mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
+        tripId = intent.getStringExtra(Utilities.TRIP_ID);
+        notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mRefDatabase = mDatabase.getReference();
+
+        List<Note> notes = new ArrayList<>();
+        HeadNoteAdapter adapter = new HeadNoteAdapter(getApplicationContext(), notes);
+        notesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        notesRecyclerView.setAdapter(adapter);
+
+        Query query = mRefDatabase.child("Notes").child(tripId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Note note = snapshot.getValue(Note.class);
+                    note.setTripId(tripId);
+                    notes.add(note);
+                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemInserted(notes.size());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -60,7 +102,7 @@ public class TripHeadService extends Service {
         mWindowManager.addView(mTripHeadView, params);
 
 //        Drag and move floating view using user's touch action.
-        mTripHeadView.findViewById(R.id.tripHead_rootContainer).setOnTouchListener(new View.OnTouchListener() {
+        mTripHeadView.findViewById(R.id.tripHead_img).setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -102,19 +144,20 @@ public class TripHeadService extends Service {
             }
         });
         mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> TripHeadService.this.stopSelf());
-        mTripHeadView.findViewById(R.id.tripHead_img).setOnClickListener(v -> {
-            Toast.makeText(TripHeadService.this, "po", Toast.LENGTH_SHORT).show();
-            if (!isExpand) {
-                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.VISIBLE);
-                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.VISIBLE);
-                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.VISIBLE);
-            } else {
-                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.GONE);
-                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.GONE);
-                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.GONE);
-            }
-            isExpand = !isExpand;
-        });
+        // mTripHeadView.findViewById(R.id.tripHead_img).setOnClickListener(v -> {
+//            Toast.makeText(TripHeadService.this, "po", Toast.LENGTH_SHORT).show();
+//            if (!isExpand) {
+//                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.VISIBLE);
+//                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.VISIBLE);
+//                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.VISIBLE);
+//            } else {
+//                mTripHeadView.findViewById(R.id.tripHead_recyclerView).setVisibility(View.GONE);
+//                mTripHeadView.findViewById(R.id.tripHead_btnNotesClose).setVisibility(View.GONE);
+//                mTripHeadView.findViewById(R.id.textView10).setVisibility(View.GONE);
+//            }
+//            isExpand = !isExpand;
+        //   });
+        return null;
     }
 
     @Override
@@ -122,4 +165,5 @@ public class TripHeadService extends Service {
         super.onDestroy();
         if (mTripHeadView != null) mWindowManager.removeView(mTripHeadView);
     }
+
 }

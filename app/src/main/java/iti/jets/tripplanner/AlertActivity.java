@@ -88,7 +88,7 @@ public class AlertActivity extends AppCompatActivity {
         resultIntent.putExtra(Utilities.TRIP_OBJECT, trip);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-// Get the PendingIntent containing the entire back stack
+        // Get the PendingIntent containing the entire back stack
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE);
         mBuilder.setContentIntent(resultPendingIntent);

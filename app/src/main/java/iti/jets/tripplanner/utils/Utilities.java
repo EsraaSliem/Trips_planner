@@ -11,6 +11,7 @@ import java.util.Date;
 public class Utilities {
     public static final String ALERT_MESSAGE = "alert message";
     public static final String TRIP_OBJECT = "trip";
+    public static final String TRIP_ID = "tripId";
 
     public static String getCurrentTime() {
         Date date = new Date();

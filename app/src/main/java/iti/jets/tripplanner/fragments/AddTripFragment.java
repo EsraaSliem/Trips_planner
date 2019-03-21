@@ -123,6 +123,10 @@ public class AddTripFragment extends Fragment {
             timePickerDialog.show();
         });
 
+        btnAddTrip.setOnClickListener(v -> {
+            addTrip();
+        });
+
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_startPoint);
 
