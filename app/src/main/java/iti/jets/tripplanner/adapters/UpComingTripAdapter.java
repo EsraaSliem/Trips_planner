@@ -263,7 +263,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         } else {
             Intent intent = new Intent(context, TripHeadService.class);
             intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
-//            context.startService(intent);
 
             context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
             String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
