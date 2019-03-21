@@ -150,6 +150,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     return true;
                 case R.id.upComingMenu_cancel:
                     fireBaseData = new FireBaseData(context);
+                    //cancel Alarm
+                    cancelAlarm(trip);
                     fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
                     return true;
                 case R.id.upComingMenu_remove:
@@ -249,6 +251,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
             btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
             btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
+
+
         }
     }
 
