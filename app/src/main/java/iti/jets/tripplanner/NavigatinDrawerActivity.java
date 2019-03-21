@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,16 +45,15 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         FloatingActionButton fab = findViewById(R.id.fab);
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_One_tag");
+        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_Home_tag").addToBackStack("One");
         fragmentTransaction.commit();
+        AddTripFragment addTripFragment = new AddTripFragment();
+        fab.setOnClickListener(view -> {
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
+            fragmentTransaction.commit();
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
-                fragmentTransaction.commit();
-            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -1,14 +1,11 @@
 package iti.jets.tripplanner;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
@@ -16,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
+import iti.jets.tripplanner.interfaces.AlertAdapterCommunicator;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.Utilities;
 
@@ -42,33 +40,29 @@ public class AlertActivity extends AppCompatActivity {
 
             builder1.setPositiveButton(
                     "go",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
+                    (dialog, id) -> {
 //                            dialog.cancel();
 //                            Intent intent1 = new Intent(getApplicationContext(), NavigatinDrawerActivity.class);
 //                            startActivity(intent1);
                             AlertAdapterCommunicator communicator = new UpComingTripAdapter(AlertActivity.this);
 
-                            communicator.callOpenMap(trip);
-                        }
+                        communicator.callOpenMap(trip);
                     });
 
             builder1.setNegativeButton(
                     "Snooze",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
+                    (dialog, id) -> {
+                        dialog.cancel();
 
+                       // sendNotification(trip);
                             createNotification(trip, getApplicationContext());
-                        }
-                    });
-            builder1.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                    System.exit(1);
 
-                }
+                    });
+            builder1.setNeutralButton("cancel", (dialogInterface, i) -> {
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(1);
+
+
             });
 
             AlertDialog alert11 = builder1.create();

@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utilities {
-    public static final String ALERT_MESSAGE = "alertmessage";
+    public static final String ALERT_MESSAGE = "alert message";
     public static final String TRIP_OBJECT = "trip";
 
     public static String getCurrentTime() {
@@ -27,7 +27,7 @@ public class Utilities {
         return dateFormat.format(date);
     }
 
-    public static Date convertStringToDateFormate(String date, String time) {
+    public static Date convertStringToDateFormat(String date, String time) {
         Date newDate = null;
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         try {
