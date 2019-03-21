@@ -149,6 +149,7 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
+
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_entPoint);
 
