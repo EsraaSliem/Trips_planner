@@ -149,6 +149,7 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
+
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_entPoint);
 
@@ -215,7 +216,7 @@ public class AddTripFragment extends Fragment {
         Intent intent = new Intent(getActivity(), MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getActivity().getApplicationContext(), 234324243, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                getActivity().getApplicationContext(), 234324243, intent, PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
         Toast.makeText(getContext(), "current " + System.currentTimeMillis() + " seconds",
