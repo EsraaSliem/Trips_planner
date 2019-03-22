@@ -11,9 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
@@ -22,6 +19,7 @@ import iti.jets.tripplanner.fragments.EditTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
+import iti.jets.tripplanner.utils.Utilities;
 
 public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.MyViewHolder> {
     LayoutInflater inflater;
@@ -51,7 +49,7 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.
         holder.timeTxt.setText(trip.getTripTime());
         holder.btnRenewTrip.setOnClickListener(v -> renewTrip(trip));
         holder.btnShowNotes.setOnClickListener(v -> openShowNotesFragment(trip));
-        holder.btnDeleteTrip.setOnClickListener(v -> deleteTrip(trip.getTripId()));
+        holder.btnDeleteTrip.setOnClickListener(v -> deleteTrip(trip));
     }
 
     @Override
@@ -69,10 +67,8 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.
 
     }
 
-    private void deleteTrip(String tripId) {
-        Toast.makeText(context, "delete", Toast.LENGTH_SHORT).show();
-        DatabaseReference databaseReference = FireBaseData.mDatabase.getReference("Trips").child(FireBaseData.mAuth.getUid());
-        databaseReference.child(tripId).removeValue();
+    private void deleteTrip(Trip trip) {
+        Utilities.alertMessage(context, trip, "delete", new FireBaseData(context));
         notifyDataSetChanged();
     }
 

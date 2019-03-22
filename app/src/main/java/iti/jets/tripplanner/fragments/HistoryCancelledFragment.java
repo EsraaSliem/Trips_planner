@@ -67,6 +67,7 @@ public class HistoryCancelledFragment extends Fragment {
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                 if (iterator.hasNext()) {
                     DataSnapshot next = iterator.next();
+                    trips.clear();
                     for (DataSnapshot dataSnapshot1 : next.getChildren()) {
                         Trip trip = dataSnapshot1.getValue(Trip.class);
                         if (trip != null && trip.getTripStatues() == Trip.STATUS_CANCELLED) {
