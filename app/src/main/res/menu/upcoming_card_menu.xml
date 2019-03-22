@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/upComingMenu_showNotes"
-        android:title="@string/showNote" />
-    <item
-        android:id="@+id/upComingMenu_edit"
-        android:title="@string/edit" />
-    <item
-        android:id="@+id/upComingMenu_cancel"
-        android:title="@string/cancel" />
-    <item
-        android:id="@+id/upComingMenu_remove"
-        android:title="@string/remove" />
+        android:id="@+id/menu"
+        android:icon="@drawable/ic_menu"
+        android:title=""
+        app:showAsAction="ifRoom">
+        <item
+            android:id="@+id/upComingMenu_showNotes"
+            android:checkable="false"
+            android:enabled="true"
+            android:icon="@drawable/ic_select_all_black_24dp"
+            android:title="@string/showNote"
+            android:visible="true"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/upComingMenu_edit"
+            android:checkable="false"
+            android:enabled="true"
+            android:icon="@drawable/ic_edit_black_24dp"
+            android:title="@string/edit"
+            android:visible="true"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/upComingMenu_cancel"
+            android:checkable="false"
+            android:icon="@drawable/ic_cancel_black_24dp"
+            android:title="@string/cancel"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/upComingMenu_remove"
+            android:enabled="true"
+            android:icon="@drawable/ic_delete_forever_black_24dp"
+            android:title="@string/remove"
+            android:visible="true"
+            app:showAsAction="never" />
 
-
+    </item>
 </menu>

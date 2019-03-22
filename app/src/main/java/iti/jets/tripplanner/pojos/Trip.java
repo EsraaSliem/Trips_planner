@@ -8,7 +8,7 @@ public class Trip implements Parcelable {
     public static final int STATUS_DONE = 0;
     public static final int STATUS_CANCELLED = -1;
     public static final int TYPE_ONE_DIRECTION = 1;
-    public static final int TYPE_ROUND = 2;
+    public static final int TYPE_ROUND_DIRECTION = 2;
 
     private String tripId;
     private String tripName;

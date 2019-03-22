@@ -57,6 +57,7 @@ public class FireBaseData {
         if (mCurrentUser != null) {
             mRefDatabase = mDatabase.getReference();
             uid = mCurrentUser.getUid();
+            setUserId(uid);
             Toast.makeText(context, "IF " + uid, Toast.LENGTH_SHORT).show();
         }
     }
@@ -140,25 +141,14 @@ public class FireBaseData {
     }
 
     public void updateTrip(final Trip trip) {
-        mRefDatabase = mDatabase.getReference("Trips").child(uid);
-        Query applesQuery = mRefDatabase.child(trip.getTripId());
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mRefDatabase = mRefDatabase.child(trip.getTripId());
-                mRefDatabase.child("tripDate").setValue(trip.getTripDate());
-                mRefDatabase.child("tripName").setValue(trip.getTripName());
-                mRefDatabase.child("tripTime").setValue(trip.getTripTime());
-                mRefDatabase.child("tripType").setValue(trip.getTripType());
-                mRefDatabase.child("startPoint").setValue(trip.getStartPoint());
-                mRefDatabase.child("endPoint").setValue(trip.getEndPoint());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        mRefDatabase = mDatabase.getReference("Trips").child(uid).child(trip.getTripId());
+        mRefDatabase.child("tripDate").setValue(trip.getTripDate());
+        mRefDatabase.child("tripName").setValue(trip.getTripName());
+        mRefDatabase.child("tripTime").setValue(trip.getTripTime());
+        mRefDatabase.child("tripType").setValue(trip.getTripType());
+        mRefDatabase.child("startPoint").setValue(trip.getStartPoint());
+        mRefDatabase.child("endPoint").setValue(trip.getEndPoint());
+        Toast.makeText(context, "Update Trip Is Done", Toast.LENGTH_SHORT).show();
     }
 
     public void cancelTrip(final Trip trip, int status) {

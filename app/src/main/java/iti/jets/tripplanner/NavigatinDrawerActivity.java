@@ -34,7 +34,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     //declare fragments
     UpcomingTripFragment upcomingTripFragment;
     HistoryFragment historyFragment;
-
     FragmentManager fragmentManager;
 
 

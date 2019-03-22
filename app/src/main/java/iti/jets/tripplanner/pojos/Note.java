@@ -1,19 +1,11 @@
 package iti.jets.tripplanner.pojos;
 
 public class Note {
-    String noteId;
-    String noteName;
-    String noteDescription;
+    private String noteId;
+    private String noteName;
+    private String noteDescription;
+    private String noteStatus;
     private String tripId;
-
-    public Note(String noteName, String noteDescription) {
-        this.noteName = noteName;
-        this.noteDescription = noteDescription;
-    }
-
-    public Note() {
-
-    }
 
     public String getNoteId() {
         return noteId;
@@ -46,4 +38,13 @@ public class Note {
     public void setTripId(String tripId) {
         this.tripId = tripId;
     }
+
+    public String getNoteStatus() {
+        return noteStatus;
+    }
+
+    public void setNoteStatus(String noteStatus) {
+        this.noteStatus = noteStatus;
+    }
+
 }
