@@ -2,7 +2,7 @@
     <string name="app_name">Trip Planner</string>
     <string name="facebook_app_id">700391843711254</string>
     <string name="fb_login_protocol_scheme">fb700391843711254</string>
-
+    <string name="google_maps_key">AIzaSyAluiqmBBsMrnJnpodYT7BPG_MYjZrihfE</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="addTripFragment_tripName">Trip Name</string>
     <string name="addTripFragment_startPoint">Start Point</string>
@@ -57,4 +57,6 @@
     <string name="editTripFragment_update_trip">Update Trip</string>
     <string name="update_note">Update Note</string>
     <string name="renew">renew</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_key_display"><![CDATA[&key=AIzaSyC4X5tDaquLpuYFDXRsxYAxcl26I1E_KSs]]></string>
 </resources>

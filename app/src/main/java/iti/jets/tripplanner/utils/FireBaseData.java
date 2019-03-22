@@ -33,11 +33,12 @@ import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
+    public static FirebaseDatabase mDatabase;
+    public static FirebaseAuth mAuth;
     //Firebase Auth and DataBase
     static FirebaseUser mCurrentUser;
-    public static FirebaseDatabase mDatabase;
     static DatabaseReference mRefDatabase;
-    public static FirebaseAuth mAuth;
+    ArrayList<Trip> pointList;
     private String uid;
     private List<Trip> trips;
     private List<Note> notes;
@@ -241,14 +242,13 @@ public class FireBaseData {
 
     public void getTrips(final RecyclerView recyclerView, final int status) {
         trips = new ArrayList<>();
+        pointList = new ArrayList<>();
         Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("TAG", "onDataChange: getTrip");
-
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-
                 if (iterator.hasNext()) {
                     DataSnapshot next = iterator.next();
                     trips.clear();
@@ -263,6 +263,9 @@ public class FireBaseData {
                     UpComingTripAdapter adapter = new UpComingTripAdapter(context, trips);
                     recyclerView.setAdapter(adapter);
                 } else {
+                    if (status == Trip.STATUS_DONE) {
+
+                    }
                     HistoryTripAdapter adapter = new HistoryTripAdapter(context, trips);
                     recyclerView.setAdapter(adapter);
                 }
