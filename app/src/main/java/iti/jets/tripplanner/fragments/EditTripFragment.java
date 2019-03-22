@@ -56,7 +56,7 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
     private String tripTime;
     private String startPoint;
     private String endPoint;
-    private Date tripDateDateObject;
+    //private Date tripDateDateObject;
 
     public EditTripFragment() {
         // Required empty public constructor
@@ -222,8 +222,9 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
                 fireBaseData.updateTrip(trip);
 
                 //Start Listening for BroadCast Receiver
-                tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
-                startAlert(tripDateDateObject, trip);
+                //tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
+                //startAlert(tripDateDateObject, trip);
+                Utilities.startAlert(trip, getContext());
             }
         }
     }

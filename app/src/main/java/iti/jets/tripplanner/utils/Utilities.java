@@ -1,9 +1,11 @@
 package iti.jets.tripplanner.utils;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -15,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.recievers.MyReceiver;
 
@@ -31,7 +34,6 @@ public class Utilities {
         DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
         String formattedDate = dateFormat.format(date);
         return formattedDate;
-
     }
 
     public static String getCurrentDate() {
@@ -51,7 +53,6 @@ public class Utilities {
             Log.i("Current Date : ", "" + System.currentTimeMillis());
             return newDate;
         } catch (ParseException e) {
-
             e.printStackTrace();
             return newDate;
         }
@@ -67,7 +68,7 @@ public class Utilities {
         return editText.getText().toString().matches("([\\s])*");
     }
 
-    //Start Timer To broadCast Reciever
+    //Start Timer To broadCast Receiver
     public static void startAlert(Trip trip, Context context) {
         Date date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
         Toast.makeText(context, "your trip Starts At " + date, Toast.LENGTH_LONG).show();
@@ -97,5 +98,61 @@ public class Utilities {
 
     }
 
+    public static void alertMessage(Context context, Trip trip, String string, FireBaseData fireBaseData) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle(string + " Trip");
+        alert.setMessage("Are you sure you want to " + string.toLowerCase() + "?");
+        if (string.toLowerCase().contains("delete")) {
+            alert.setIcon(R.drawable.ic_delete_forever_black_24dp);
+        } else if (string.toLowerCase().contains("cancel")) {
+            alert.setIcon(R.drawable.ic_cancel_black_24dp);
+        } else {
+            //else if we want add something in future
+        }
+
+        alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // continue wif delete
+                //FireBaseData fireBaseData = new FireBaseData(context);
+                if (string.contains("delete")) {
+                    fireBaseData.deleteTrip(trip);
+                } else if (string.contains("cancel")) {
+                    fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
+                    cancelAlarm(context, trip);
+                } else {
+                    Toast.makeText(context, "String Must be (delete or cancel)", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // close dialog
+                dialog.cancel();
+            }
+        });
+        alert.show();
+    }
+
+    // cancel Alarm
+    public static void cancelAlarm(Context context, Trip trip) {
+        AlarmManager mAlarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent cancelServiceIntent = new Intent(context.getApplicationContext(), MyReceiver.class);
+        PendingIntent cancelServicePendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(),
+                trip.getPindingIntentId(), // integer constant used to identify the service
+                cancelServiceIntent,
+                PendingIntent.FLAG_IMMUTABLE //no FLAG needed for a service cancel
+        );
+        cancelServicePendingIntent.cancel();
+        mAlarmManager.cancel(cancelServicePendingIntent);
+
+        ComponentName receiver = new ComponentName(context.getApplicationContext(), MyReceiver.class);
+        PackageManager pm = context.getApplicationContext().getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+
+    }
 
 }
