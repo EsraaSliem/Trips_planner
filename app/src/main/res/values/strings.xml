@@ -54,6 +54,7 @@
     <string name="showNote">Show Notes</string>
     <string name="duration">Duration</string>
     <string name="note_title">Note Title</string>
-    <string name="update_note">Edit Note</string>
     <string name="editTripFragment_update_trip">Update Trip</string>
+    <string name="update_note">Update Note</string>
+    <string name="renew">renew</string>
 </resources>

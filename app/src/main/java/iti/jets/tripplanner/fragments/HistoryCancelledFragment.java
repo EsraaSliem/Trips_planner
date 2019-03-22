@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.utils.FireBaseData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +31,7 @@ public class HistoryCancelledFragment extends Fragment {
         tripRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         tripRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        FireBaseData fireBaseData = new FireBaseData(context);
-        fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_CANCELLED);
+//       fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_CANCELLED);
         return view;
     }
 }

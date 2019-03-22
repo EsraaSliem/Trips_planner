@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,16 @@ public class HistoryFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         viewPager = view.findViewById(R.id.viewPager);
-        viewPagerAdapter = new HistoryViewPagerAdapter(getActivity().getSupportFragmentManager());
-        viewPager.setAdapter(viewPagerAdapter);
         tabLayout = view.findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i("TAG", "onStart : history fragment");
+        viewPagerAdapter = new HistoryViewPagerAdapter(getChildFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 }
