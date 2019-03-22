@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Trip Planner</string>
+    <string name="app_name">3a Eseka</string>
     <string name="facebook_app_id">700391843711254</string>
     <string name="fb_login_protocol_scheme">fb700391843711254</string>
     <string name="google_maps_key">AIzaSyAluiqmBBsMrnJnpodYT7BPG_MYjZrihfE</string>
@@ -11,7 +11,6 @@
     <string name="addTripFragment_timeTrip">Time</string>
     <string name="addTripFragment__tripType">Trip Type</string>
     <string name="addTripFragment__addTrip">Add Trip</string>
-
     <string-array name="addTripFragment_spnTripType">
         <item>One Direction</item>
         <item>Round Direction</item>
