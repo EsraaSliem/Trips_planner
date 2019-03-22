@@ -7,11 +7,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -70,26 +68,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                 .inflate(R.layout.upcoming_trip_item, parent, false);
         return new MyViewHolder(view);
     }
-
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            TripHeadService binder = (TripHeadService) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-//            mBound = false;
-        }
-    };
 
     private void addTrip() {
         alertLayout = inflater.inflate(R.layout.add_note_layout, null);
@@ -187,7 +165,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         trip = tripList.get(position);
         //validate up comming trip to set Alarm For it
         if (trip != null) {
-            if (isTripComming(trip)) {
+            if (isTripComing(trip)) {
                 Utilities.startAlert(trip, context);
             }
             holder.txtTitle.setText(trip.getTripName());
@@ -268,14 +246,14 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             Intent intent = new Intent(context, TripHeadService.class);
             intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
 
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            context.startService(intent);
             String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
         }
 
     }
 
-    public boolean isTripComming(Trip trip) {
+    public boolean isTripComing(Trip trip) {
 
 
         Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());

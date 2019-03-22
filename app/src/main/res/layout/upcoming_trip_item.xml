@@ -162,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/offWhite"
-                    android:drawableEnd="@drawable/ic_action_name"
+                    android:drawableEnd="@drawable/ic_add_orange"
                     android:text="@string/add_note"
                     android:textColor="@color/colorPrimary"
                     card_view:layout_constraintBottom_toBottomOf="parent"

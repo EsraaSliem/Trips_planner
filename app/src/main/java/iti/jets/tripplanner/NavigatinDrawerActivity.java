@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.HistoryFragment;
-import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 import iti.jets.tripplanner.utils.TripHeadService;
 
@@ -35,7 +34,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     //declare fragments
     UpcomingTripFragment upcomingTripFragment;
     HistoryFragment historyFragment;
-    ShowNotesFragment showNotesFragment;
 
     FragmentManager fragmentManager;
 
@@ -52,10 +50,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         context = this;
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
-        if (upcomingTripFragment == null) {
-            upcomingTripFragment = new UpcomingTripFragment();
-        }
-        addFragment(upcomingTripFragment, "UpcomingTripFragment");
 
         AddTripFragment addTripFragment = new AddTripFragment();
         fab.setOnClickListener(view -> {
@@ -73,6 +67,13 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (upcomingTripFragment == null) {
+            upcomingTripFragment = new UpcomingTripFragment();
+        }
+        addFragment(upcomingTripFragment, "UpcomingTripFragment");
+        navigationView.getMenu().getItem(0).setChecked(true);
+
     }
 
     @Override
@@ -95,11 +96,19 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_logout:
+                logout();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(context, AuthenticationActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -107,9 +116,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
-            case R.id.nav_profile:
-
-                break;
             case R.id.nav_upComing:
                 if (upcomingTripFragment == null)
                     upcomingTripFragment = new UpcomingTripFragment();
@@ -127,10 +133,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
                 break;
             case R.id.nav_logout:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(context, AuthenticationActivity.class);
-                startActivity(intent);
-                finish();
+                logout();
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

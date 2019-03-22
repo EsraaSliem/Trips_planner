@@ -70,7 +70,6 @@ public class HistoryDoneFragment extends Fragment {
                     for (DataSnapshot dataSnapshot1 : next.getChildren()) {
                         Trip trip = dataSnapshot1.getValue(Trip.class);
                         if (trip != null && trip.getTripStatues() == Trip.STATUS_DONE) {
-                            Log.i("TAG", "onDataChange: in done");
                             trips.add(trip);
                             adapter.notifyDataSetChanged();
                         }
