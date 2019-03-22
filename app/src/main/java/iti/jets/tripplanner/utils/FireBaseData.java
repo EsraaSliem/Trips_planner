@@ -104,7 +104,7 @@ public class FireBaseData {
         return task.isSuccessful();
     }
 
-    public void addTrip(Trip trip) {
+    public String addTrip(Trip trip) {
         //User user = new User();
         mRefDatabase = mDatabase.getReference("Trips");
         String key = mRefDatabase.push().getKey();
@@ -125,6 +125,7 @@ public class FireBaseData {
         Toast.makeText(context, "UID " + uid, Toast.LENGTH_SHORT).show();
         mRefDatabase.child(uid).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+        return key;
     }
 
     public void addNote(Note note, Trip trip) {

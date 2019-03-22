@@ -1,11 +1,14 @@
 package iti.jets.tripplanner.adapters;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -24,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import iti.jets.tripplanner.R;
@@ -32,6 +36,7 @@ import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.interfaces.AlertAdapterCommunicator;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
+import iti.jets.tripplanner.recievers.MyReceiver;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.TripHeadService;
 import iti.jets.tripplanner.utils.Utilities;
@@ -85,74 +90,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 //            mBound = false;
         }
     };
-
-
-    @Override
-    public int getItemCount() {
-        return tripList.size();
-    }
-
-    @Override
-    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
-        trip = tripList.get(position);
-        holder.txtTitle.setText(trip.getTripName());
-        holder.txtStartPoint.setText(trip.getStartPoint());
-        holder.txtEndPoint.setText(trip.getEndPoint());
-        holder.txtDate.setText(trip.getTripDate());
-        holder.txtTime.setText(trip.getTripTime());
-        holder.btnMenu.setOnClickListener(v -> showPopup(v));
-        holder.btnAddNote.setOnClickListener(v -> addTrip());
-        holder.btnStartTrip.setOnClickListener(v -> {
-            FireBaseData fireBaseData = new FireBaseData(context);
-            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
-            openMap();
-        });
-    }
-
-    @Override
-    public void callOpenMap(Trip trip1) {
-        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        context.startActivity(intent);
-    }
-
-    private void openMap() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-
-            //If the draw over permission is not available open the settings screen
-            //to grant the permission.
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + context.getPackageName()));
-            ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-        } else {
-            Intent intent = new Intent(context, TripHeadService.class);
-            intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
-
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-            String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
-        }
-
-    }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtTitle, txtStartPoint, txtEndPoint, txtTime, txtDate;
-        public ImageButton btnMenu;
-        Button btnAddNote, btnStartTrip;
-
-        public MyViewHolder(View view) {
-            super(view);
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            txtTitle = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
-            txtStartPoint = view.findViewById(R.id.txtStartPoint_tripCardView);
-            txtEndPoint = view.findViewById(R.id.txtEndPoint_tripCardView);
-            txtTime = view.findViewById(R.id.txtTime_tripCardView);
-            txtDate = view.findViewById(R.id.txtDuration_tripCardView);
-            btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
-            btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
-            btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
-        }
-    }
 
     private void addTrip() {
         alertLayout = inflater.inflate(R.layout.add_note_layout, null);
@@ -213,11 +150,15 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     return true;
                 case R.id.upComingMenu_cancel:
                     fireBaseData = new FireBaseData(context);
+                    //cancel Alarm
+                    cancelAlarm(trip);
                     fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
                     return true;
                 case R.id.upComingMenu_remove:
                     fireBaseData = new FireBaseData(context);
                     fireBaseData.deleteTrip(trip);
+                    //cancel Alarm
+                    cancelAlarm(trip);
                     return true;
                 case R.id.upComingMenu_showNotes:
                     ShowNotesFragment showNotesFragment = new ShowNotesFragment();
@@ -236,4 +177,114 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     }
 
 
+    @Override
+    public int getItemCount() {
+        return tripList.size();
+    }
+
+    @Override
+    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
+        trip = tripList.get(position);
+        //validate up comming trip to set Alarm For it
+        if (trip != null) {
+            if (isTripComming(trip)) {
+                Utilities.startAlert(trip, context);
+            }
+            holder.txtTitle.setText(trip.getTripName());
+            holder.txtStartPoint.setText(trip.getStartPoint());
+            holder.txtEndPoint.setText(trip.getEndPoint());
+            holder.txtDate.setText(trip.getTripDate());
+            holder.txtTime.setText(trip.getTripTime());
+            holder.btnMenu.setOnClickListener(v -> showPopup(v));
+            holder.btnAddNote.setOnClickListener(v -> addTrip());
+            holder.btnStartTrip.setOnClickListener(v -> {
+//            FireBaseData fireBaseData = new FireBaseData(context);
+//            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
+                openMap();
+            });
+
+        }
+
+    }
+
+    @Override
+    public void callOpenMap(Trip trip1) {
+        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        context.startActivity(intent);
+    }
+
+    // cancel Alarm
+    public void cancelAlarm(Trip trip) {
+        AlarmManager mAlarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent cancelServiceIntent = new Intent(context.getApplicationContext(), MyReceiver.class);
+        PendingIntent cancelServicePendingIntent = PendingIntent.getBroadcast(
+                context.getApplicationContext(),
+                trip.getPindingIntentId(), // integer constant used to identify the service
+                cancelServiceIntent,
+                PendingIntent.FLAG_IMMUTABLE //no FLAG needed for a service cancel
+        );
+        cancelServicePendingIntent.cancel();
+        mAlarmManager.cancel(cancelServicePendingIntent);
+
+        ComponentName receiver = new ComponentName(context.getApplicationContext(), MyReceiver.class);
+        PackageManager pm = context.getApplicationContext().getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtTitle, txtStartPoint, txtEndPoint, txtTime, txtDate;
+        public ImageButton btnMenu;
+        Button btnAddNote, btnStartTrip;
+
+        public MyViewHolder(View view) {
+            super(view);
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            txtTitle = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
+            txtStartPoint = view.findViewById(R.id.txtStartPoint_tripCardView);
+            txtEndPoint = view.findViewById(R.id.txtEndPoint_tripCardView);
+            txtTime = view.findViewById(R.id.txtTime_tripCardView);
+            txtDate = view.findViewById(R.id.txtDuration_tripCardView);
+            btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
+            btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
+            btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
+
+
+        }
+    }
+
+    private void openMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
+
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName()));
+            ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            Intent intent = new Intent(context, TripHeadService.class);
+            intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
+
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+        }
+
+    }
+
+    public boolean isTripComming(Trip trip) {
+
+
+        Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
+        Date tripDate = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+        Long date1 = Utilities.convertDateToMilliSecond(currentDate);
+        if (tripDate != null) {
+            Long date2 = Utilities.convertDateToMilliSecond(tripDate);
+            return date1 < date2;
+        } else return false;
+
+    }
 }
