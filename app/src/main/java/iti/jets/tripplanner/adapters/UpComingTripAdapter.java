@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -50,25 +50,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     private List<Trip> tripList;
     private View alertLayout;
     private String noteDescription, noteName;
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection connection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            TripHeadService binder = (TripHeadService) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-//            mBound = false;
-        }
-    };
 
     public UpComingTripAdapter(Context context) {
         this.context = context;
@@ -218,7 +200,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             Intent intent = new Intent(context, TripHeadService.class);
             intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
 
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            context.startService(intent);
             String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
         }
