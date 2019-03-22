@@ -8,14 +8,13 @@ import iti.jets.tripplanner.fragments.HistoryCancelledFragment;
 import iti.jets.tripplanner.fragments.HistoryDoneFragment;
 
 public class HistoryViewPagerAdapter extends FragmentPagerAdapter {
-
+    Fragment fragment;
     public HistoryViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
         if (position == 0) {
             fragment = new HistoryDoneFragment();
         } else if (position == 1) {

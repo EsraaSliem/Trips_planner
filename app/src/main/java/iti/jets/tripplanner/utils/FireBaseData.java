@@ -35,9 +35,9 @@ import iti.jets.tripplanner.pojos.User;
 public class FireBaseData {
     //Firebase Auth and DataBase
     static FirebaseUser mCurrentUser;
-    static FirebaseDatabase mDatabase;
+    public static FirebaseDatabase mDatabase;
     static DatabaseReference mRefDatabase;
-    static FirebaseAuth mAuth;
+    public static FirebaseAuth mAuth;
     private String uid;
     private List<Trip> trips;
     private List<Note> notes;

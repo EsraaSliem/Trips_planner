@@ -62,7 +62,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     @Override
     public UpComingTripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.upcoming_trip_card, parent, false);
+                .inflate(R.layout.upcoming_trip_item, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -85,6 +85,74 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
 //            mBound = false;
         }
     };
+
+
+    @Override
+    public int getItemCount() {
+        return tripList.size();
+    }
+
+    @Override
+    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
+        trip = tripList.get(position);
+        holder.txtTitle.setText(trip.getTripName());
+        holder.txtStartPoint.setText(trip.getStartPoint());
+        holder.txtEndPoint.setText(trip.getEndPoint());
+        holder.txtDate.setText(trip.getTripDate());
+        holder.txtTime.setText(trip.getTripTime());
+        holder.btnMenu.setOnClickListener(v -> showPopup(v));
+        holder.btnAddNote.setOnClickListener(v -> addTrip());
+        holder.btnStartTrip.setOnClickListener(v -> {
+            FireBaseData fireBaseData = new FireBaseData(context);
+            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
+            openMap();
+        });
+    }
+
+    @Override
+    public void callOpenMap(Trip trip1) {
+        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        context.startActivity(intent);
+    }
+
+    private void openMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
+
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName()));
+            ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            Intent intent = new Intent(context, TripHeadService.class);
+            intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
+
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+        }
+
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtTitle, txtStartPoint, txtEndPoint, txtTime, txtDate;
+        public ImageButton btnMenu;
+        Button btnAddNote, btnStartTrip;
+
+        public MyViewHolder(View view) {
+            super(view);
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            txtTitle = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
+            txtStartPoint = view.findViewById(R.id.txtStartPoint_tripCardView);
+            txtEndPoint = view.findViewById(R.id.txtEndPoint_tripCardView);
+            txtTime = view.findViewById(R.id.txtTime_tripCardView);
+            txtDate = view.findViewById(R.id.txtDuration_tripCardView);
+            btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
+            btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
+            btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
+        }
+    }
 
     private void addTrip() {
         alertLayout = inflater.inflate(R.layout.add_note_layout, null);
@@ -168,70 +236,4 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     }
 
 
-    @Override
-    public int getItemCount() {
-        return tripList.size();
-    }
-
-    @Override
-    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
-        trip = tripList.get(position);
-        holder.txtTitle.setText(trip.getTripName());
-        holder.txtStartPoint.setText(trip.getStartPoint());
-        holder.txtEndPoint.setText(trip.getEndPoint());
-        holder.txtDate.setText(trip.getTripDate());
-        holder.txtTime.setText(trip.getTripTime());
-        holder.btnMenu.setOnClickListener(v -> showPopup(v));
-        holder.btnAddNote.setOnClickListener(v -> addTrip());
-        holder.btnStartTrip.setOnClickListener(v -> {
-//            FireBaseData fireBaseData = new FireBaseData(context);
-//            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
-            openMap();
-        });
-    }
-
-    @Override
-    public void callOpenMap(Trip trip1) {
-        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        context.startActivity(intent);
-    }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtTitle, txtStartPoint, txtEndPoint, txtTime, txtDate;
-        public ImageButton btnMenu;
-        Button btnAddNote, btnStartTrip;
-
-        public MyViewHolder(View view) {
-            super(view);
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            txtTitle = view.findViewById(R.id.tripNameTxt_upcomingTrip_card);
-            txtStartPoint = view.findViewById(R.id.txtStartPoint_tripCardView);
-            txtEndPoint = view.findViewById(R.id.txtEndPoint_tripCardView);
-            txtTime = view.findViewById(R.id.txtTime_tripCardView);
-            txtDate = view.findViewById(R.id.txtDuration_tripCardView);
-            btnAddNote = view.findViewById(R.id.upcomingTripCard_btnAddNote);
-            btnMenu = view.findViewById(R.id.upcomingTripCard_menu);
-            btnStartTrip = view.findViewById(R.id.upcomingTripCard_btnStart);
-        }
-    }
-
-    private void openMap() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
-
-            //If the draw over permission is not available open the settings screen
-            //to grant the permission.
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + context.getPackageName()));
-            ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-        } else {
-            Intent intent = new Intent(context, TripHeadService.class);
-            intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
-
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-            String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
-        }
-
-    }
 }
