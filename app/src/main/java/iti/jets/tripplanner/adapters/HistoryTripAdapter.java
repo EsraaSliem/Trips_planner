@@ -1,6 +1,7 @@
 package iti.jets.tripplanner.adapters;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +13,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.fragments.EditTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
@@ -51,7 +49,7 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.
         holder.txtEntPoint.setText(trip.getEndPoint());
         holder.txtDate.setText(trip.getTripDate());
         holder.timeTxt.setText(trip.getTripTime());
-        holder.btnRenewTrip.setOnClickListener(v -> renewTrip(trip.getTripId()));
+        holder.btnRenewTrip.setOnClickListener(v -> renewTrip(trip));
         holder.btnShowNotes.setOnClickListener(v -> openShowNotesFragment(trip));
         holder.btnDeleteTrip.setOnClickListener(v -> deleteTrip(trip.getTripId()));
     }
@@ -78,24 +76,14 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.
         notifyDataSetChanged();
     }
 
-    private void renewTrip(String tripId) {
-        DatabaseReference databaseReference =
-                FireBaseData.mDatabase.getReference("Trips").child(FireBaseData.mAuth.getUid());
-        Query applesQuery = databaseReference.child(tripId);
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                databaseReference
-                        .child(tripId)
-                        .child("tripStatues").setValue(Trip.STATUS_UP_COMING);
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void renewTrip(Trip trip) {
+        EditTripFragment editTripFragment = new EditTripFragment();
+        editTripFragment.sendTripId(trip);
+        FragmentManager supportFragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainContainerView, editTripFragment, "edit fragment")
+                .addToBackStack("edit fragment")
+                .commit();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
