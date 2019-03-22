@@ -27,12 +27,19 @@ public class UpcomingTripFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_upcoming_trip, container, false);
         context = getActivity();
         tripRecyclerView = view.findViewById(R.id.recyclerView_upcomingTrip);
-
         tripRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         tripRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         FireBaseData fireBaseData = new FireBaseData(context);
         fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_UP_COMING);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FireBaseData fireBaseData = new FireBaseData(context);
+        fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_UP_COMING);
+
     }
 }

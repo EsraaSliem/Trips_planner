@@ -24,7 +24,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.fragments.AddTripFragment;
+import iti.jets.tripplanner.fragments.EditTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.interfaces.AlertAdapterCommunicator;
 import iti.jets.tripplanner.pojos.Note;
@@ -126,12 +126,12 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             FireBaseData fireBaseData;
             switch (item.getItemId()) {
                 case R.id.upComingMenu_edit:
-                    AddTripFragment addTripFragment = new AddTripFragment();
-                    //showNotesFragment.sendTripId(trip);
+                    EditTripFragment editTripFragment = new EditTripFragment();
+                    editTripFragment.sendTripId(trip);
                     manager = ((AppCompatActivity) context).getSupportFragmentManager();
                     transaction = manager.beginTransaction();
-                    transaction.replace(R.id.mainContainerView, addTripFragment, null);
-                    transaction.addToBackStack(null);
+                    transaction.replace(R.id.mainContainerView, editTripFragment, "edit fragment");
+                    transaction.addToBackStack("edit fragment");
                     transaction.commit();
                     return true;
                 case R.id.upComingMenu_cancel:
@@ -139,8 +139,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
                     return true;
                 case R.id.upComingMenu_remove:
-                    fireBaseData = new FireBaseData(context);
-                    fireBaseData.deleteTrip(trip);
+                    deleteTrip(trip);
                     return true;
                 case R.id.upComingMenu_showNotes:
                     ShowNotesFragment showNotesFragment = new ShowNotesFragment();
@@ -179,6 +178,27 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             context.startActivity(intent);
         }
 
+    }
+
+    private void deleteTrip(Trip trip) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Delete Trip");
+        alert.setMessage("Are you sure you want to delete?");
+        alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // continue wif delete
+                FireBaseData fireBaseData = new FireBaseData(context);
+                fireBaseData.deleteTrip(trip);
+
+            }
+        });
+        alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // close dialog
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
     @Override

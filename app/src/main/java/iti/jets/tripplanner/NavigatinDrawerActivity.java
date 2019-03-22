@@ -124,6 +124,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
                 break;
         }
         try {
+            assert fragmentClass != null;
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
