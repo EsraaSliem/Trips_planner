@@ -7,4 +7,6 @@
     <color name="white">#FFFFFF</color>
     <color name="offWhite">#F9FBFF</color>
     <color name="blue">#0092F9</color>
+    <color name="colorGray">#707070</color>
+    <color name="colorFocus">#030B19</color>
 </resources>

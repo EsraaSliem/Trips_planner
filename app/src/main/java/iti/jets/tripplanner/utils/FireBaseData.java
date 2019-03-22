@@ -10,7 +10,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +30,7 @@ import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.NoteAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
+import iti.jets.tripplanner.fragments.ProfileFragment;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
@@ -83,6 +86,11 @@ public class FireBaseData {
                     user.setUserId(uId);
 //                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
                     mRefDatabase.setValue(user);
+
+                    Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(main_intent);
+
                 }
             }
         });
@@ -255,4 +263,76 @@ public class FireBaseData {
             }
         });
     }
+
+    public  void updateUser(final User user)
+    {
+        mRefDatabase = mDatabase.getReference("Users").child(uid);
+
+        mRefDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateUserEmail(user.getEmail(),user.getPassword());
+                mRefDatabase.child("email").setValue(user.getEmail());
+                mRefDatabase.child("fName").setValue(user.getfName());
+                mRefDatabase.child("lName").setValue(user.getlName());
+                mRefDatabase.child("image").setValue(user.getImage());
+                mRefDatabase.child("password").setValue(user.getPassword());
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("User", databaseError.getMessage());
+            }
+        });
+
+    }
+    public void getUser(final ProfileFragment fragment ) {
+
+        Query query = mRefDatabase.child("Users").orderByKey().equalTo(mAuth.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Toast.makeText(context, "ss", Toast.LENGTH_SHORT).show();
+
+                User user=dataSnapshot.getChildren().iterator().next().getValue(User.class);
+                fragment.getUser(user);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+    public void updateUserEmail(String email ,String pass)
+    {
+
+
+
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(email, pass);
+
+     // Prompt the user to re-provide their sign-in credentials
+        mCurrentUser.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //Log.d(TAG, "User re-authenticated.");
+                        mCurrentUser.updateEmail(email)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                          //  Log.d(TAG, "User email address updated.");
+                                            Toast.makeText(context, "sucess", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                });
+
+    }
 }
+
