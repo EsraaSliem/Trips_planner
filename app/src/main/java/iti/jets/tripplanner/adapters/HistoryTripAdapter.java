@@ -71,8 +71,8 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripAdapter.
 
     private void deleteTrip(String tripId) {
         Toast.makeText(context, "delete", Toast.LENGTH_SHORT).show();
-        DatabaseReference databaseReference = FireBaseData.mDatabase.getReference("Trips").child(tripId);
-        databaseReference.child(tripId).getRef().removeValue();
+        DatabaseReference databaseReference = FireBaseData.mDatabase.getReference("Trips").child(FireBaseData.mAuth.getUid());
+        databaseReference.child(tripId).removeValue();
         notifyDataSetChanged();
     }
 
