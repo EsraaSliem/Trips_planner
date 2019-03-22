@@ -85,7 +85,6 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
             ft.replace(R.id.map, mapFragment);
         }
         mapFragment.getMapAsync(this);
-        Toast.makeText(context, "MAPPPP", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
             @Override
