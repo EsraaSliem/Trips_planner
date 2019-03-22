@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -110,26 +109,23 @@ public class Utilities {
             //else if we want add something in future
         }
 
-        alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // continue wif delete
-                //FireBaseData fireBaseData = new FireBaseData(context);
-                if (string.contains("delete")) {
-                    fireBaseData.deleteTrip(trip);
-                } else if (string.contains("cancel")) {
-                    fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
-                    cancelAlarm(context, trip);
-                } else {
-                    Toast.makeText(context, "String Must be (delete or cancel)", Toast.LENGTH_SHORT).show();
-                }
+        alert.setPositiveButton(android.R.string.yes, (dialog, which) -> {
+            // continue wif delete
+            //FireBaseData fireBaseData = new FireBaseData(context);
+            if (string.toLowerCase().contains("delete")) {
+                fireBaseData.deleteTrip(trip);
+                cancelAlarm(context, trip);
+            } else if (string.toLowerCase().contains("cancel")) {
+                fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
+                cancelAlarm(context, trip);
+            } else {
+                Toast.makeText(context, "String Must be (delete or cancel)", Toast.LENGTH_SHORT).show();
+            }
 
-            }
         });
-        alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // close dialog
-                dialog.cancel();
-            }
+        alert.setNegativeButton(android.R.string.no, (dialog, which) -> {
+            // close dialog
+            dialog.cancel();
         });
         alert.show();
     }

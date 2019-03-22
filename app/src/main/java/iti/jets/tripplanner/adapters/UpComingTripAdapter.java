@@ -82,7 +82,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     @Override
     public UpComingTripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.upcoming_trip_card, parent, false);
+                .inflate(R.layout.upcoming_trip_item, parent, false);
         return new MyViewHolder(view);
     }
 
