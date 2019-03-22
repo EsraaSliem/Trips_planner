@@ -159,8 +159,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             holder.btnMenu.setOnClickListener(v -> showPopup(v));
             holder.btnAddNote.setOnClickListener(v -> addTrip());
             holder.btnStartTrip.setOnClickListener(v -> {
-//            FireBaseData fireBaseData = new FireBaseData(context);
-//            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
                 openMap();
             });
 
@@ -189,6 +187,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     Uri.parse("package:" + context.getPackageName()));
             ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
         } else {
+            FireBaseData fireBaseData = new FireBaseData(context);
+            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
             Intent intent = new Intent(context, TripHeadService.class);
             intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
 

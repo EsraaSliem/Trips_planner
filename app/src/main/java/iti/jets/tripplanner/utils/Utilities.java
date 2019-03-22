@@ -80,7 +80,7 @@ public class Utilities {
         int pindingIntentId = (int) Utilities.convertDateToMilliSecond(Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(), pindingIntentId, intent, PendingIntent.FLAG_IMMUTABLE);
-        trip.setPindingIntentId(pindingIntentId);
+        trip.setPendingIntentId(pindingIntentId);
 
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
@@ -136,7 +136,7 @@ public class Utilities {
         Intent cancelServiceIntent = new Intent(context.getApplicationContext(), MyReceiver.class);
         PendingIntent cancelServicePendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(),
-                trip.getPindingIntentId(), // integer constant used to identify the service
+                trip.getPendingIntentId(), // integer constant used to identify the service
                 cancelServiceIntent,
                 PendingIntent.FLAG_IMMUTABLE //no FLAG needed for a service cancel
         );
