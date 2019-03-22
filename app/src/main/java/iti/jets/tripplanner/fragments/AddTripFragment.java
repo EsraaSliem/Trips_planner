@@ -1,11 +1,8 @@
 package iti.jets.tripplanner.fragments;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -31,11 +28,8 @@ import java.util.Date;
 
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.recievers.MyReceiver;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.Utilities;
-
-import static android.content.Context.ALARM_SERVICE;
 
 
 public class AddTripFragment extends Fragment {
@@ -54,7 +48,7 @@ public class AddTripFragment extends Fragment {
     private String tripTime;
     private String startPoint;
     private String endPoint;
-    private Date tripDateDateObject;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,6 +116,8 @@ public class AddTripFragment extends Fragment {
             timePickerDialog.show();
         });
 
+        btnAddTrip.setOnClickListener(v -> addTrip() );
+
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_startPoint);
 
@@ -144,6 +140,7 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
+
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_entPoint);
 
@@ -160,8 +157,6 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
-
-        btnAddTrip.setOnClickListener(v -> addTrip());
         return view;
     }
 
@@ -199,29 +194,12 @@ public class AddTripFragment extends Fragment {
                 fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
                 fragmentTransaction.addToBackStack("NoteTrip");
                 fragmentTransaction.commit();
-                //Start Listening for BroadCast Receiver
-                tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
-                startAlert(tripDateDateObject, trip);
+                //Start Listning for BroadCast Reciever
+                Utilities.startAlert(trip, getContext());
             }
         }
     }
 
-    //Start Timer To broadCast Receiver
-    public void startAlert(Date date, Trip trip) {
-        Toast.makeText(getContext(), "your trip Starts At " + date, Toast.LENGTH_LONG).show();
-        long millis = date.getTime();
-        Intent intent = new Intent(getActivity(), MyReceiver.class);
-        intent.putExtra(Utilities.TRIP_OBJECT, trip);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getActivity().getApplicationContext(), 234324243, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
-        Toast.makeText(getContext(), "current " + System.currentTimeMillis() + " seconds",
-                Toast.LENGTH_LONG).show();
-        Toast.makeText(getContext(), "Date " + millis + " seconds",
-                Toast.LENGTH_LONG).show();
-
-    }
 
     private boolean isValidDateAndTime(String date, String time) {
         Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());

@@ -18,6 +18,11 @@ public class Trip implements Parcelable {
     private String endPoint;
     private int tripType;
     private int tripStatues;
+    private int pindingIntentId;
+
+
+
+
 
 
     public static final Creator<Trip> CREATOR = new Creator<Trip>() {
@@ -110,6 +115,15 @@ public class Trip implements Parcelable {
     public void setTripStatues(int tripStatues) {
         this.tripStatues = tripStatues;
     }
+
+    public int getPindingIntentId() {
+        return pindingIntentId;
+    }
+
+    public void setPindingIntentId(int pindingIntentId) {
+        this.pindingIntentId = pindingIntentId;
+    }
+
 
     @Override
     public int describeContents() {
