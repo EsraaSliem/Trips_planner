@@ -64,7 +64,7 @@
             android:layout_weight=".1"
             android:gravity="center"
             android:text="@string/sign_up"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/colorPrimary"
             android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@+id/imageView3"
             tools:layout_editor_absoluteX="0dp" />

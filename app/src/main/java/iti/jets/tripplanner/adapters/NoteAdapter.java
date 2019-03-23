@@ -44,8 +44,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         Note note = noteList.get(position);
-        holder.noteName.setText(note.getNoteName());
+        holder.noteCheck.setText(note.getNoteName());
         holder.noteDesc.setText(note.getNoteDescription());
+        if (note.isNoteStatus()) {
+            holder.noteCheck.setChecked(true);
+        }
 
         holder.editNoteCard_menu.setOnClickListener(view -> {
             //creating a popup menu
@@ -61,8 +64,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
                         break;
                     case R.id.delete_note_menu:
                         //handle menu1 click
-                        FireBaseData fireBaseData = new FireBaseData(context);
-                        fireBaseData.deleteNote(note);
+                        FireBaseData fireBaseDat = new FireBaseData(context);
+                        fireBaseDat.deleteNote(note);
                         break;
                 }
                 return false;
@@ -112,8 +115,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView noteNamee, noteDesc;
-        public CheckBox noteName;
+        public TextView noteDesc;
+        public CheckBox noteCheck;
         public ImageButton editNoteCard_menu;
 
         public LinearLayout parentLayout, linearLayout;
@@ -121,12 +124,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         public MyViewHolder(View view) {
             super(view);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            noteName = view.findViewById(R.id.name);
+            noteCheck = view.findViewById(R.id.name);
             noteDesc = view.findViewById(R.id.desc);
             editNoteCard_menu = view.findViewById(R.id.editNoteCard_menu);
             linearLayout = view.findViewById(R.id.linearLayout);
             parentLayout = view.findViewById(R.id.addNoteLayout);
-
         }
     }
 
