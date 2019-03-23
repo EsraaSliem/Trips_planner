@@ -42,6 +42,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     FragmentManager manager;
     FragmentTransaction transaction;
     TripHeadService mService;
+
     boolean mBound = false;
     private Context context;
     private List<Trip> tripList;
