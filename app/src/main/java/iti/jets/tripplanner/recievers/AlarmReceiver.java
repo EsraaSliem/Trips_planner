@@ -13,7 +13,7 @@ import iti.jets.tripplanner.AlertActivity;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.Utilities;
 
-public class MyReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
