@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,11 @@ public class SignUpFragment extends Fragment {
 
 
     private static final String IMAGE_DIRECTORY = "/demonuts";
+    private int GALLERY = 1, CAMERA = 2;
+    private int PICK_IMAGE_REQUEST = 1;
     private static final int STORAGE_PERMISSION_CODE = 123;
+    private Bitmap bitmap;
+    private Uri filePath;
     FirebaseStorage storage;
     StorageReference storageReference;
     Bundle extras;
@@ -51,11 +57,14 @@ public class SignUpFragment extends Fragment {
     ImageView profileImageView;
     User user;
     FireBaseData fireBaseData;
-    private int GALLERY = 1, CAMERA = 2;
-    private int PICK_IMAGE_REQUEST = 1;
-    private Bitmap bitmap;
-    private Uri filePath;
     private Context context;
+    boolean fnameValidateFlag =false;
+    boolean lnameValidateFlag=false;
+    boolean emailValidateFlag=false;
+
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    boolean confirmPasswordFlag=false;
+    boolean passwordFalg =false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,19 +81,165 @@ public class SignUpFragment extends Fragment {
         profileImageView = view.findViewById(R.id.signUp_imageViewProfile);
         edtConfirmPassword = view.findViewById(R.id.signUp_edtConfirmPassword);
         fireBaseData = new FireBaseData(getActivity());
+        edtFirstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        view.findViewById(R.id.signUp_btnSingUp).setOnClickListener(v -> {
-            user.setfName(edtFirstName.getText().toString());
-            user.setlName(edtLastName.getText().toString());
-            user.setPassword(edtPassword.getText().toString());
-            user.setEmail(edtEmail.getText().toString());
-            String confirmPassword = edtConfirmPassword.getText().toString();
-            if (user.getPassword().equals(confirmPassword)) {
-                uploadImage();
-            } else {
-                Toast.makeText(getActivity(), "password is not match", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtFirstName.getText().toString().trim().length()<=0)
+                {
+                    edtFirstName.setError("please enter a valid name");
+                }
+                else {
+                    fnameValidateFlag =true;
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
+
+
+        edtLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtLastName.getText().toString().trim().length()<=0)
+                {
+                    edtLastName.setError("please enter a valid name");
+                }
+                else {
+                    lnameValidateFlag =true;
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
+
+        view.findViewById(R.id.signUp_btnSingUp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(fnameValidateFlag&&lnameValidateFlag&&passwordFalg&&confirmPasswordFlag) {
+                    user.setfName(edtFirstName.getText().toString());
+                    user.setlName(edtLastName.getText().toString());
+                    user.setPassword(edtPassword.getText().toString());
+                    user.setEmail(edtEmail.getText().toString());
+                    user.setImage("");
+                    String confirmPassword = edtConfirmPassword.getText().toString();
+                    if(filePath!=null) {
+                        uploadImage();
+                    }
+                    else
+                    {
+                        fireBaseData.writeNewUser(user);
+                    }
+
+                }
+            }
+        });
+
+
+
+        edtEmail.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+
+                if (edtEmail.getText().toString().matches(emailPattern) && s.length() > 0)
+                {
+
+                    emailValidateFlag=true;
+                }
+                else
+                {
+                    //Toast.makeText(getApplicationContext(),"Invalid email address",Toast.LENGTH_SHORT).show();
+                    //or
+                    edtEmail.setError("Invalid email");
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // other stuffs
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // other stuffs
+            }
+        });
+
+
+
+
+        edtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtPassword.getText().toString().trim().length()<6)
+                {
+                    edtPassword.setError("Required at least 6 digit");
+                }
+
+
+                else {
+                    passwordFalg=true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        edtConfirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtConfirmPassword.getText().toString().trim().length()==0)
+                {
+                    edtConfirmPassword.setError("Required");
+                }
+
+                else if(! edtConfirmPassword.getText().toString().trim().equals(edtPassword.getText().toString().trim()))
+                {
+                    edtConfirmPassword.setError("missmatch password");
+                }
+                else {
+                    confirmPasswordFlag=true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
         view.findViewById(R.id.signUp_btnImageView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,8 +293,8 @@ public class SignUpFragment extends Fragment {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            String imageFullPath = UUID.randomUUID().toString() + ".png";
-            StorageReference ref = storageReference.child("images/" + imageFullPath);
+            String imageFullPath = UUID.randomUUID().toString()+".png";
+            StorageReference ref = storageReference.child("images/"+imageFullPath );
 
 
             ref.putFile(filePath)
@@ -147,10 +302,10 @@ public class SignUpFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(context, "" + storageReference.child("images").child(imageFullPath).getDownloadUrl().toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, ""+ storageReference.child("images" ).child(imageFullPath).getDownloadUrl().toString(), Toast.LENGTH_SHORT).show();
                             //Toast.makeText(getContext(), "Uploaded"+uri.toString(), Toast.LENGTH_LONG).show();
                             user.setImage(imageFullPath);
-                            Constatnts.uri = imageFullPath;
+                            Constatnts.uri=imageFullPath;
                             fireBaseData.writeNewUser(user);
 
 
@@ -160,40 +315,21 @@ public class SignUpFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(getContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
 
 
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
 
                         }
                     });
         }
     }
-/*
-    public void writeNewUser(final User user) {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-                    String uId = current_user.getUid();
-                    //Firebase Database
-                    mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
-//                    user.setUserId(mAuth.getUid());
-                    user.setUserId(uId);
-//                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
-                    mRefDatabase.setValue(user);
-                }
-            }
-        });
-    }
-    */
 }

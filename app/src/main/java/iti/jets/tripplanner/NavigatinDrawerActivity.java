@@ -204,7 +204,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
                 storageReference.getDownloadUrl().toString();
                 Constatnts.uri = generatedFilePath;
                 Picasso.with(NavigatinDrawerActivity.this)
-                        .load(Constatnts.uri)
+                        .load(Constatnts.uri).placeholder(R.drawable.profile)
                         .into(profileImg);
                 Toast.makeText(context, "uri : " + generatedFilePath, Toast.LENGTH_LONG).show();
 
