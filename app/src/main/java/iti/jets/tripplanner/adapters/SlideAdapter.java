@@ -10,23 +10,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SlideAdapter extends PagerAdapter {
-    Context context;
-    LayoutInflater layoutInflater;
-    public SlideAdapter(Context context){
-        this.context=context;
-    }
-    public int [] slide_image={
+    public int[] slide_image = {
             iti.jets.tripplanner.R.drawable.splash1,
             iti.jets.tripplanner.R.drawable.splash2,
             iti.jets.tripplanner.R.drawable.splash3,
-
-
     };
-    public String [] slide_desc={
+    public String[] slide_desc = {
             "Never miss your trip",
             "find the way for your trip",
             "write your notes on your trip"
     };
+    Context context;
+    LayoutInflater layoutInflater;
+
+    public SlideAdapter(Context context) {
+        this.context = context;
+    }
+
     @Override
     public int getCount() {
         return slide_image.length;
@@ -34,24 +34,23 @@ public class SlideAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view ==(RelativeLayout)object;
+        return view == object;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        layoutInflater=(LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View view=layoutInflater.inflate(iti.jets.tripplanner.R.layout.slide,container,false);
-        ImageView slideImageView=(ImageView) view.findViewById(iti.jets.tripplanner.R.id.slideImage);
-        TextView textView=(TextView) view.findViewById(iti.jets.tripplanner.R.id.slideText);
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(iti.jets.tripplanner.R.layout.slide, container, false);
+        ImageView slideImageView = view.findViewById(iti.jets.tripplanner.R.id.slideImage);
+        TextView textView = view.findViewById(iti.jets.tripplanner.R.id.slideText);
         slideImageView.setImageResource(slide_image[position]);
         textView.setText(slide_desc[position]);
-
         container.addView(view);
         return view;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((RelativeLayout)object);
+        container.removeView((RelativeLayout) object);
     }
 }

@@ -1,15 +1,9 @@
 package iti.jets.tripplanner.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,8 +13,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import iti.jets.tripplanner.AuthenticationActivity;
-import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
@@ -61,32 +53,34 @@ public class FireBaseData {
         this.uid = uid;
     }
 
-    public void writeNewUser(final User user) {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-                    String uId = current_user.getUid();
-                    //Firebase Database
-                    mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
+    /*
+        public void writeNewUser(final User user) {
+            mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+                        String uId = current_user.getUid();
+                        //Firebase Database
+                        mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
 
-                    Intent main_intent = new Intent(context, AuthenticationActivity.class);
-                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    context.startActivity(main_intent);
+                        Intent main_intent = new Intent(context, AuthenticationActivity.class);
+                        main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        context.startActivity(main_intent);
 
+                    }
                 }
-            }
-        });
-    }
-
+            });
+        }
+    */
+/*
     public void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                 main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                SharedPreferences.Editor prefEditor= context.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE).edit();
-                prefEditor.putBoolean("logined",true);
+                SharedPreferences.Editor prefEditor = context.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE).edit();
+                prefEditor.putBoolean("logined", true);
                 prefEditor.apply();
                 context.startActivity(main_intent);
             } else {
@@ -94,12 +88,13 @@ public class FireBaseData {
             }
         });
     }
-
+*/
+/*
     public boolean verifyUser(final String email, final String password) {
         Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password);
         return task.isSuccessful();
     }
-
+*/
     public String addTrip(Trip trip) {
         //User user = new User();
         mRefDatabase = mDatabase.getReference("Trips");

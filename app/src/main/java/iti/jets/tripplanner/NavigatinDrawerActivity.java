@@ -231,7 +231,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
                 nameTxt.setText(user.getfName());
                 emailTxt.setText(user.getEmail());
                 getUserImage();
-
                 progressDialog.dismiss();
             }
 

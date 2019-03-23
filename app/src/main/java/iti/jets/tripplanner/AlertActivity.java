@@ -48,7 +48,7 @@ public class AlertActivity extends AppCompatActivity {
 //                            startActivity(intent1);
                             AlertAdapterCommunicator communicator = new UpComingTripAdapter(AlertActivity.this);
 
-                        communicator.callOpenMap(trip);
+                        communicator.callOpenMap(trip, getApplicationContext());
                     });
 
             builder1.setNegativeButton(

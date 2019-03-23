@@ -13,7 +13,7 @@ import iti.jets.tripplanner.AlertActivity;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.Utilities;
 
-public class MyReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -24,6 +24,7 @@ public class MyReceiver extends BroadcastReceiver {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         MediaPlayer mp = MediaPlayer.create(context, notification);
         mp.start();
+
         //**************
         // Vibrate the mobile phone
         Intent intent1 = new Intent(context, AlertActivity.class);

@@ -17,7 +17,7 @@ import java.util.Date;
 
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.recievers.MyReceiver;
+import iti.jets.tripplanner.recievers.AlarmReceiver;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -80,7 +80,7 @@ public class Utilities {
             date = Utilities.convertStringToDateFormat(trip.getReturnDate(), trip.getReturnTime());
         }
         long millis = date.getTime();
-        Intent intent = new Intent(context, MyReceiver.class);
+        Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -90,7 +90,7 @@ public class Utilities {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
-        ComponentName receiver = new ComponentName(context.getApplicationContext(), MyReceiver.class);
+        ComponentName receiver = new ComponentName(context.getApplicationContext(), AlarmReceiver.class);
         PackageManager pm = context.getApplicationContext().getPackageManager();
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
@@ -134,7 +134,7 @@ public class Utilities {
     // cancel Alarm
     public static void cancelAlarm(Context context, Trip trip) {
         AlarmManager mAlarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent cancelServiceIntent = new Intent(context.getApplicationContext(), MyReceiver.class);
+        Intent cancelServiceIntent = new Intent(context.getApplicationContext(), AlarmReceiver.class);
         PendingIntent cancelServicePendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(),
                 trip.getPendingIntentId(), // integer constant used to identify the service
@@ -144,7 +144,7 @@ public class Utilities {
         cancelServicePendingIntent.cancel();
         mAlarmManager.cancel(cancelServicePendingIntent);
 
-        ComponentName receiver = new ComponentName(context.getApplicationContext(), MyReceiver.class);
+        ComponentName receiver = new ComponentName(context.getApplicationContext(), AlarmReceiver.class);
         PackageManager pm = context.getApplicationContext().getPackageManager();
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
