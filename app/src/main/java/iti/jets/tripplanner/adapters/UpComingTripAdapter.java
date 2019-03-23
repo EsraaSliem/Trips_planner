@@ -1,14 +1,11 @@
 package iti.jets.tripplanner.adapters;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -50,25 +47,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     private List<Trip> tripList;
     private View alertLayout;
     private String noteDescription, noteName;
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection connection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            TripHeadService binder = (TripHeadService) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-//            mBound = false;
-        }
-    };
 
     public UpComingTripAdapter(Context context) {
         this.context = context;
@@ -137,15 +116,10 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     return true;
                 case R.id.upComingMenu_cancel:
                     fireBaseData = new FireBaseData(context);
-                    //cancel Alarm
-                    //Utilites.cancelAlarm(context, trip);
                     Utilities.alertMessage(context, trip, "Cancel", fireBaseData);
-                    //fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
                     return true;
                 case R.id.upComingMenu_remove:
                     deleteTrip(trip);
-                    //cancel Alarm
-                    //Utilites.cancelAlarm(context, trip);
                     return true;
                 case R.id.upComingMenu_showNotes:
                     ShowNotesFragment showNotesFragment = new ShowNotesFragment();
@@ -185,8 +159,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             holder.btnMenu.setOnClickListener(v -> showPopup(v));
             holder.btnAddNote.setOnClickListener(v -> addTrip());
             holder.btnStartTrip.setOnClickListener(v -> {
-//            FireBaseData fireBaseData = new FireBaseData(context);
-//            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
                 openMap();
             });
 
@@ -215,10 +187,12 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     Uri.parse("package:" + context.getPackageName()));
             ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
         } else {
+            FireBaseData fireBaseData = new FireBaseData(context);
+            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
             Intent intent = new Intent(context, TripHeadService.class);
             intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
 
-            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            context.startService(intent);
             String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
         }

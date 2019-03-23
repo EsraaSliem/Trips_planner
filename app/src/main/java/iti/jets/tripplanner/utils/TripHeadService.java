@@ -38,19 +38,49 @@ public class TripHeadService extends Service {
     RecyclerView notesRecyclerView;
     CardView notesCardView;
 
-    public TripHeadService getService() {
-        // Return this instance of LocalService so clients can call public methods
-        return TripHeadService.this;
-    }
+    /*
+        @Override
+        public IBinder onBind(Intent intent) {
+            //Inflate the chat head layout we created
+            tripId = intent.getStringExtra(Utilities.TRIP_ID);
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference mRefDatabase = mDatabase.getReference();
 
+            List<Note> notes = new ArrayList<>();
+            HeadNoteAdapter adapter = new HeadNoteAdapter(getApplicationContext(), notes);
+            notesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            notesRecyclerView.setAdapter(adapter);
+
+            Query query = mRefDatabase.child("Notes").child(tripId);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Note note = snapshot.getValue(Note.class);
+                        note.setTripId(tripId);
+                        notes.add(note);
+                        adapter.notifyDataSetChanged();
+                        adapter.notifyItemInserted(notes.size());
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> {
+                stopService(intent);
+                mWindowManager.removeView(mTripHeadView);
+                mTripHeadView = null;
+            });
+            return null;
+        }
+    */
     @Override
-    public IBinder onBind(Intent intent) {
-        //Inflate the chat head layout we created
-        mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        int i = super.onStartCommand(intent, flags, startId);
         tripId = intent.getStringExtra(Utilities.TRIP_ID);
-        notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
-        notesCardView = mTripHeadView.findViewById(R.id.tripHead_cardView);
-
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mRefDatabase = mDatabase.getReference();
 
@@ -76,6 +106,22 @@ public class TripHeadService extends Service {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> {
+            stopService(intent);
+            mWindowManager.removeView(mTripHeadView);
+            mTripHeadView = null;
+        });
+        return i;
+
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
+        notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
+        notesCardView = mTripHeadView.findViewById(R.id.tripHead_cardView);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             params = new WindowManager.LayoutParams(
@@ -106,12 +152,11 @@ public class TripHeadService extends Service {
 
 //        Drag and move floating view using user's touch action.
         mTripHeadView.findViewById(R.id.tripHead_img).setOnTouchListener(new View.OnTouchListener() {
+            long time_start = 0, time_end = 0;
             private int initialX;
             private int initialY;
             private float initialTouchX;
             private float initialTouchY;
-            long time_start = 0, time_end = 0;
-
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -158,18 +203,18 @@ public class TripHeadService extends Service {
                 return true;
             }
         });
-        mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> {
-            TripHeadService.this.stopSelf();
-            mWindowManager.removeView(mTripHeadView);
-        });
-
-        return null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mTripHeadView != null) mWindowManager.removeView(mTripHeadView);
+    }
+
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 }
