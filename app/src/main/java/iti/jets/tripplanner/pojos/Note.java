@@ -4,7 +4,7 @@ public class Note {
     private String noteId;
     private String noteName;
     private String noteDescription;
-    private String noteStatus;
+    private boolean noteStatus;
     private String tripId;
 
     public String getNoteId() {
@@ -39,12 +39,11 @@ public class Note {
         this.tripId = tripId;
     }
 
-    public String getNoteStatus() {
+    public boolean isNoteStatus() {
         return noteStatus;
     }
 
-    public void setNoteStatus(String noteStatus) {
+    public void setNoteStatus(boolean noteStatus) {
         this.noteStatus = noteStatus;
     }
-
 }

@@ -36,6 +36,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+        getSupportActionBar().hide();
         mAuth = FirebaseAuth.getInstance();
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = findViewById(R.id.authentication_viewPager);

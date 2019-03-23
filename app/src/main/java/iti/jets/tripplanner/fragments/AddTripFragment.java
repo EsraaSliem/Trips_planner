@@ -80,7 +80,6 @@ public class AddTripFragment extends Fragment {
         edtTripDate = view.findViewById(R.id.addTripFragment_edtTripDate);
         edtTripTime = view.findViewById(R.id.addTripFragment_edtTripTime);
         spnTripType = view.findViewById(R.id.addTripFragment_spnTripType);
-
         btnTripTime = view.findViewById(R.id.addTripFragment_btnTripTime);
         btnTripDate = view.findViewById(R.id.addTripFragment_btnTripDate);
         btnAddTrip = view.findViewById(R.id.addTripFragment_btnAddTrip);
@@ -238,7 +237,6 @@ public class AddTripFragment extends Fragment {
 
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_entPoint);
-
         autocompleteEndPoint.setFilter(filter);
         autocompleteEndPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 
@@ -312,9 +310,7 @@ public class AddTripFragment extends Fragment {
         Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
         Long date1 = Utilities.convertDateToMilliSecond(currentDate);
         Date inputDate = Utilities.convertStringToDateFormat(date, time);
-
         Long date2 = Utilities.convertDateToMilliSecond(inputDate);
-
         return date1 < date2;
     }
 }

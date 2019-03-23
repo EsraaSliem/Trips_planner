@@ -12,6 +12,7 @@ import java.util.List;
 
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.Note;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 public class HeadNoteAdapter extends RecyclerView.Adapter<HeadNoteAdapter.MyViewHolder> {
 
@@ -37,6 +38,15 @@ public class HeadNoteAdapter extends RecyclerView.Adapter<HeadNoteAdapter.MyView
         Note note = noteList.get(position);
         holder.noteName.setText(note.getNoteName());
         holder.noteDesc.setText(note.getNoteDescription());
+        holder.noteName.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            FireBaseData fireBaseData = new FireBaseData(context);
+            if (isChecked) {
+                note.isNoteStatus();
+                fireBaseData.changeNoteStatus(note);
+            } else {
+                fireBaseData.changeNoteStatus(note);
+            }
+        });
     }
 
     @Override
@@ -55,6 +65,4 @@ public class HeadNoteAdapter extends RecyclerView.Adapter<HeadNoteAdapter.MyView
             noteDesc = view.findViewById(R.id.headNoteItem_Description);
         }
     }
-
-
 }
