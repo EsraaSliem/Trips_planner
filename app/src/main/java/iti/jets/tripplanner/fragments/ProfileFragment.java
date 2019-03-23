@@ -1,7 +1,6 @@
 package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,15 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.interfaces.UserInt;
 import iti.jets.tripplanner.pojos.User;
 import iti.jets.tripplanner.utils.Constatnts;
 import iti.jets.tripplanner.utils.FireBaseData;
@@ -54,12 +49,12 @@ public class ProfileFragment extends Fragment  {
         user = new User();
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        firstNameTxt = (EditText) view.findViewById(R.id.fragment_profile_user_firstName);
-        lastNameTxt = (EditText) view.findViewById(R.id.fragment_profile_user_lastName);
-        emailTxt = (EditText) view.findViewById(R.id.fragment_profile_user_email);
-        passTxt = (EditText) view.findViewById(R.id.fragment_profile_user_pass);
-        image = (CircleImageView) view.findViewById(R.id.fragment_profile_user_img);
-        editBtn = (Button) view.findViewById(R.id.fragment_profile_edit);
+        firstNameTxt = view.findViewById(R.id.fragment_profile_user_firstName);
+        lastNameTxt = view.findViewById(R.id.fragment_profile_user_lastName);
+        emailTxt = view.findViewById(R.id.fragment_profile_user_email);
+        passTxt = view.findViewById(R.id.fragment_profile_user_pass);
+        image = view.findViewById(R.id.fragment_profile_user_img);
+        editBtn = view.findViewById(R.id.fragment_profile_edit);
         Picasso.with(getActivity())
                 .load(Constatnts.uri)
                 .into(image);

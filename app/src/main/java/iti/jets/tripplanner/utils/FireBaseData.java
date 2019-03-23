@@ -301,7 +301,7 @@ public class FireBaseData {
         mRefDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                updateUserEmail(user.getEmail(), user.getPassword());
+//                updateUserEmail(user.getEmail(), user.getPassword());
                 mRefDatabase.child("email").setValue(user.getEmail());
                 mRefDatabase.child("fName").setValue(user.getfName());
                 mRefDatabase.child("lName").setValue(user.getlName());

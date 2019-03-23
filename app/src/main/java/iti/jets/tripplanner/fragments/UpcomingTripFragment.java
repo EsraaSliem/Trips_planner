@@ -23,7 +23,6 @@ import java.util.Iterator;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
@@ -77,10 +76,10 @@ public class UpcomingTripFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Query query = navigatinDrawerActivity.getDatabaseReference()
+        Query query = FireBaseData.mDatabase.getReference()
                 .child("Trips")
                 .orderByKey()
-                .equalTo(navigatinDrawerActivity.getUserId());
+                .equalTo(mAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
