@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,7 +28,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -42,10 +40,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.VolleyConnection;
 
 /**
@@ -56,18 +53,12 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
     //should replaced with  array of history trips
     Context context;
     SupportMapFragment mapFragment;
-    DatabaseReference mRefDatabase;
-    HistoryTripAdapter adapter;
     private GoogleMap mMap;
     private ProgressDialog mProgressDialog;
     private int mRequests;
     private RequestQueue mRequestQueue;
     private List<Trip> trips;
-
-    public HistoryMapFragment() {
-        mRefDatabase = FireBaseData.mDatabase.getReference();
-        trips = new ArrayList<>();
-    }
+    NavigatinDrawerActivity navigatinDrawerActivity;
 
 
     @Override
@@ -75,7 +66,8 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        context = getActivity();
+
+        trips = new ArrayList<>();
         mRequestQueue = VolleyConnection.getRequestQueue(context);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment == null) {
@@ -90,20 +82,23 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void run() {
                 mapFragment.getMapAsync(HistoryMapFragment.this);
-                mProgressDialog = new ProgressDialog(context);
-                mProgressDialog.setMessage("Loading...");
-                mProgressDialog.setIndeterminate(true);
-                mProgressDialog.setCancelable(true);
-                mProgressDialog.show();
             }
-        }, 20);
+        }, 0);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        navigatinDrawerActivity = (NavigatinDrawerActivity) context;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(FireBaseData.mAuth.getUid());
+        Query query = navigatinDrawerActivity.getDatabaseReference().child("Trips").orderByKey()
+                .equalTo(navigatinDrawerActivity.getUserId());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -142,7 +137,6 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    Toast.makeText(context, "MAPP", Toast.LENGTH_SHORT).show();
                                     int colors[] = {Color.RED, Color.BLACK, Color.MAGENTA, Color.DKGRAY, Color.GRAY, Color.MAGENTA, Color.YELLOW, Color.BLUE};
                                     Random rand = new Random();
                                     int randomColor = colors[rand.nextInt(colors.length)];

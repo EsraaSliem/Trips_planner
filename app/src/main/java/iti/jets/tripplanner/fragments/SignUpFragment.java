@@ -1,28 +1,21 @@
 package iti.jets.tripplanner.fragments;
 
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Base64;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,22 +27,15 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.UUID;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.User;
 import iti.jets.tripplanner.utils.Constatnts;
 import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.app.Activity.RESULT_OK;
-import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -72,6 +58,13 @@ public class SignUpFragment extends Fragment {
     User user;
     FireBaseData fireBaseData;
     private Context context;
+    boolean fnameValidateFlag =false;
+    boolean lnameValidateFlag=false;
+    boolean emailValidateFlag=false;
+
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    boolean confirmPasswordFlag=false;
+    boolean passwordFalg =false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,22 +81,165 @@ public class SignUpFragment extends Fragment {
         profileImageView = view.findViewById(R.id.signUp_imageViewProfile);
         edtConfirmPassword = view.findViewById(R.id.signUp_edtConfirmPassword);
         fireBaseData = new FireBaseData(getActivity());
+        edtFirstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtFirstName.getText().toString().trim().length()<=0)
+                {
+                    edtFirstName.setError("please enter a valid name");
+                }
+                else {
+                    fnameValidateFlag =true;
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+        edtLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtLastName.getText().toString().trim().length()<=0)
+                {
+                    edtLastName.setError("please enter a valid name");
+                }
+                else {
+                    lnameValidateFlag =true;
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
 
         view.findViewById(R.id.signUp_btnSingUp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setfName(edtFirstName.getText().toString());
-                user.setlName(edtLastName.getText().toString());
-                user.setPassword(edtPassword.getText().toString());
-                user.setEmail(edtEmail.getText().toString());
-                String confirmPassword = edtConfirmPassword.getText().toString();
-                if (user.getPassword().equals(confirmPassword)) {
-                    uploadImage();
-                } else {
-                    Toast.makeText(getActivity(), "password is not match", Toast.LENGTH_SHORT).show();
+                if(fnameValidateFlag&&lnameValidateFlag&&passwordFalg&&confirmPasswordFlag) {
+                    user.setfName(edtFirstName.getText().toString());
+                    user.setlName(edtLastName.getText().toString());
+                    user.setPassword(edtPassword.getText().toString());
+                    user.setEmail(edtEmail.getText().toString());
+                    user.setImage("");
+                    String confirmPassword = edtConfirmPassword.getText().toString();
+                    if(filePath!=null) {
+                        uploadImage();
+                    }
+                    else
+                    {
+                        fireBaseData.writeNewUser(user);
+                    }
+
                 }
             }
         });
+
+
+
+        edtEmail.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+
+                if (edtEmail.getText().toString().matches(emailPattern) && s.length() > 0)
+                {
+
+                    emailValidateFlag=true;
+                }
+                else
+                {
+                    //Toast.makeText(getApplicationContext(),"Invalid email address",Toast.LENGTH_SHORT).show();
+                    //or
+                    edtEmail.setError("Invalid email");
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // other stuffs
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // other stuffs
+            }
+        });
+
+
+
+
+        edtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtPassword.getText().toString().trim().length()<6)
+                {
+                    edtPassword.setError("Required at least 6 digit");
+                }
+
+
+                else {
+                    passwordFalg=true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        edtConfirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(edtConfirmPassword.getText().toString().trim().length()==0)
+                {
+                    edtConfirmPassword.setError("Required");
+                }
+
+                else if(! edtConfirmPassword.getText().toString().trim().equals(edtPassword.getText().toString().trim()))
+                {
+                    edtConfirmPassword.setError("missmatch password");
+                }
+                else {
+                    confirmPasswordFlag=true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
         view.findViewById(R.id.signUp_btnImageView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,8 +289,7 @@ public class SignUpFragment extends Fragment {
 
 
     private void uploadImage() {
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();

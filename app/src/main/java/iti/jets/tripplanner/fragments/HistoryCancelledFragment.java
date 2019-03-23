@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -23,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.utils.FireBaseData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,22 +34,18 @@ public class HistoryCancelledFragment extends Fragment {
 
     RecyclerView tripRecyclerView;
     Context context;
-    DatabaseReference mRefDatabase;
     HistoryTripAdapter adapter;
     private List<Trip> trips;
     private ConstraintLayout empty_list;
-
-    public HistoryCancelledFragment() {
-        mRefDatabase = FireBaseData.mDatabase.getReference();
-        trips = new ArrayList<>();
-    }
+    NavigatinDrawerActivity navigatinDrawerActivity;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history_cancelled, container, false);
-        context = getActivity();
+
+        trips = new ArrayList<>();
         tripRecyclerView = view.findViewById(R.id.historyCancelledTrip_recyclerView);
         empty_list = view.findViewById(R.id.fragment_history_cancelled_empty);
         if (trips.size() <= 0) {
@@ -67,10 +62,19 @@ public class HistoryCancelledFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        navigatinDrawerActivity = (NavigatinDrawerActivity) context;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(FireBaseData.mAuth.getUid());
+        Query query = navigatinDrawerActivity.getDatabaseReference().child("Trips").orderByKey()
+                .equalTo(navigatinDrawerActivity.getUserId());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
