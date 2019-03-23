@@ -259,7 +259,11 @@ public class AddTripFragment extends Fragment {
             edtTripName.setError("required Field");
         } else if (Utilities.isEditTextEmpty(edtTripDate)) {
             edtTripDate.setError("required Field");
+            Toast.makeText(context, "you must enter Date", Toast.LENGTH_LONG).show();
+
         } else if (Utilities.isEditTextEmpty(edtTripTime)) {
+            Toast.makeText(context, "you must enter Time ", Toast.LENGTH_LONG).show();
+
             edtTripTime.setError("required Field");
         } else if (startPoint == null) {
             Toast.makeText(context, "you must enter start point", Toast.LENGTH_LONG).show();

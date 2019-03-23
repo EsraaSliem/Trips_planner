@@ -56,7 +56,7 @@
             android:enabled="true" />
 
         <receiver
-            android:name=".recievers.MyReceiver"
+            android:name=".recievers.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
