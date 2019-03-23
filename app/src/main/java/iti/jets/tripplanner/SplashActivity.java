@@ -2,6 +2,7 @@ package iti.jets.tripplanner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,10 +22,15 @@ public class SplashActivity extends AppCompatActivity {
     private TextView[] mDots;
     private Button bSlider;
     private int mcurrent;
+    SharedPreferences appPrefrences;
+    Boolean logined=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        appPrefrences= SplashActivity.this.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE);
+        logined=appPrefrences.getBoolean("logined",false);
+
         mSliderViewPager =(ViewPager) findViewById(R.id.splshActivity_viewPagerSlider);
         maDotsLayout=(LinearLayout)findViewById(R.id.splshActivity_dots);
         bSlider=(Button)findViewById(R.id.splashActivity_btnSplash);
@@ -43,6 +49,16 @@ public class SplashActivity extends AppCompatActivity {
         addDotsIndicator(0);
         mSliderViewPager.addOnPageChangeListener(viewListener);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(logined){
+            Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
+            startActivity(intent);
+        }
+    }
+
     public void addDotsIndicator(int position){
         mDots=new TextView[3];
         maDotsLayout.removeAllViews();

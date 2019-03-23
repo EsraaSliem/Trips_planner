@@ -3,6 +3,7 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -55,11 +56,13 @@ public class SignInFragment extends Fragment {
     LoginButton btnFacebook;
     private static final String EMAIL = "email";
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
         context = getActivity();
+
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
