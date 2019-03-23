@@ -2,6 +2,7 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -34,6 +35,8 @@ public class UpcomingTripFragment extends Fragment {
     NavigatinDrawerActivity navigatinDrawerActivity;
     ArrayList<Trip> trips;
     UpComingTripAdapter adapter;
+    private ConstraintLayout empty_list;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,6 +44,11 @@ public class UpcomingTripFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_upcoming_trip, container, false);
         tripRecyclerView = view.findViewById(R.id.recyclerView_upcomingTrip);
         trips = new ArrayList<>();
+        empty_list = view.findViewById(R.id.fragment_upcoming_trip_empty);
+        if (trips.size() <= 0) {
+            empty_list.setVisibility(View.VISIBLE);
+            empty_list.requestLayout();
+        }
         adapter = new UpComingTripAdapter(context, trips);
         tripRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         tripRecyclerView.setItemAnimator(new DefaultItemAnimator());
