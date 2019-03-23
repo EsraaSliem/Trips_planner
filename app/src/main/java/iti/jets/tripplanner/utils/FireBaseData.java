@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -71,9 +70,6 @@ public class FireBaseData {
                     String uId = current_user.getUid();
                     //Firebase Database
                     mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
-//                    user.setUserId(uId);
-//                    mRefDatabase.setValue(user);
-//                    Constatnts.user = user;
 
                     Intent main_intent = new Intent(context, AuthenticationActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -151,7 +147,7 @@ public class FireBaseData {
     }
 
     public void cancelTrip(final Trip trip, int status) {
-        mRefDatabase = mDatabase.getReference("Trips").child(uid);
+        mRefDatabase = mDatabase.getReference("Trips").child(mAuth.getUid());
         Query applesQuery = mRefDatabase.child(trip.getTripId());
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

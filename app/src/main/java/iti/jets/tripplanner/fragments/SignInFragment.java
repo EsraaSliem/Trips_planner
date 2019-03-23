@@ -3,7 +3,6 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -35,6 +34,7 @@ import java.util.Arrays;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -49,7 +49,7 @@ public class SignInFragment extends Fragment {
     EditText edtEmail, edtPassword;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
-    //FireBaseData fireBaseData;
+    FireBaseData fireBaseData;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
     CallbackManager callbackManager;
@@ -65,20 +65,19 @@ public class SignInFragment extends Fragment {
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
-        //fireBaseData = new FireBaseData(getContext());
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         }
         edtPassword = view.findViewById(R.id.signIn_edtPassword);
-//        fireBaseData = new FireBaseData(getActivity());
+        fireBaseData = new FireBaseData(getActivity());
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = edtEmail.getText().toString();
                 String password = edtPassword.getText().toString();
-                //fireBaseData.loginUser(email, password);
+                fireBaseData.loginUser(email, password);
 
             }
         });

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,46 +38,8 @@ public class TripHeadService extends Service {
     String tripId;
     RecyclerView notesRecyclerView;
     CardView notesCardView;
+    List<Note> notes;
 
-    /*
-        @Override
-        public IBinder onBind(Intent intent) {
-            //Inflate the chat head layout we created
-            tripId = intent.getStringExtra(Utilities.TRIP_ID);
-            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference mRefDatabase = mDatabase.getReference();
-
-            List<Note> notes = new ArrayList<>();
-            HeadNoteAdapter adapter = new HeadNoteAdapter(getApplicationContext(), notes);
-            notesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            notesRecyclerView.setAdapter(adapter);
-
-            Query query = mRefDatabase.child("Notes").child(tripId);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Note note = snapshot.getValue(Note.class);
-                        note.setTripId(tripId);
-                        notes.add(note);
-                        adapter.notifyDataSetChanged();
-                        adapter.notifyItemInserted(notes.size());
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-
-            mTripHeadView.findViewById(R.id.tripHead_btnClose).setOnClickListener(v -> {
-                stopService(intent);
-                mWindowManager.removeView(mTripHeadView);
-                mTripHeadView = null;
-            });
-            return null;
-        }
-    */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int i = super.onStartCommand(intent, flags, startId);
@@ -84,7 +47,7 @@ public class TripHeadService extends Service {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mRefDatabase = mDatabase.getReference();
 
-        List<Note> notes = new ArrayList<>();
+        notes = new ArrayList<>();
         HeadNoteAdapter adapter = new HeadNoteAdapter(getApplicationContext(), notes);
         notesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         notesRecyclerView.setAdapter(adapter);
@@ -112,43 +75,7 @@ public class TripHeadService extends Service {
             mWindowManager.removeView(mTripHeadView);
             mTripHeadView = null;
         });
-        return i;
 
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
-        notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
-        notesCardView = mTripHeadView.findViewById(R.id.tripHead_cardView);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    PixelFormat.TRANSLUCENT);
-        } else {
-            params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    PixelFormat.TRANSLUCENT);
-        }
-        params.gravity = Gravity.START | Gravity.TOP;
-        params.x = 0;
-        params.y = 100;
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        mWindowManager.addView(mTripHeadView, params);
 
 //        Drag and move floating view using user's touch action.
         mTripHeadView.findViewById(R.id.tripHead_img).setOnTouchListener(new View.OnTouchListener() {
@@ -188,7 +115,11 @@ public class TripHeadService extends Service {
                         time_end = System.currentTimeMillis();
                         if (time_end - time_start < 300) {
                             if (!isExpand) {
-                                notesCardView.setVisibility(View.VISIBLE);
+                                if (notes.size() > 0) {
+                                    notesCardView.setVisibility(View.VISIBLE);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "no notes added", Toast.LENGTH_SHORT).show();
+                                }
                                 isExpand = !isExpand;
                             } else {
                                 notesCardView.setVisibility(View.GONE);
@@ -203,6 +134,44 @@ public class TripHeadService extends Service {
                 return true;
             }
         });
+
+        return i;
+
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mTripHeadView = LayoutInflater.from(this).inflate(R.layout.trip_head, null);
+        notesRecyclerView = mTripHeadView.findViewById(R.id.tripHead_recyclerView);
+        notesCardView = mTripHeadView.findViewById(R.id.tripHead_cardView);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT);
+        } else {
+            params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT);
+        }
+        params.gravity = Gravity.START | Gravity.TOP;
+        params.x = 0;
+        params.y = 100;
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mWindowManager.addView(mTripHeadView, params);
     }
 
     @Override

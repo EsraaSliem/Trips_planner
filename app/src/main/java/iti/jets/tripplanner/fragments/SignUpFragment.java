@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -63,7 +62,6 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
         context = getActivity();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         user = new User();
@@ -75,19 +73,16 @@ public class SignUpFragment extends Fragment {
         edtConfirmPassword = view.findViewById(R.id.signUp_edtConfirmPassword);
         fireBaseData = new FireBaseData(getActivity());
 
-        view.findViewById(R.id.signUp_btnSingUp).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user.setfName(edtFirstName.getText().toString());
-                user.setlName(edtLastName.getText().toString());
-                user.setPassword(edtPassword.getText().toString());
-                user.setEmail(edtEmail.getText().toString());
-                String confirmPassword = edtConfirmPassword.getText().toString();
-                if (user.getPassword().equals(confirmPassword)) {
-                    uploadImage();
-                } else {
-                    Toast.makeText(getActivity(), "password is not match", Toast.LENGTH_SHORT).show();
-                }
+        view.findViewById(R.id.signUp_btnSingUp).setOnClickListener(v -> {
+            user.setfName(edtFirstName.getText().toString());
+            user.setlName(edtLastName.getText().toString());
+            user.setPassword(edtPassword.getText().toString());
+            user.setEmail(edtEmail.getText().toString());
+            String confirmPassword = edtConfirmPassword.getText().toString();
+            if (user.getPassword().equals(confirmPassword)) {
+                uploadImage();
+            } else {
+                Toast.makeText(getActivity(), "password is not match", Toast.LENGTH_SHORT).show();
             }
         });
         view.findViewById(R.id.signUp_btnImageView).setOnClickListener(new View.OnClickListener() {
