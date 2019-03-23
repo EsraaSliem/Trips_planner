@@ -1,7 +1,6 @@
 package iti.jets.tripplanner.fragments;
 
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -32,35 +31,23 @@ public class AddNoteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_note, container, false);
         addNoteFragment_btnAddNoteFragment = view.findViewById(R.id.addNoteFragment_btnAddNoteFragment);
-        addNoteFragment_btnAddNoteFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        addNoteFragment_btnAddNoteFragment.setOnClickListener(view1 -> {
 
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
-                View mView = getActivity().getLayoutInflater().inflate(R.layout.add_note_layout, null);
-                mBuilder.setTitle("Add Note To Trip");
-                final EditText addNoteName = mView.findViewById(R.id.addNote_edtAddNoteName);
-                final EditText addNoteDescription = mView.findViewById(R.id.addNote_edtAddNoteDescription);
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+            View mView = getActivity().getLayoutInflater().inflate(R.layout.add_note_layout, null);
+            mBuilder.setTitle("Add Note To Trip");
+            final EditText addNoteName = mView.findViewById(R.id.addNote_edtAddNoteName);
+            final EditText addNoteDescription = mView.findViewById(R.id.addNote_edtAddNoteDescription);
 
-                mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        noteName = addNoteName.getText().toString();
-                        noteDescription = addNoteDescription.getText().toString();
-                        dialogInterface.dismiss();
-                    }
-                });
-                mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
-            }
+            mBuilder.setPositiveButton("OK", (dialogInterface, i) -> {
+                noteName = addNoteName.getText().toString();
+                noteDescription = addNoteDescription.getText().toString();
+                dialogInterface.dismiss();
+            });
+            mBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+            mBuilder.setView(mView);
+            AlertDialog dialog = mBuilder.create();
+            dialog.show();
         });
 
         return view;

@@ -3,7 +3,6 @@ package iti.jets.tripplanner.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
@@ -37,21 +36,21 @@ import iti.jets.tripplanner.pojos.User;
 
 
 public class FireBaseData {
+    //Firebase Auth and DataBase
+    static FirebaseUser mCurrentUser;
+    public static FirebaseDatabase mDatabase;
+    static DatabaseReference mRefDatabase;
+    public static FirebaseAuth mAuth;
     private String uid;
     private List<Trip> trips;
     private List<Note> notes;
-    //Firebase Auth and DataBase
-    private FirebaseUser mCurrentUser;
-    private FirebaseDatabase mDatabase;
-    private FirebaseAuth mAuth;
-    private DatabaseReference mRefDatabase;
     private Context context;
 
     //Firebase Connect
     public FireBaseData(Context context) {
         this.context = context;
         if (mDatabase == null) {
-//            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             mDatabase = FirebaseDatabase.getInstance();
             mRefDatabase = mDatabase.getReference();
             mAuth = FirebaseAuth.getInstance();
@@ -61,6 +60,7 @@ public class FireBaseData {
         if (mCurrentUser != null) {
             mRefDatabase = mDatabase.getReference();
             uid = mCurrentUser.getUid();
+            setUserId(uid);
             Toast.makeText(context, "IF " + uid, Toast.LENGTH_SHORT).show();
         }
     }
@@ -113,7 +113,7 @@ public class FireBaseData {
         return task.isSuccessful();
     }
 
-    public void addTrip(Trip trip) {
+    public String addTrip(Trip trip) {
         //User user = new User();
         mRefDatabase = mDatabase.getReference("Trips");
         String key = mRefDatabase.push().getKey();
@@ -134,11 +134,13 @@ public class FireBaseData {
         Toast.makeText(context, "UID " + uid, Toast.LENGTH_SHORT).show();
         mRefDatabase.child(uid).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+        return key;
     }
 
     public void addNote(Note note, Trip trip) {
         mRefDatabase = mRefDatabase.child("Notes").child(trip.getTripId());
         String key = mRefDatabase.push().getKey();
+
         Toast.makeText(context, "Trip Id " + trip.getTripId(), Toast.LENGTH_SHORT).show();
         note.setNoteId(key);
         note.setNoteName(note.getNoteName());
@@ -146,8 +148,35 @@ public class FireBaseData {
         mRefDatabase.child(key).setValue(note);
     }
 
+    public void updateTrip(final Trip trip) {
+        mRefDatabase = mDatabase.getReference("Trips").child(uid).child(trip.getTripId());
+        mRefDatabase.child("tripDate").setValue(trip.getTripDate());
+        mRefDatabase.child("tripName").setValue(trip.getTripName());
+        mRefDatabase.child("tripTime").setValue(trip.getTripTime());
+        mRefDatabase.child("tripType").setValue(trip.getTripType());
+        mRefDatabase.child("startPoint").setValue(trip.getStartPoint());
+        mRefDatabase.child("endPoint").setValue(trip.getEndPoint());
+        Toast.makeText(context, "Update Trip Is Done", Toast.LENGTH_SHORT).show();
+    }
+
+    public void cancelTrip(final Trip trip, int status) {
+        mRefDatabase = mDatabase.getReference("Trips").child(uid);
+        Query applesQuery = mRefDatabase.child(trip.getTripId());
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mRefDatabase = mRefDatabase.child(trip.getTripId());
+                mRefDatabase.child("tripStatues").setValue(status);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void updateNote(final Note note) {
-        //mRefDatabase = mDatabase.getReference("Notes");
         mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId());
         Query applesQuery = mRefDatabase.child(note.getNoteId());
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -155,15 +184,14 @@ public class FireBaseData {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRefDatabase = mRefDatabase.child(note.getNoteId());
                 mRefDatabase.child("noteDescription").setValue(note.getNoteDescription());
-                mRefDatabase.child("noteName").setValue(note.getNoteName());
-//                mRefDatabase.setValue(note).addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        //progress dismiss if success
-//                        Toast.makeText(context, "Update Done", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(context, "Update Failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                mRefDatabase.child("noteName").setValue(note.getNoteName()).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        //progress dismiss if success
+                        Toast.makeText(context, "Update Done", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Update Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Toast.makeText(context, "Note Updated " + note.getNoteId(), Toast.LENGTH_SHORT).show();
             }
 
@@ -177,6 +205,7 @@ public class FireBaseData {
     public void deleteNote(Note note) {
         mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId());
         Query applesQuery = mRefDatabase.child(note.getNoteId()).orderByChild("noteName");
+
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -186,39 +215,26 @@ public class FireBaseData {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
 
     public void deleteTrip(Trip trip) {
         mRefDatabase = mDatabase.getReference("Trips").child(getUserId());
-        Query applesQuery = mRefDatabase.child(trip.getTripId()).orderByChild("tripName");
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-
-        });
+        mRefDatabase.child(trip.getTripId()).getRef().removeValue();
     }
 
-    public void getNotes(final RecyclerView recyclerView, Trip trip) {
+    public void getNotes(final RecyclerView recyclerView, String tripId) {
         notes = new ArrayList<>();
-        Query query = mRefDatabase.child("Notes").child(trip.getTripId());
+        Query query = mRefDatabase.child("Notes").child(tripId);
+        mRefDatabase.keepSynced(true);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Note note = snapshot.getValue(Note.class);
-                    note.setTripId(trip.getTripId());
-                    Log.e("Note ID", note.getNoteId() + "  " + note.getNoteName());
+                    note.setTripId(tripId);
                     notes.add(note);
                 }
                 NoteAdapter adapter = new NoteAdapter(context, notes);
@@ -237,13 +253,16 @@ public class FireBaseData {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("TAG", "onDataChange: getTrip");
+
                 Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+
                 if (iterator.hasNext()) {
                     DataSnapshot next = iterator.next();
-                    Iterator<DataSnapshot> iterator1 = next.getChildren().iterator();
-                    while (iterator1.hasNext()) {
-                        Trip trip = iterator1.next().getValue(Trip.class);
-                        if (trip.getTripStatues() == status) {
+                    trips.clear();
+                    for (DataSnapshot dataSnapshot1 : next.getChildren()) {
+                        Trip trip = dataSnapshot1.getValue(Trip.class);
+                        if (trip != null && trip.getTripStatues() == status) {
                             trips.add(trip);
                         }
                     }

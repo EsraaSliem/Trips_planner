@@ -1,11 +1,14 @@
 package iti.jets.tripplanner.adapters;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,25 +24,51 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
-import iti.jets.tripplanner.AlertAdapterCommunicator;
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.fragments.EditTripFragment;
 import iti.jets.tripplanner.fragments.ShowNotesFragment;
+import iti.jets.tripplanner.interfaces.AlertAdapterCommunicator;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.TripHeadService;
+import iti.jets.tripplanner.utils.Utilities;
 
 public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapter.MyViewHolder> implements AlertAdapterCommunicator {
     public static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 100;
     LayoutInflater inflater;
     View view;
     Trip trip;
+    FragmentManager manager;
+    FragmentTransaction transaction;
+    TripHeadService mService;
+    boolean mBound = false;
     private Context context;
     private List<Trip> tripList;
     private View alertLayout;
     private String noteDescription, noteName;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            TripHeadService binder = (TripHeadService) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+//            mBound = false;
+        }
+    };
 
     public UpComingTripAdapter(Context context) {
         this.context = context;
@@ -54,36 +82,8 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     @Override
     public UpComingTripAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.upcoming_trip_card, parent, false);
+                .inflate(R.layout.upcoming_trip_item, parent, false);
         return new MyViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
-        trip = tripList.get(position);
-        holder.txtTitle.setText(trip.getTripName());
-        holder.txtStartPoint.setText(trip.getStartPoint());
-        holder.txtEndPoint.setText(trip.getEndPoint());
-        holder.txtDate.setText(trip.getTripDate());
-        holder.txtTime.setText(trip.getTripTime());
-        holder.btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup(v);
-            }
-        });
-        holder.btnAddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTrip();
-            }
-        });
-        holder.btnStartTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMap();
-            }
-        });
     }
 
     private void addTrip() {
@@ -98,7 +98,6 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
             public void onClick(DialogInterface dialog, int which) {
                 final FireBaseData fireBaseData = new FireBaseData(context);
                 final Note note = new Note();
-//                        String key = trip.getTripId();
                 trip.setTripId(trip.getTripId());
                 noteName = addNoteName.getText().toString();
                 noteDescription = addNoteDescription.getText().toString();
@@ -112,14 +111,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (view != null) {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    if (parent != null) {
-                        parent.removeAllViews();
-                        dialog.cancel();
-                        dialog.dismiss();
-                    }
-                }
+                dialog.dismiss();
             }
         });
         AlertDialog dialog = alert.create();
@@ -131,32 +123,41 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.upcoming_card_menu, popup.getMenu());
         // This activity implements OnMenuItemClickListener
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.upComingMenu_edit:
-
-                        return true;
-                    case R.id.upComingMenu_cancel:
-
-                        return true;
-                    case R.id.upComingMenu_remove:
-                        FireBaseData fireBaseData = new FireBaseData(context);
-                        fireBaseData.deleteTrip(trip);
-                        return true;
-                    case R.id.upComingMenu_showNotes:
-                        ShowNotesFragment showNotesFragment = new ShowNotesFragment();
-                        showNotesFragment.sendTripId(trip);
-                        FragmentManager manager = ((AppCompatActivity) context).getSupportFragmentManager();
-                        FragmentTransaction transaction = manager.beginTransaction();
-                        transaction.replace(R.id.mainContainerView, showNotesFragment, null);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        return true;
-                    default:
-                        return false;
-                }
+        popup.setOnMenuItemClickListener(item -> {
+            FireBaseData fireBaseData;
+            switch (item.getItemId()) {
+                case R.id.upComingMenu_edit:
+                    EditTripFragment editTripFragment = new EditTripFragment();
+                    editTripFragment.sendTripId(trip);
+                    manager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    transaction = manager.beginTransaction();
+                    transaction.replace(R.id.mainContainerView, editTripFragment, "edit fragment");
+                    transaction.addToBackStack("edit fragment");
+                    transaction.commit();
+                    return true;
+                case R.id.upComingMenu_cancel:
+                    fireBaseData = new FireBaseData(context);
+                    //cancel Alarm
+                    //Utilites.cancelAlarm(context, trip);
+                    Utilities.alertMessage(context, trip, "Cancel", fireBaseData);
+                    //fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
+                    return true;
+                case R.id.upComingMenu_remove:
+                    deleteTrip(trip);
+                    //cancel Alarm
+                    //Utilites.cancelAlarm(context, trip);
+                    return true;
+                case R.id.upComingMenu_showNotes:
+                    ShowNotesFragment showNotesFragment = new ShowNotesFragment();
+                    showNotesFragment.sendTripId(trip);
+                    manager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    transaction = manager.beginTransaction();
+                    transaction.replace(R.id.mainContainerView, showNotesFragment, null);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                    return true;
+                default:
+                    return false;
             }
         });
         popup.show();
@@ -168,6 +169,43 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         return tripList.size();
     }
 
+    @Override
+    public void onBindViewHolder(UpComingTripAdapter.MyViewHolder holder, int position) {
+        trip = tripList.get(position);
+        //validate up comming trip to set Alarm For it
+        if (trip != null) {
+            if (isTripComming(trip)) {
+                Utilities.startAlert(trip, context);
+            }
+            holder.txtTitle.setText(trip.getTripName());
+            holder.txtStartPoint.setText(trip.getStartPoint());
+            holder.txtEndPoint.setText(trip.getEndPoint());
+            holder.txtDate.setText(trip.getTripDate());
+            holder.txtTime.setText(trip.getTripTime());
+            holder.btnMenu.setOnClickListener(v -> showPopup(v));
+            holder.btnAddNote.setOnClickListener(v -> addTrip());
+            holder.btnStartTrip.setOnClickListener(v -> {
+//            FireBaseData fireBaseData = new FireBaseData(context);
+//            fireBaseData.cancelTrip(trip, Trip.STATUS_DONE);
+                openMap();
+            });
+
+        }
+
+    }
+
+    private void deleteTrip(Trip trip) {
+        FireBaseData fireBaseData = new FireBaseData(context);
+        Utilities.alertMessage(context, trip, "Delete", fireBaseData);
+    }
+
+    @Override
+    public void callOpenMap(Trip trip1) {
+        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        context.startActivity(intent);
+    }
+
     private void openMap() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(context)) {
 
@@ -177,19 +215,25 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                     Uri.parse("package:" + context.getPackageName()));
             ((AppCompatActivity) context).startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
         } else {
-            context.startService(new Intent(context, TripHeadService.class));
+            Intent intent = new Intent(context, TripHeadService.class);
+            intent.putExtra(Utilities.TRIP_ID, trip.getTripId());
+
+            context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
             String uri = "http://maps.google.com/maps?saddr=" + trip.getStartPoint() + "&daddr=" + trip.getEndPoint();
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            context.startActivity(intent);
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
         }
 
     }
 
-    @Override
-    public void callOpenMap(Trip trip1) {
-        String uri = "http://maps.google.com/maps?saddr=" + trip1.getStartPoint() + "&daddr=" + trip1.getEndPoint();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        context.startActivity(intent);
+    public boolean isTripComming(Trip trip) {
+        Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
+        Date tripDate = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+        Long date1 = Utilities.convertDateToMilliSecond(currentDate);
+        if (tripDate != null) {
+            Long date2 = Utilities.convertDateToMilliSecond(tripDate);
+            return date1 < date2;
+        } else return false;
+
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

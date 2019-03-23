@@ -1,7 +1,7 @@
-package iti.jets.tripplanner;
+package iti.jets.tripplanner.interfaces;
 
 import iti.jets.tripplanner.pojos.Trip;
 
 public interface AlertAdapterCommunicator {
-    public void callOpenMap(Trip trip);
+    void callOpenMap(Trip trip);
 }

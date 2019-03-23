@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,29 +33,35 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     FragmentTransaction fragmentTransaction;
     Context context;
 
+    //declare fragments
+    UpcomingTripFragment upcomingTripFragment;
+    HistoryFragment historyFragment;
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_navigatin_drawer);
 
+        fragmentManager = getSupportFragmentManager();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         context = this;
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
+        if (upcomingTripFragment == null) {
+            upcomingTripFragment = new UpcomingTripFragment();
+        }
+        addFragment(upcomingTripFragment, "UpcomingTripFragment");
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.mainContainerView, new UpcomingTripFragment(), "Frag_One_tag");
-        fragmentTransaction.commit();
+        AddTripFragment addTripFragment = new AddTripFragment();
+        fab.setOnClickListener(view -> {
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
+            fragmentTransaction.commit();
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("One");
-                fragmentTransaction.add(R.id.mainContainerView, new AddTripFragment(), "Frag_One_tag");
-                fragmentTransaction.commit();
-            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -98,51 +103,51 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        Fragment fragment = null;
-        Class fragmentClass = null;
-        boolean isToFragment = true;
 
         switch (item.getItemId()) {
             case R.id.nav_profile:
-                fragmentClass = ProfileFragment.class;
+
                 break;
             case R.id.nav_upComing:
-                fragmentClass = UpcomingTripFragment.class;
+                if (upcomingTripFragment == null)
+                    upcomingTripFragment = new UpcomingTripFragment();
+                addFragment(upcomingTripFragment, "UpcomingTripFragment");
                 break;
             case R.id.nav_history:
-                fragmentClass = HistoryFragment.class;
+                if (historyFragment == null)
+                    historyFragment = new HistoryFragment();
+                addFragment(historyFragment, "HistoryFragment");
                 break;
             case R.id.nav_setting:
-                fragmentClass = ShowNotesFragment.class;
+
                 break;
             case R.id.nav_about:
-                fragmentClass = ShowNotesFragment.class;
+
                 break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(context, AuthenticationActivity.class);
                 startActivity(intent);
-                isToFragment = false;
                 finish();
                 break;
-        }
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (isToFragment) {
-            // Insert the fragment by replacing any existing fragment
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.mainContainerView, fragment, "Frag_One_tag")
-                    .addToBackStack("Container").commit();
-
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void addFragment(Fragment fragment, String fragmentTag) {
+
+        Fragment fragmentByTag = fragmentManager.findFragmentByTag(fragmentTag);
+        if (fragmentByTag != null) {
+//            fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.remove(fragmentByTag).commit();
+            fragmentManager.popBackStackImmediate(fragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainContainerView, fragment, fragmentTag)
+                .addToBackStack(fragmentTag)
+                .commit();
     }
 
     @Override

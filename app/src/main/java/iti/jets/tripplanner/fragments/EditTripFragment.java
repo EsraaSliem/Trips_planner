@@ -1,11 +1,14 @@
 package iti.jets.tripplanner.fragments;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,55 +30,71 @@ import java.util.Calendar;
 import java.util.Date;
 
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.interfaces.ObjectCarrier;
 import iti.jets.tripplanner.pojos.Trip;
+import iti.jets.tripplanner.recievers.MyReceiver;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.Utilities;
 
+import static android.content.Context.ALARM_SERVICE;
 
-public class AddTripFragment extends Fragment {
+public class EditTripFragment extends Fragment implements ObjectCarrier {
+
 
     private static View view;
+    Trip trip;
     private Context context;
     private String mAM_PM;
     private EditText edtTripName;
     private EditText edtTripDate;
     private EditText edtTripTime;
     private Spinner spnTripType;
-    private Button btnAddTrip;
+    private Button btnUpdateTrip;
     private ImageButton btnTripDate, btnTripTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private String tripDate;
     private String tripTime;
     private String startPoint;
     private String endPoint;
+    //private Date tripDateDateObject;
 
+    public EditTripFragment() {
+        // Required empty public constructor
+    }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_add_trip, container, false);
+            view = inflater.inflate(R.layout.fragment_edit_trip, container, false);
         }
-
         context = getActivity();
 
-        edtTripName = view.findViewById(R.id.addTripFragment_edtTripName);
-        edtTripDate = view.findViewById(R.id.addTripFragment_edtTripDate);
-        edtTripTime = view.findViewById(R.id.addTripFragment_edtTripTime);
-        spnTripType = view.findViewById(R.id.addTripFragment_spnTripType);
+        edtTripName = view.findViewById(R.id.editTripFragment_edtTripName);
+        edtTripDate = view.findViewById(R.id.editTripFragment_edtTripDate);
+        edtTripTime = view.findViewById(R.id.editTripFragment_edtTripTime);
+        spnTripType = view.findViewById(R.id.editTripFragment_spnTripType);
 
-        btnTripTime = view.findViewById(R.id.addTripFragment_btnTripTime);
-        btnTripDate = view.findViewById(R.id.addTripFragment_btnTripDate);
-        btnAddTrip = view.findViewById(R.id.addTripFragment_btnAddTrip);
+        edtTripName.setText(trip.getTripName());
+        edtTripDate.setText(trip.getTripDate());
+        //edtTripTime.setText(trip.getTripTime());
+
+        btnTripDate = view.findViewById(R.id.editTripFragment_btnTripDate);
+        btnTripTime = view.findViewById(R.id.editTripFragment_btnTripTime);
+        btnUpdateTrip = view.findViewById(R.id.editTripFragment_btnUpdateTrip);
 
         ArrayAdapter<? extends String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.addTripFragment_spnTripType));
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnTripType.setAdapter(adapter);
 
+        spnTripType.setAdapter(adapter);
+        if (trip.getTripType() == Trip.TYPE_ONE_DIRECTION) {
+            spnTripType.setSelection(0);
+        } else {
+            spnTripType.setSelection(1);
+        }
 
         //Trip_Date
         btnTripDate.setOnClickListener(v -> {
@@ -116,22 +135,21 @@ public class AddTripFragment extends Fragment {
             timePickerDialog.show();
         });
 
-        btnAddTrip.setOnClickListener(v -> addTrip() );
-
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
-                ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_startPoint);
-
+                ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.editTripFragment_startPoint);
+        autocompleteStartPoint.setText(trip.getStartPoint());
         AutocompleteFilter filter = new AutocompleteFilter.Builder()
                 .setCountry("EG")
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
                 .build();
         autocompleteStartPoint.setFilter(filter);
         autocompleteStartPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-
-
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 startPoint = place.getName().toString();
+//                if (startPoint.isEmpty()) {
+//                    startPoint = trip.getEndPoint();
+//                }
                 Log.i("jh", place.getName().toString());
             }
 
@@ -140,16 +158,18 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
-
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
-                ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_entPoint);
-
+                ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.editTripFragment_entPoint);
+        autocompleteEndPoint.setText(trip.getEndPoint());
         autocompleteEndPoint.setFilter(filter);
         autocompleteEndPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 endPoint = place.getName().toString();
+//                if (endPoint.isEmpty()) {
+//                    endPoint = trip.getEndPoint();
+//                }
             }
 
             @Override
@@ -157,11 +177,20 @@ public class AddTripFragment extends Fragment {
                 Log.e("error", status.toString());
             }
         });
+        if (startPoint == null || endPoint == null) {
+            startPoint = trip.getStartPoint();
+            endPoint = trip.getEndPoint();
+        }
+
+        btnUpdateTrip.setOnClickListener(v -> {
+            updateTrip();
+            getActivity().getSupportFragmentManager().popBackStack("edit fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        });
         return view;
     }
 
 
-    private void addTrip() {
+    private void updateTrip() {
         if (Utilities.isEditTextEmpty(edtTripName)) {
             edtTripName.setError("required Field");
         } else if (Utilities.isEditTextEmpty(edtTripDate)) {
@@ -176,8 +205,8 @@ public class AddTripFragment extends Fragment {
             if (!isValidDateAndTime(edtTripDate.getText().toString(), edtTripTime.getText().toString())) {
                 Toast.makeText(context, "you must enter valid date and time", Toast.LENGTH_LONG).show();
             } else {
-                final FireBaseData fireBaseData = new FireBaseData(context);
-                Trip trip = new Trip();
+                FireBaseData fireBaseData = new FireBaseData(context);
+                //trip = new Trip();
                 trip.setTripName(edtTripName.getText().toString());
                 trip.setTripTime(tripTime);
                 trip.setTripDate(tripDate);
@@ -186,20 +215,34 @@ public class AddTripFragment extends Fragment {
                 trip.setEndPoint(endPoint);
                 if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
                     trip.setTripType(Trip.TYPE_ONE_DIRECTION);
+                    Log.i("TAG", "updateTrip: " + spnTripType.getSelectedItemPosition());
                 } else {
                     trip.setTripType(Trip.TYPE_ROUND_DIRECTION);
                 }
-                fireBaseData.addTrip(trip);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.mainContainerView, new UpcomingTripFragment());
-                fragmentTransaction.addToBackStack("NoteTrip");
-                fragmentTransaction.commit();
-                //Start Listning for BroadCast Reciever
+                fireBaseData.updateTrip(trip);
+
+                //Start Listening for BroadCast Receiver
+                //tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
+                //startAlert(tripDateDateObject, trip);
                 Utilities.startAlert(trip, getContext());
             }
         }
     }
 
+    //Start Timer To broadCast Receiver
+    public void startAlert(Date date, Trip trip) {
+
+        Toast.makeText(getContext(), "your trip Starts At " + date, Toast.LENGTH_LONG).show();
+        long millis = date.getTime();
+        Intent intent = new Intent(getActivity(), MyReceiver.class);
+        intent.putExtra(Utilities.TRIP_OBJECT, trip);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getActivity().getApplicationContext(), 234324243, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
+        Toast.makeText(getContext(), "current " + System.currentTimeMillis() + " seconds",
+                Toast.LENGTH_LONG).show();
+    }
 
     private boolean isValidDateAndTime(String date, String time) {
         Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());
@@ -209,5 +252,11 @@ public class AddTripFragment extends Fragment {
         Long date2 = Utilities.convertDateToMilliSecond(inputDate);
 
         return date1 < date2;
+    }
+
+    public void sendTripId(Trip trip) {
+        this.trip = new Trip();
+        this.trip.setTripId(trip.getTripId());
+        this.trip = trip;
     }
 }

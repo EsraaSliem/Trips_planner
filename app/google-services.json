@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "816442432158-advomqirbnaf93krfr8qhvkmg4snhf1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "iti.jets.tripplanner",
+            "certificate_hash": "516e4a25ae30aefabd1cc4842e432f982203c826"
+          }
+        },
+        {
           "client_id": "816442432158-lmuj65k1gj6pa3qpgnea1le44p5oogl3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816442432158-45hahcuoo4c1blqucgg1au2jv56c2scs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
