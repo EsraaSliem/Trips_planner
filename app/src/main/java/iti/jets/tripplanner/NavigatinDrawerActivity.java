@@ -3,7 +3,6 @@ package iti.jets.tripplanner;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
-import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.HistoryFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 import iti.jets.tripplanner.utils.TripHeadService;
@@ -48,16 +46,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         context = this;
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-
-        AddTripFragment addTripFragment = new AddTripFragment();
-        fab.setOnClickListener(view -> {
-            fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
-            fragmentTransaction.commit();
-
-        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

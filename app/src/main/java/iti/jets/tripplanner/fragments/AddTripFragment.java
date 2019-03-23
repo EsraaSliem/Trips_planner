@@ -45,7 +45,6 @@ public class AddTripFragment extends Fragment {
     private Spinner spnTripType;
     private Button btnAddTrip;
     private ImageButton btnTripDate, btnTripTime;
-    //*********
     String selectedItem;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private ImageButton btnTripDate2, btnTripTime2;
@@ -60,6 +59,12 @@ public class AddTripFragment extends Fragment {
     private EditText editTripTime2;
     private LinearLayout timeContainer;
     private LinearLayout dateContainer;
+    //longitude and latitude
+    private double startPointLongitude;
+    private double startPointLatitude;
+    private double endPointLongitude;
+    private double endPointLatitude;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -206,7 +211,7 @@ public class AddTripFragment extends Fragment {
         });
         //****************************************
 
-        btnAddTrip.setOnClickListener(v -> addTrip() );
+        btnAddTrip.setOnClickListener(v -> addTrip());
 
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
                 ((AppCompatActivity) context).getFragmentManager().findFragmentById(R.id.addTripFragment_startPoint);
@@ -222,6 +227,8 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 startPoint = place.getName().toString();
+                startPointLongitude = place.getLatLng().longitude;
+                startPointLatitude = place.getLatLng().latitude;
                 Log.i("jh", place.getName().toString());
             }
 
@@ -240,6 +247,8 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 endPoint = place.getName().toString();
+                endPointLongitude = place.getLatLng().longitude;
+                endPointLatitude = place.getLatLng().latitude;
             }
 
             @Override
@@ -291,8 +300,11 @@ public class AddTripFragment extends Fragment {
 
                 trip.setTripStatues(Trip.STATUS_UP_COMING);
                 trip.setStartPoint(startPoint);
+                trip.setStartPointlongitude(startPointLongitude);
+                trip.setStartPointlatitude(startPointLatitude);
+                trip.setEndPointlongitude(endPointLongitude);
+                trip.setEndPointlatitude(endPointLatitude);
                 trip.setEndPoint(endPoint);
-
                 if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
                     trip.setTripType(Trip.TYPE_ONE_DIRECTION);
                 } else {

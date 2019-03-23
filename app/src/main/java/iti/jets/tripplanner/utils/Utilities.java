@@ -52,8 +52,6 @@ public class Utilities {
             newDate = format.parse(date + " " + time);
             long d = newDate.getTime();
             long dd = System.currentTimeMillis();
-            Log.i("Date         : ", "" + newDate.getTime());
-            Log.i("Current Date : ", "" + System.currentTimeMillis());
             return newDate;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -72,31 +70,21 @@ public class Utilities {
     }
 
     //Start Timer To broadCast Receiver
-    public static void startAlert(Trip trip, Context context, int flag) {
-        Date date = null;
-        if (flag == 0) {
-            date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
-        } else if (flag == 1) {
-            date = Utilities.convertStringToDateFormat(trip.getReturnDate(), trip.getReturnTime());
-        }
+    public static void startAlert(Trip trip, Context context) {
+        Date date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
 
-        Toast.makeText(context, "your trip Starts At " + date, Toast.LENGTH_LONG).show();
-        Toast.makeText(context, "your trip trip date  " + trip.getTripDate() + trip.getTripTime(), Toast.LENGTH_LONG).show();
         long millis = date.getTime();
         Intent intent = new Intent(context, MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
-        int pindingIntentId = (int) Utilities.convertDateToMilliSecond(Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
+        int pendingIntentId = (int) Utilities.convertDateToMilliSecond(
+                Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context.getApplicationContext(), pindingIntentId, intent, PendingIntent.FLAG_IMMUTABLE);
-        trip.setPindingIntentId(pindingIntentId);
+                context.getApplicationContext(), pendingIntentId, intent, PendingIntent.FLAG_IMMUTABLE);
+        trip.setPendingIntentId(pendingIntentId);
 
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
-        Toast.makeText(context, "current " + System.currentTimeMillis() + " seconds",
-                Toast.LENGTH_LONG).show();
-        Toast.makeText(context, "Date " + millis + " seconds",
-                Toast.LENGTH_LONG).show();
         ComponentName receiver = new ComponentName(context.getApplicationContext(), MyReceiver.class);
         PackageManager pm = context.getApplicationContext().getPackageManager();
         pm.setComponentEnabledSetting(receiver,
@@ -144,7 +132,7 @@ public class Utilities {
         Intent cancelServiceIntent = new Intent(context.getApplicationContext(), MyReceiver.class);
         PendingIntent cancelServicePendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(),
-                trip.getPindingIntentId(), // integer constant used to identify the service
+                trip.getPendingIntentId(), // integer constant used to identify the service
                 cancelServiceIntent,
                 PendingIntent.FLAG_IMMUTABLE //no FLAG needed for a service cancel
         );

@@ -2,7 +2,9 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +34,15 @@ public class UpcomingTripFragment extends Fragment {
 
         FireBaseData fireBaseData = new FireBaseData(context);
         fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_UP_COMING);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+
+        AddTripFragment addTripFragment = new AddTripFragment();
+        fab.setOnClickListener(v -> {
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
+            fragmentTransaction.commit();
+        });
         return view;
     }
 

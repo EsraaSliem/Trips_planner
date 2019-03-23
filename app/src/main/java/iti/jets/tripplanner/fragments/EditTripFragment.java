@@ -56,11 +56,6 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
     private String tripTime;
     private String startPoint;
     private String endPoint;
-    //private Date tripDateDateObject;
-
-    public EditTripFragment() {
-        // Required empty public constructor
-    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -232,7 +227,6 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
     //Start Timer To broadCast Receiver
     public void startAlert(Date date, Trip trip) {
 
-        Toast.makeText(getContext(), "your trip Starts At " + date, Toast.LENGTH_LONG).show();
         long millis = date.getTime();
         Intent intent = new Intent(getActivity(), MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
@@ -240,8 +234,6 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
                 getActivity().getApplicationContext(), 234324243, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
-        Toast.makeText(getContext(), "current " + System.currentTimeMillis() + " seconds",
-                Toast.LENGTH_LONG).show();
     }
 
     private boolean isValidDateAndTime(String date, String time) {

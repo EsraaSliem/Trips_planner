@@ -9,7 +9,17 @@ public class Trip implements Parcelable {
     public static final int STATUS_CANCELLED = -1;
     public static final int TYPE_ONE_DIRECTION = 1;
     public static final int TYPE_ROUND_DIRECTION = 2;
+    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
+        @Override
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
 
+        @Override
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
     private String tripId;
     private String tripName;
     private String tripDate;
@@ -49,6 +59,11 @@ public class Trip implements Parcelable {
             return new Trip[size];
         }
     };
+    private int pendingIntentId;
+    private double startPointlongitude;
+    private double startPointlatitude;
+    private double endPointlongitude;
+    private double endPointlatitude;
 
     public Trip(Parcel in) {
         tripId = in.readString();
@@ -129,12 +144,44 @@ public class Trip implements Parcelable {
         this.tripStatues = tripStatues;
     }
 
-    public int getPindingIntentId() {
-        return pindingIntentId;
+    public int getPendingIntentId() {
+        return pendingIntentId;
     }
 
-    public void setPindingIntentId(int pindingIntentId) {
-        this.pindingIntentId = pindingIntentId;
+    public void setPendingIntentId(int pendingIntentId) {
+        this.pendingIntentId = pendingIntentId;
+    }
+
+    public double getStartPointlongitude() {
+        return startPointlongitude;
+    }
+
+    public void setStartPointlongitude(double startPointlongitude) {
+        this.startPointlongitude = startPointlongitude;
+    }
+
+    public double getStartPointlatitude() {
+        return startPointlatitude;
+    }
+
+    public void setStartPointlatitude(double startPointlatitude) {
+        this.startPointlatitude = startPointlatitude;
+    }
+
+    public double getEndPointlongitude() {
+        return endPointlongitude;
+    }
+
+    public void setEndPointlongitude(double endPointlongitude) {
+        this.endPointlongitude = endPointlongitude;
+    }
+
+    public double getEndPointlatitude() {
+        return endPointlatitude;
+    }
+
+    public void setEndPointlatitude(double endPointlatitude) {
+        this.endPointlatitude = endPointlatitude;
     }
 
 
@@ -144,14 +191,19 @@ public class Trip implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(tripId);
-        parcel.writeString(tripName);
-        parcel.writeString(tripDate);
-        parcel.writeString(tripTime);
-        parcel.writeString(startPoint);
-        parcel.writeString(endPoint);
-        parcel.writeInt(tripType);
-        parcel.writeInt(tripStatues);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(tripId);
+        dest.writeString(tripName);
+        dest.writeString(tripDate);
+        dest.writeString(tripTime);
+        dest.writeString(startPoint);
+        dest.writeString(endPoint);
+        dest.writeInt(tripType);
+        dest.writeInt(tripStatues);
+        dest.writeInt(pendingIntentId);
+        dest.writeDouble(startPointlongitude);
+        dest.writeDouble(startPointlatitude);
+        dest.writeDouble(endPointlongitude);
+        dest.writeDouble(endPointlatitude);
     }
 }

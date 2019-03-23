@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Trip Planner</string>
+    <string name="app_name">3a Eseka</string>
     <string name="facebook_app_id">700391843711254</string>
     <string name="fb_login_protocol_scheme">fb700391843711254</string>
-
+    <string name="google_maps_key">AIzaSyAluiqmBBsMrnJnpodYT7BPG_MYjZrihfE</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="addTripFragment_tripName">Trip Name</string>
     <string name="addTripFragment_startPoint">Start Point</string>
@@ -11,7 +11,6 @@
     <string name="addTripFragment_timeTrip">Return Time</string>
     <string name="addTripFragment__tripType">Trip Type</string>
     <string name="addTripFragment__addTrip">Add Trip</string>
-
     <string-array name="addTripFragment_spnTripType">
         <item>One Direction</item>
         <item>Round Direction</item>
@@ -23,7 +22,6 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="profile">Profile</string>
     <string name="up_coming">Up coming</string>
     <string name="history">History</string>
     <string name="setting">Setting</string>
@@ -39,8 +37,6 @@
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
-    <string name="done">Done</string>
-    <string name="cancelled">Cancelled</string>
     <string name="cancel">Cancel</string>
     <string name="date">Date :</string>
     <string name="start">Start</string>
@@ -52,9 +48,9 @@
     <string name="from">From :</string>
     <string name="title">Title</string>
     <string name="showNote">Show Notes</string>
-    <string name="duration">Duration</string>
     <string name="note_title">Note Title</string>
     <string name="editTripFragment_update_trip">Update Trip</string>
     <string name="update_note">Update Note</string>
     <string name="renew">renew</string>
+    <string name="google_key_display"><![CDATA[&key=AIzaSyC4X5tDaquLpuYFDXRsxYAxcl26I1E_KSs]]></string>
 </resources>
