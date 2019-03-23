@@ -57,6 +57,9 @@ public class HistoryDoneFragment extends Fragment {
         if (trips.size() <= 0) {
             empty_list.setVisibility(View.VISIBLE);
             empty_list.requestLayout();
+        } else {
+            empty_list.setVisibility(View.GONE);
+            empty_list.requestLayout();
         }
         adapter = new HistoryTripAdapter(context, trips);
         tripRecyclerView.setAdapter(adapter);
@@ -81,6 +84,8 @@ public class HistoryDoneFragment extends Fragment {
                         if (trip != null && trip.getTripStatues() == Trip.STATUS_DONE) {
                             trips.add(trip);
                             adapter.notifyDataSetChanged();
+                            empty_list.setVisibility(View.GONE);
+                            empty_list.requestLayout();
                         }
                     }
                 }
