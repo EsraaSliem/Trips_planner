@@ -25,6 +25,10 @@ public class Utilities {
     public static final String ALERT_MESSAGE = "alert message";
     public static final String TRIP_OBJECT = "trip";
     public static final String TRIP_ID = "tripId";
+    public static final int TRIP_REMINDER = 0;
+    public static final int RETURN_REMINDER = 1;
+
+
 
     public static String getCurrentTime() {
         Date date = new Date();
@@ -65,14 +69,20 @@ public class Utilities {
     }
 
     //Start Timer To broadCast Receiver
-    public static void startAlert(Trip trip, Context context) {
-        Date date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
-
+    public static void startAlert(Trip trip, Context context, int flag) {
+        int pendingIntentId = (int) Utilities.convertDateToMilliSecond(
+                Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
+        Date date = null;
+        if (flag == TRIP_REMINDER) {
+            date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+        } else if (flag == RETURN_REMINDER) {
+            pendingIntentId += 1;
+            date = Utilities.convertStringToDateFormat(trip.getReturnDate(), trip.getReturnTime());
+        }
         long millis = date.getTime();
         Intent intent = new Intent(context, MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
-        int pendingIntentId = (int) Utilities.convertDateToMilliSecond(
-                Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(), pendingIntentId, intent, PendingIntent.FLAG_IMMUTABLE);
         trip.setPendingIntentId(pendingIntentId);

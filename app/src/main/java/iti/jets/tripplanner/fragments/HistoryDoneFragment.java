@@ -3,6 +3,7 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,8 @@ public class HistoryDoneFragment extends Fragment {
     DatabaseReference mRefDatabase;
     HistoryTripAdapter adapter;
     private List<Trip> trips;
+    private ConstraintLayout empty_list;
+
 
     public HistoryDoneFragment() {
         mRefDatabase = FireBaseData.mDatabase.getReference();
@@ -50,6 +53,11 @@ public class HistoryDoneFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history_done, container, false);
         context = getActivity();
         tripRecyclerView = view.findViewById(R.id.historyDoneTrip_recyclerView);
+        empty_list = view.findViewById(R.id.fragment_history_done_empty);
+        if (trips.size() <= 0) {
+            empty_list.setVisibility(View.VISIBLE);
+            empty_list.requestLayout();
+        }
         adapter = new HistoryTripAdapter(context, trips);
         tripRecyclerView.setAdapter(adapter);
         tripRecyclerView.setLayoutManager(new LinearLayoutManager(context));

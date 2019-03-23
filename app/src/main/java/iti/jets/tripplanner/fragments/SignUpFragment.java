@@ -76,7 +76,6 @@ public class SignUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
         context = getActivity();
         storage = FirebaseStorage.getInstance();
@@ -99,10 +98,7 @@ public class SignUpFragment extends Fragment {
                 user.setEmail(edtEmail.getText().toString());
                 String confirmPassword = edtConfirmPassword.getText().toString();
                 if (user.getPassword().equals(confirmPassword)) {
-
                     uploadImage();
-
-
                 } else {
                     Toast.makeText(getActivity(), "password is not match", Toast.LENGTH_SHORT).show();
                 }
@@ -111,7 +107,6 @@ public class SignUpFragment extends Fragment {
         view.findViewById(R.id.signUp_btnImageView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -121,9 +116,6 @@ public class SignUpFragment extends Fragment {
         return view;
     }
 
-
-
-    //This method will be called when the user will tap on allow or deny
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
@@ -205,8 +197,4 @@ public class SignUpFragment extends Fragment {
                     });
         }
     }
-
-
-
-
 }

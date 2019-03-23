@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,19 +37,11 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
-import iti.jets.tripplanner.fragments.AddTripFragment;
 import iti.jets.tripplanner.fragments.HistoryFragment;
 import iti.jets.tripplanner.fragments.ProfileFragment;
-import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
-import iti.jets.tripplanner.interfaces.UserInt;
 import iti.jets.tripplanner.pojos.User;
 import iti.jets.tripplanner.utils.Constatnts;
-import iti.jets.tripplanner.utils.FireBaseData;
-import iti.jets.tripplanner.utils.TripHeadService;
-
-import static iti.jets.tripplanner.utils.Constatnts.user;
-import static iti.jets.tripplanner.utils.FireBaseData.mAuth;
 
 
 public class NavigatinDrawerActivity extends AppCompatActivity
@@ -95,7 +85,10 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        View view = navigationView.getHeaderView(0);
+        nameTxt=view.findViewById(R.id.navDrawer_nameTxt);
+        emailTxt=view.findViewById(R.id.navDrawer_emailTxt);
+        profileImg=view.findViewById(R.id.navDrawer_profileImage);
         if (upcomingTripFragment == null) {
             upcomingTripFragment = new UpcomingTripFragment();
         }
@@ -106,6 +99,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -176,8 +170,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
 
         Fragment fragmentByTag = fragmentManager.findFragmentByTag(fragmentTag);
         if (fragmentByTag != null) {
-//            fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.remove(fragmentByTag).commit();
             fragmentManager.popBackStackImmediate(fragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -189,9 +181,7 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == UpComingTripAdapter.CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
-            if (resultCode == RESULT_OK) {
-                context.startService(new Intent(context, TripHeadService.class));
-            } else {
+            if (resultCode != RESULT_OK) {
                 Toast.makeText(this, "Draw over other app permission not available. Closing the application.", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -228,26 +218,23 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setTitle("Uploading...");
         progressDialog.show();
+        progressDialog.setCanceledOnTouchOutside(false);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         Query query = databaseReference.child("Users").orderByKey().equalTo(currentUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 User user = dataSnapshot.getChildren().iterator().next().getValue(User.class);
-
-                Toast.makeText(context, "ss" , Toast.LENGTH_SHORT).show();
-                Constatnts.user = user;
-                nameTxt.setText(Constatnts.user.getfName());
-                emailTxt.setText(Constatnts.user.getEmail());
+                nameTxt.setText(user.getfName());
+                emailTxt.setText(user.getEmail());
                 getUserImage();
-                progressDialog.dismiss();
 
+                progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(context, "error to load data", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -6,6 +6,14 @@
     tools:context=".fragments.HistoryDoneFragment">
 
 
+    <include
+        android:id="@+id/fragment_history_done_empty"
+        layout="@layout/empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/historyDoneTrip_recyclerView"
         android:layout_width="match_parent"

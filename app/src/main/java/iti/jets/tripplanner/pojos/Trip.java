@@ -28,6 +28,27 @@ public class Trip implements Parcelable {
     private String endPoint;
     private int tripType;
     private int tripStatues;
+    private int pindingIntentId;
+    private String returnDate;
+    private String returnTime;
+
+    public String getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(String returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public String getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(String returnTime) {
+        this.returnTime = returnTime;
+    }
+
+
     private int pendingIntentId;
     private double startPointlongitude;
     private double startPointlatitude;
@@ -44,7 +65,6 @@ public class Trip implements Parcelable {
         tripType = in.readInt();
         tripStatues = in.readInt();
     }
-
 
     public Trip() {
 

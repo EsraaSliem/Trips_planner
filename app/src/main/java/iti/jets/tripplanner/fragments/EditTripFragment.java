@@ -1,11 +1,8 @@
 package iti.jets.tripplanner.fragments;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,11 +29,8 @@ import java.util.Date;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.interfaces.ObjectCarrier;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.recievers.MyReceiver;
 import iti.jets.tripplanner.utils.FireBaseData;
 import iti.jets.tripplanner.utils.Utilities;
-
-import static android.content.Context.ALARM_SERVICE;
 
 public class EditTripFragment extends Fragment implements ObjectCarrier {
 
@@ -219,22 +213,11 @@ public class EditTripFragment extends Fragment implements ObjectCarrier {
                 //Start Listening for BroadCast Receiver
                 //tripDateDateObject = Utilities.convertStringToDateFormat(tripDate, tripTime);
                 //startAlert(tripDateDateObject, trip);
-                Utilities.startAlert(trip, getContext());
+                Utilities.startAlert(trip, getContext(), Utilities.TRIP_REMINDER);
             }
         }
     }
 
-    //Start Timer To broadCast Receiver
-    public void startAlert(Date date, Trip trip) {
-
-        long millis = date.getTime();
-        Intent intent = new Intent(getActivity(), MyReceiver.class);
-        intent.putExtra(Utilities.TRIP_OBJECT, trip);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getActivity().getApplicationContext(), 234324243, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);//getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, millis/*System.currentTimeMillis() + (i * 1000)*/, pendingIntent);
-    }
 
     private boolean isValidDateAndTime(String date, String time) {
         Date currentDate = Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime());

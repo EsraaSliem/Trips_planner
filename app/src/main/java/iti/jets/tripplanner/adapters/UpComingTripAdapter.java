@@ -42,6 +42,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
     FragmentManager manager;
     FragmentTransaction transaction;
     TripHeadService mService;
+
     boolean mBound = false;
     private Context context;
     private List<Trip> tripList;
@@ -149,7 +150,12 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         //validate up comming trip to set Alarm For it
         if (trip != null) {
             if (isTripComming(trip)) {
-                Utilities.startAlert(trip, context);
+                Utilities.startAlert(trip, context, Utilities.TRIP_REMINDER);
+                if (trip.getReturnDate() != null) {
+                    Utilities.startAlert(trip, context, Utilities.RETURN_REMINDER);
+
+                }
+
             }
             holder.txtTitle.setText(trip.getTripName());
             holder.txtStartPoint.setText(trip.getStartPoint());
