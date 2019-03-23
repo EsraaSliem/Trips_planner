@@ -50,7 +50,7 @@ public class FireBaseData {
     public FireBaseData(Context context) {
         this.context = context;
         if (mDatabase == null) {
-         //   FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            //   FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             mDatabase = FirebaseDatabase.getInstance();
             mRefDatabase = mDatabase.getReference();
             mAuth = FirebaseAuth.getInstance();

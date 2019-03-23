@@ -37,6 +37,8 @@ public class AuthenticationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         getSupportActionBar().hide();
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         mAuth = FirebaseAuth.getInstance();
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = findViewById(R.id.authentication_viewPager);
@@ -70,6 +72,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
+
 
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
