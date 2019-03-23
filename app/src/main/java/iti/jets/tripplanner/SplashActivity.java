@@ -78,6 +78,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onStart();
         if (logined) {
             Intent intent = new Intent(SplashActivity.this, AuthenticationActivity.class);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             startActivity(intent);
             finish();
         } else {

@@ -21,6 +21,7 @@
                 style="@style/linearForm">
 
                 <LinearLayout style="@style/linearForm">
+
                     <TextView
                         style="@style/labelField"
                         android:text="@string/addTripFragment_tripName" />

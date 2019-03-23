@@ -1,6 +1,7 @@
 package iti.jets.tripplanner.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,7 +36,6 @@ import java.util.Arrays;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -49,12 +49,13 @@ public class SignInFragment extends Fragment {
     Button btnLogin;
     EditText edtEmail, edtPassword;
     FirebaseAuth mAuth;
-    DatabaseReference mDatabase;
-    FireBaseData fireBaseData;
+    DatabaseReference mRefDatabase;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
     CallbackManager callbackManager;
     LoginButton btnFacebook;
+    //ProgressDialog
+    ProgressDialog mRegProgress;
 
 
     @Override
@@ -68,18 +69,19 @@ public class SignInFragment extends Fragment {
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+            mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         }
         edtPassword = view.findViewById(R.id.signIn_edtPassword);
-        fireBaseData = new FireBaseData(getActivity());
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = edtEmail.getText().toString();
-                String password = edtPassword.getText().toString();
-                fireBaseData.loginUser(email, password);
-            }
+        btnLogin.setOnClickListener(v -> {
+            String email = edtEmail.getText().toString();
+            String password = edtPassword.getText().toString();
+            mRegProgress = new ProgressDialog(context);
+            mRegProgress.setTitle("Logging");
+            mRegProgress.setMessage("Please Wait While Create Login");
+            mRegProgress.setCanceledOnTouchOutside(false);
+            mRegProgress.show();
+            loginUser(email, password);
         });
 
         // Configure sign-in to request the user's ID, email address, and basic
@@ -182,6 +184,10 @@ public class SignInFragment extends Fragment {
             if (task.isSuccessful()) {
                 Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                 main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                SharedPreferences.Editor prefEditor = context.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE).edit();
+                prefEditor.putBoolean("logined", true);
+                prefEditor.apply();
+                mRegProgress.dismiss();
                 context.startActivity(main_intent);
             } else {
                 Toast.makeText(context, "Email or Password is invalid", Toast.LENGTH_SHORT).show();
