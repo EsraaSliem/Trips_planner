@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -90,13 +89,8 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void run() {
                 mapFragment.getMapAsync(HistoryMapFragment.this);
-                mProgressDialog = new ProgressDialog(context);
-                mProgressDialog.setMessage("Loading...");
-                mProgressDialog.setIndeterminate(true);
-                mProgressDialog.setCancelable(true);
-                mProgressDialog.show();
             }
-        }, 20);
+        }, 0);
         return view;
     }
 
@@ -142,7 +136,6 @@ public class HistoryMapFragment extends Fragment implements OnMapReadyCallback {
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    Toast.makeText(context, "MAPP", Toast.LENGTH_SHORT).show();
                                     int colors[] = {Color.RED, Color.BLACK, Color.MAGENTA, Color.DKGRAY, Color.GRAY, Color.MAGENTA, Color.YELLOW, Color.BLUE};
                                     Random rand = new Random();
                                     int randomColor = colors[rand.nextInt(colors.length)];

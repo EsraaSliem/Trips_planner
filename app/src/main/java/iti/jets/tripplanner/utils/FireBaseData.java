@@ -254,7 +254,7 @@ public class FireBaseData {
     public void getTrips(final RecyclerView recyclerView, final int status) {
         trips = new ArrayList<>();
         pointList = new ArrayList<>();
-        Query query = mRefDatabase.child("Trips").equalTo(mAuth.getUid());
+        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
