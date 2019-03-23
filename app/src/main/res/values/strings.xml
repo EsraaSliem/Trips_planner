@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">3a Eseka</string>
+    <string name="app_name">3seka</string>
     <string name="facebook_app_id">700391843711254</string>
     <string name="fb_login_protocol_scheme">fb700391843711254</string>
     <string name="google_maps_key">AIzaSyAluiqmBBsMrnJnpodYT7BPG_MYjZrihfE</string>
@@ -53,4 +53,5 @@
     <string name="update_note">Update Note</string>
     <string name="renew">renew</string>
     <string name="google_key_display"><![CDATA[&key=AIzaSyC4X5tDaquLpuYFDXRsxYAxcl26I1E_KSs]]></string>
+    <string name="delete_note">Delete Note</string>
 </resources>

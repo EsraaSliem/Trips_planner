@@ -85,7 +85,7 @@ public class SignUpFragment extends Fragment {
         super.onActivityResult(reqCode, resultCode, data);
 
 
-        if (reqCode == RESULT_LOAD_IMG) {
+        if (reqCode == RESULT_LOAD_IMG && data != null) {
             try {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
