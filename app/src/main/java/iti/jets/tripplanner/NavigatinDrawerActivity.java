@@ -104,9 +104,9 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
-            case R.id.nav_profile:
-
-                break;
+//            case R.id.nav_profile:
+//
+//                break;
             case R.id.nav_upComing:
                 if (upcomingTripFragment == null)
                     upcomingTripFragment = new UpcomingTripFragment();

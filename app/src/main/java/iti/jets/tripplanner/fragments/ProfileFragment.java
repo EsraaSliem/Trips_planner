@@ -13,15 +13,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.interfaces.UserInt;
 import iti.jets.tripplanner.pojos.User;
+import iti.jets.tripplanner.utils.Constatnts;
 import iti.jets.tripplanner.utils.FireBaseData;
 
 
-public class ProfileFragment extends Fragment implements UserInt {
+public class ProfileFragment extends Fragment  {
 
 
     public ProfileFragment() {
@@ -39,7 +42,7 @@ public class ProfileFragment extends Fragment implements UserInt {
         super.onCreate(savedInstanceState);
         context = getActivity();
         fireBaseData = new FireBaseData(context);
-        fireBaseData.getUser(ProfileFragment.this);
+
     }
 
 
@@ -57,8 +60,15 @@ public class ProfileFragment extends Fragment implements UserInt {
         passTxt = (EditText) view.findViewById(R.id.fragment_profile_user_pass);
         image = (CircleImageView) view.findViewById(R.id.fragment_profile_user_img);
         editBtn = (Button) view.findViewById(R.id.fragment_profile_edit);
+        Picasso.with(getActivity())
+                .load(Constatnts.uri)
+                .into(image);
         disableTextFields();
 
+        emailTxt.setText(Constatnts.user.getEmail());
+        passTxt.setText(Constatnts.user.getPassword());
+        firstNameTxt.setText(Constatnts.user.getfName());
+        lastNameTxt.setText(Constatnts.user.getlName());
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,14 +106,4 @@ public class ProfileFragment extends Fragment implements UserInt {
         emailTxt.setEnabled(true);
     }
 
-    @Override
-    public void getUser(User _user) {
-
-        firstNameTxt.setText(_user.getfName());
-        lastNameTxt.setText(_user.getlName());
-        emailTxt.setText(_user.getEmail());
-        passTxt.setText(_user.getPassword());
-        user.setUserId(_user.getUserId());
-        Toast.makeText(context, "" + _user.getfName(), Toast.LENGTH_SHORT).show();
-    }
 }

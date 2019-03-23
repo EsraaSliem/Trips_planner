@@ -1,13 +1,21 @@
 package iti.jets.tripplanner.utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -20,16 +28,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import iti.jets.tripplanner.AuthenticationActivity;
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.NoteAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.fragments.ProfileFragment;
+import iti.jets.tripplanner.interfaces.UserInt;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
@@ -46,6 +64,7 @@ public class FireBaseData {
     private List<Trip> trips;
     private List<Note> notes;
     private Context context;
+
 
     //Firebase Connect
     public FireBaseData(Context context) {
@@ -81,14 +100,16 @@ public class FireBaseData {
                 if (task.isSuccessful()) {
                     FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                     String uId = current_user.getUid();
+
                     //Firebase Database
                     mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
 //                    user.setUserId(mAuth.getUid());
                     user.setUserId(uId);
 //                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
                     mRefDatabase.setValue(user);
+                    Constatnts.user = user;
 
-                    Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                    Intent main_intent = new Intent(context, AuthenticationActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(main_intent);
 
@@ -100,9 +121,11 @@ public class FireBaseData {
     public void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+
                 Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                 main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(main_intent);
+
             } else {
                 Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
             }
@@ -286,14 +309,13 @@ public class FireBaseData {
         });
     }
 
-    public  void updateUser(final User user)
-    {
-        mRefDatabase = mDatabase.getReference("Users").child(uid);
+    public void updateUser(final User user) {
+        mRefDatabase = mDatabase.getReference("Users").child(mAuth.getUid());
 
         mRefDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                updateUserEmail(user.getEmail(),user.getPassword());
+                updateUserEmail(user.getEmail(), user.getPassword());
                 mRefDatabase.child("email").setValue(user.getEmail());
                 mRefDatabase.child("fName").setValue(user.getfName());
                 mRefDatabase.child("lName").setValue(user.getlName());
@@ -301,6 +323,7 @@ public class FireBaseData {
                 mRefDatabase.child("password").setValue(user.getPassword());
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("User", databaseError.getMessage());
@@ -308,35 +331,17 @@ public class FireBaseData {
         });
 
     }
-    public void getUser(final ProfileFragment fragment ) {
-
-        Query query = mRefDatabase.child("Users").orderByKey().equalTo(mAuth.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Toast.makeText(context, "ss", Toast.LENGTH_SHORT).show();
-
-                User user=dataSnapshot.getChildren().iterator().next().getValue(User.class);
-                fragment.getUser(user);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-    }
-    public void updateUserEmail(String email ,String pass)
-    {
 
 
 
+    public void updateUserEmail(String email, String pass) {
 // Get auth credentials from the user for re-authentication. The example below shows
 // email and password credentials but there are multiple possible providers,
 // such as GoogleAuthProvider or FacebookAuthProvider.
         AuthCredential credential = EmailAuthProvider
                 .getCredential(email, pass);
 
-     // Prompt the user to re-provide their sign-in credentials
+        // Prompt the user to re-provide their sign-in credentials
         mCurrentUser.reauthenticate(credential)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -347,7 +352,7 @@ public class FireBaseData {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                          //  Log.d(TAG, "User email address updated.");
+                                            //  Log.d(TAG, "User email address updated.");
                                             Toast.makeText(context, "sucess", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -356,5 +361,7 @@ public class FireBaseData {
                 });
 
     }
+
+
 }
 
