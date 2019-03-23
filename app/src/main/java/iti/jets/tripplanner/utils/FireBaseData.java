@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,15 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import iti.jets.tripplanner.AuthenticationActivity;
 import iti.jets.tripplanner.NavigatinDrawerActivity;
-import iti.jets.tripplanner.adapters.HistoryTripAdapter;
-import iti.jets.tripplanner.adapters.NoteAdapter;
-import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.pojos.Note;
 import iti.jets.tripplanner.pojos.Trip;
 import iti.jets.tripplanner.pojos.User;
@@ -40,10 +32,7 @@ public class FireBaseData {
     //Firebase Auth and DataBase
     static FirebaseUser mCurrentUser;
     static DatabaseReference mRefDatabase;
-    ArrayList<Trip> pointList;
     private String uid;
-    private List<Trip> trips;
-    private List<Note> notes;
     private Context context;
 
     //Firebase Connect
@@ -61,7 +50,6 @@ public class FireBaseData {
             mRefDatabase = mDatabase.getReference();
             uid = mCurrentUser.getUid();
             setUserId(uid);
-            Toast.makeText(context, "IF " + uid, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -82,11 +70,6 @@ public class FireBaseData {
                     String uId = current_user.getUid();
                     //Firebase Database
                     mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
-//                    user.setUserId(mAuth.getUid());
-                    user.setUserId(uId);
-//                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
-                    mRefDatabase.setValue(user);
-                    Constatnts.user = user;
 
                     Intent main_intent = new Intent(context, AuthenticationActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -164,7 +147,7 @@ public class FireBaseData {
     }
 
     public void cancelTrip(final Trip trip, int status) {
-        mRefDatabase = mDatabase.getReference("Trips").child(uid);
+        mRefDatabase = mDatabase.getReference("Trips").child(mAuth.getUid());
         Query applesQuery = mRefDatabase.child(trip.getTripId());
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -229,69 +212,8 @@ public class FireBaseData {
         mRefDatabase.child(trip.getTripId()).getRef().removeValue();
     }
 
-    public void getNotes(final RecyclerView recyclerView, String tripId) {
-        notes = new ArrayList<>();
-        Query query = mRefDatabase.child("Notes").child(tripId);
-        mRefDatabase.keepSynced(true);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Note note = snapshot.getValue(Note.class);
-                    note.setTripId(tripId);
-                    notes.add(note);
-                }
-                NoteAdapter adapter = new NoteAdapter(context, notes);
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    public void getTrips(final RecyclerView recyclerView, final int status) {
-        trips = new ArrayList<>();
-        pointList = new ArrayList<>();
-        Query query = mRefDatabase.child("Trips").orderByKey().equalTo(mAuth.getUid());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("TAG", "onDataChange: getTrip");
-                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
-                if (iterator.hasNext()) {
-                    DataSnapshot next = iterator.next();
-                    trips.clear();
-                    for (DataSnapshot dataSnapshot1 : next.getChildren()) {
-                        Trip trip = dataSnapshot1.getValue(Trip.class);
-                        if (trip != null && trip.getTripStatues() == status) {
-                            trips.add(trip);
-                        }
-                    }
-                }
-                if (status == Trip.STATUS_UP_COMING) {
-                    UpComingTripAdapter adapter = new UpComingTripAdapter(context, trips);
-                    recyclerView.setAdapter(adapter);
-                } else {
-                    if (status == Trip.STATUS_DONE) {
-
-                    }
-                    HistoryTripAdapter adapter = new HistoryTripAdapter(context, trips);
-                    recyclerView.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("fffff", databaseError.toString());
-            }
-        });
-    }
-
     public void changeNoteStatus(Note note) {
         mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId()).child(note.getNoteId());
-        //mRefDatabase = mRefDatabase.child(note.getNoteId());
         if (note.isNoteStatus())
             mRefDatabase.child("noteStatus").setValue(note.isNoteStatus());
         else
@@ -305,13 +227,11 @@ public class FireBaseData {
         mRefDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //updateUserEmail(user.getEmail(), user.getPassword());
                 mRefDatabase.child("email").setValue(user.getEmail());
                 mRefDatabase.child("fName").setValue(user.getfName());
                 mRefDatabase.child("lName").setValue(user.getlName());
                 mRefDatabase.child("image").setValue(user.getImage());
                 mRefDatabase.child("password").setValue(user.getPassword());
-
             }
 
             @Override

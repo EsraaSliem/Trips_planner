@@ -3,6 +3,7 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -65,7 +66,6 @@ public class SignInFragment extends Fragment {
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
-        //fireBaseData = new FireBaseData(getContext());
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
