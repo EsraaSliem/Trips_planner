@@ -17,7 +17,7 @@
     <EditText
         android:id="@+id/addNote_edtAddNoteDescription"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="100dp"
         android:layout_margin="10dp"
         android:ems="50"
         android:hint="Note Description"

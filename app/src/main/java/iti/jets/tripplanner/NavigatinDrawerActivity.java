@@ -38,7 +38,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_navigatin_drawer);
 
         fragmentManager = getSupportFragmentManager();

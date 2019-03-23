@@ -125,7 +125,7 @@ public class FireBaseData {
             e.printStackTrace();
         }
         Toast.makeText(context, "UID " + uid, Toast.LENGTH_SHORT).show();
-        mRefDatabase.child(uid).child(key).setValue(trip);
+        mRefDatabase.child(mAuth.getUid()).child(key).setValue(trip);
         Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
         return key;
     }
@@ -276,5 +276,15 @@ public class FireBaseData {
                 Log.e("fffff", databaseError.toString());
             }
         });
+    }
+
+    public void changeNoteStatus(Note note) {
+        mRefDatabase = mDatabase.getReference("Notes").child(note.getTripId()).child(note.getNoteId());
+        //mRefDatabase = mRefDatabase.child(note.getNoteId());
+        if (note.isNoteStatus())
+            mRefDatabase.child("noteStatus").setValue(note.isNoteStatus());
+        else
+            mRefDatabase.child("noteStatus").setValue(!note.isNoteStatus());
+        Toast.makeText(context, "Note Updated " + note.isNoteStatus(), Toast.LENGTH_SHORT).show();
     }
 }
