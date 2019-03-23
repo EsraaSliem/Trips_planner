@@ -7,8 +7,8 @@
     <string name="addTripFragment_tripName">Trip Name</string>
     <string name="addTripFragment_startPoint">Start Point</string>
     <string name="addTripFragment_endPoint">End Point</string>
-    <string name="addTripFragment_dateTrip">Date</string>
-    <string name="addTripFragment_timeTrip">Time</string>
+    <string name="addTripFragment_dateTrip">Return Date</string>
+    <string name="addTripFragment_timeTrip">Return Time</string>
     <string name="addTripFragment__tripType">Trip Type</string>
     <string name="addTripFragment__addTrip">Add Trip</string>
 

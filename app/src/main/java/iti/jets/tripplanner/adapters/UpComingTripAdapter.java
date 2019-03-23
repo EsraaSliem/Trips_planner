@@ -1,12 +1,9 @@
 package iti.jets.tripplanner.adapters;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -120,7 +117,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
                 case R.id.upComingMenu_cancel:
                     fireBaseData = new FireBaseData(context);
                     //cancel Alarm
-                    //Utilites.cancelAlarm(context, trip);
+                    // Utilities.cancelAlarm(context, trip);
                     Utilities.alertMessage(context, trip, "Cancel", fireBaseData);
                     //fireBaseData.cancelTrip(trip, Trip.STATUS_CANCELLED);
                     return true;
@@ -157,7 +154,7 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         //validate up comming trip to set Alarm For it
         if (trip != null) {
             if (isTripComming(trip)) {
-                Utilities.startAlert(trip, context);
+                Utilities.startAlert(trip, context, Utilities.TRIP_REMINDER);
             }
             holder.txtTitle.setText(trip.getTripName());
             holder.txtStartPoint.setText(trip.getStartPoint());

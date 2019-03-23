@@ -26,6 +26,10 @@ public class Utilities {
     public static final String ALERT_MESSAGE = "alert message";
     public static final String TRIP_OBJECT = "trip";
     public static final String TRIP_ID = "tripId";
+    public static final int TRIP_REMINDER = 0;
+    public static final int RETURN_REMINDER = 1;
+
+
 
     public static String getCurrentTime() {
         Date date = new Date();
@@ -68,12 +72,16 @@ public class Utilities {
     }
 
     //Start Timer To broadCast Receiver
-    public static void startAlert(Trip trip, Context context) {
-        Date date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+    public static void startAlert(Trip trip, Context context, int flag) {
+        Date date = null;
+        if (flag == 0) {
+            date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+        } else if (flag == 1) {
+            date = Utilities.convertStringToDateFormat(trip.getReturnDate(), trip.getReturnTime());
+        }
+
         Toast.makeText(context, "your trip Starts At " + date, Toast.LENGTH_LONG).show();
         Toast.makeText(context, "your trip trip date  " + trip.getTripDate() + trip.getTripTime(), Toast.LENGTH_LONG).show();
-
-
         long millis = date.getTime();
         Intent intent = new Intent(context, MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);

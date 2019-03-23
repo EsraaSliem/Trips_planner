@@ -19,11 +19,24 @@ public class Trip implements Parcelable {
     private int tripType;
     private int tripStatues;
     private int pindingIntentId;
+    private String returnDate;
+    private String returnTime;
 
+    public String getReturnDate() {
+        return returnDate;
+    }
 
+    public void setReturnDate(String returnDate) {
+        this.returnDate = returnDate;
+    }
 
+    public String getReturnTime() {
+        return returnTime;
+    }
 
-
+    public void setReturnTime(String returnTime) {
+        this.returnTime = returnTime;
+    }
 
     public static final Creator<Trip> CREATOR = new Creator<Trip>() {
         @Override
