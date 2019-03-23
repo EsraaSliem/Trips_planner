@@ -2,7 +2,6 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,12 +22,8 @@ import java.util.Iterator;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.pojos.Trip;
-import iti.jets.tripplanner.utils.FireBaseData;
-
-import static iti.jets.tripplanner.utils.FireBaseData.mAuth;
 
 
 public class UpcomingTripFragment extends Fragment {
@@ -51,25 +46,24 @@ public class UpcomingTripFragment extends Fragment {
         tripRecyclerView.setItemAnimator(new DefaultItemAnimator());
         tripRecyclerView.setAdapter(adapter);
 
-        FireBaseData fireBaseData = new FireBaseData(context);
-        fireBaseData.getTrips(tripRecyclerView, Trip.STATUS_UP_COMING);
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-
-        AddTripFragment addTripFragment = new AddTripFragment();
-        fab.setOnClickListener(v -> {
-            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.replace(R.id.mainContainerView, addTripFragment, "Add_One_tag");
-            fragmentTransaction.commit();
-        });
+        view.findViewById(R.id.fab).setOnClickListener(v -> openAddTripFragment());
         return view;
+    }
+
+    private void openAddTripFragment() {
+        AddTripFragment addTripFragment = new AddTripFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction
+                .replace(R.id.mainContainerView, addTripFragment, "AddTripFragment")
+                .addToBackStack("AddTripFragment")
+                .commit();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        navigatinDrawerActivity = (NavigatinDrawerActivity)context;
+        navigatinDrawerActivity = (NavigatinDrawerActivity) context;
     }
 
 
@@ -100,9 +94,10 @@ public class UpcomingTripFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("fffff", databaseError.toString());
+                Log.e("error", databaseError.toString());
             }
         });
     }

@@ -20,9 +20,6 @@ public class AddNoteFragment extends Fragment {
     String noteDescription, noteName;
     private Button addNoteFragment_btnAddNoteFragment;
 
-    public AddNoteFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -49,7 +46,6 @@ public class AddNoteFragment extends Fragment {
             AlertDialog dialog = mBuilder.create();
             dialog.show();
         });
-
         return view;
     }
 
