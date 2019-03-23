@@ -79,10 +79,10 @@ public class UpcomingTripFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Query query = FireBaseData.mDatabase.getReference()
+        Query query = navigatinDrawerActivity.getDatabaseReference()
                 .child("Trips")
                 .orderByKey()
-                .equalTo(mAuth.getUid());
+                .equalTo(navigatinDrawerActivity.getUserId());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

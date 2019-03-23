@@ -77,7 +77,7 @@ public class ProfileFragment extends Fragment  {
                     user.setPassword(passTxt.getText().toString());
                     user.setfName(firstNameTxt.getText().toString());
                     user.setlName(lastNameTxt.getText().toString());
-                    fireBaseData.updateUser(user);
+//                    fireBaseData.updateUser(user);
                     disableTextFields();
                     editBtn.setText("edit");
                 }
