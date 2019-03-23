@@ -1,7 +1,6 @@
 package iti.jets.tripplanner.fragments;
 
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -31,7 +29,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import iti.jets.tripplanner.AuthenticationActivity;
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.User;
@@ -51,7 +48,6 @@ public class SignInFragment extends Fragment {
     DatabaseReference mDatabase;
     FireBaseData fireBaseData;
     private FirebaseAuth mAuth;
-    FirebaseAuth mAuth;
     DatabaseReference mRefDatabase;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
@@ -65,7 +61,7 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
         context = getActivity();
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
@@ -152,10 +148,14 @@ public class SignInFragment extends Fragment {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         User user = new User();
                         user.setfName(firebaseUser.getDisplayName());
-                        user.setImage(firebaseUser.getPhotoUrl().getPath());
+                        user.setImage(firebaseUser.getPhotoUrl().toString());
                         user.setEmail(firebaseUser.getEmail());
                         user.setPassword(firebaseUser.getProviderId());
-                        writeNewUser(user);
+                        String uid = mAuth.getUid();
+                        user.setUserId(uid);
+                        mRefDatabase = mDatabase.child("Users").child(uid);
+                        mRefDatabase.setValue(user);
+
                         Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                         main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         context.startActivity(main_intent);
@@ -184,25 +184,6 @@ public class SignInFragment extends Fragment {
                 context.startActivity(main_intent);
             } else {
                 Toast.makeText(context, "Email or Password is invalid", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void writeNewUser(final User user) {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-                    String uId = current_user.getUid();
-                    //Firebase Database
-                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
-
-                    Intent main_intent = new Intent(context, AuthenticationActivity.class);
-                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    context.startActivity(main_intent);
-
-                }
             }
         });
     }
