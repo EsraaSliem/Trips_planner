@@ -48,6 +48,9 @@ public class UpcomingTripFragment extends Fragment {
         if (trips.size() <= 0) {
             empty_list.setVisibility(View.VISIBLE);
             empty_list.requestLayout();
+        } else {
+            empty_list.setVisibility(View.GONE);
+            empty_list.requestLayout();
         }
         adapter = new UpComingTripAdapter(context, trips);
         tripRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -98,6 +101,8 @@ public class UpcomingTripFragment extends Fragment {
                         if (trip != null && trip.getTripStatues() == Trip.STATUS_UP_COMING) {
                             trips.add(trip);
                             adapter.notifyDataSetChanged();
+                            empty_list.setVisibility(View.GONE);
+                            empty_list.requestLayout();
                         }
                     }
                 }
