@@ -48,17 +48,7 @@ public class Trip implements Parcelable {
         this.returnTime = returnTime;
     }
 
-    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
-        @Override
-        public Trip createFromParcel(Parcel in) {
-            return new Trip(in);
-        }
 
-        @Override
-        public Trip[] newArray(int size) {
-            return new Trip[size];
-        }
-    };
     private int pendingIntentId;
     private double startPointlongitude;
     private double startPointlatitude;

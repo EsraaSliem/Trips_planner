@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -70,14 +69,20 @@ public class Utilities {
     }
 
     //Start Timer To broadCast Receiver
-    public static void startAlert(Trip trip, Context context) {
-        Date date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
-
+    public static void startAlert(Trip trip, Context context, int flag) {
+        int pendingIntentId = (int) Utilities.convertDateToMilliSecond(
+                Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
+        Date date = null;
+        if (flag == TRIP_REMINDER) {
+            date = Utilities.convertStringToDateFormat(trip.getTripDate(), trip.getTripTime());
+        } else if (flag == RETURN_REMINDER) {
+            pendingIntentId += 1;
+            date = Utilities.convertStringToDateFormat(trip.getReturnDate(), trip.getReturnTime());
+        }
         long millis = date.getTime();
         Intent intent = new Intent(context, MyReceiver.class);
         intent.putExtra(Utilities.TRIP_OBJECT, trip);
-        int pendingIntentId = (int) Utilities.convertDateToMilliSecond(
-                Utilities.convertStringToDateFormat(Utilities.getCurrentDate(), Utilities.getCurrentTime()));
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context.getApplicationContext(), pendingIntentId, intent, PendingIntent.FLAG_IMMUTABLE);
         trip.setPendingIntentId(pendingIntentId);

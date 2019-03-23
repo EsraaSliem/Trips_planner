@@ -51,10 +51,10 @@ public class AddTripFragment extends Fragment {
     private String tripDate;
     private String tripTime;
     private int mYear2, mMonth2, mDay2, mHour2, mMinute2;
-    private String returnDate;
+    private String returnDate = null;
     private String startPoint;
     private String endPoint;
-    private String returnTime;
+    private String returnTime = null;
     private EditText editTripDate2;
     private EditText editTripTime2;
     private LinearLayout timeContainer;
@@ -227,8 +227,6 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 startPoint = place.getName().toString();
-                startPointLongitude = place.getLatLng().longitude;
-                startPointLatitude = place.getLatLng().latitude;
                 Log.i("jh", place.getName().toString());
             }
 
@@ -247,8 +245,6 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
                 endPoint = place.getName().toString();
-                endPointLongitude = place.getLatLng().longitude;
-                endPointLatitude = place.getLatLng().latitude;
             }
 
             @Override
@@ -271,17 +267,14 @@ public class AddTripFragment extends Fragment {
             Toast.makeText(context, "you must enter start point", Toast.LENGTH_LONG).show();
         } else if (endPoint == null) {
             Toast.makeText(context, "you must enter end point", Toast.LENGTH_LONG).show();
-        } else if (dateContainer.getVisibility() == View.VISIBLE) {
-            if (Utilities.isEditTextEmpty(editTripTime2)) {
-                editTripTime2.setError("required Field");
-            } else if (Utilities.isEditTextEmpty(editTripDate2)) {
-                editTripDate2.setError("required Field");
-            }
-
         } else {
-            if (dateContainer.getVisibility() == View.VISIBLE && !isValidDateAndTime(editTripDate2.getText().toString(), editTripTime2.getText().toString())) {
+            if (!isValidDateAndTime(edtTripDate.getText().toString(), edtTripTime.getText().toString())) {
                 Toast.makeText(context, "you must enter valid date and time", Toast.LENGTH_LONG).show();
-            } else if (!isValidDateAndTime(edtTripDate.getText().toString(), edtTripTime.getText().toString())) {
+            } else if (dateContainer.getVisibility() == view.VISIBLE && Utilities.isEditTextEmpty(editTripDate2)) {
+                editTripDate2.setError("required");
+            } else if (dateContainer.getVisibility() == view.VISIBLE && Utilities.isEditTextEmpty(editTripTime2)) {
+                editTripDate2.setError("required");
+            } else if (dateContainer.getVisibility() == view.VISIBLE && !isValidDateAndTime(editTripDate2.getText().toString(), editTripTime2.getText().toString())) {
                 Toast.makeText(context, "you must enter valid date and time", Toast.LENGTH_LONG).show();
             } else {
                 final FireBaseData fireBaseData = new FireBaseData(context);
@@ -289,22 +282,12 @@ public class AddTripFragment extends Fragment {
                 trip.setTripName(edtTripName.getText().toString());
                 trip.setTripTime(tripTime);
                 trip.setTripDate(tripDate);
-                if (dateContainer.getVisibility() == View.VISIBLE) {
-                    trip.setReturnDate(returnDate);
-                    trip.setReturnTime(returnTime);
-
-                } else {
-                    trip.setReturnDate(null);
-                    trip.setReturnTime(null);
-                }
-
                 trip.setTripStatues(Trip.STATUS_UP_COMING);
                 trip.setStartPoint(startPoint);
-                trip.setStartPointlongitude(startPointLongitude);
-                trip.setStartPointlatitude(startPointLatitude);
-                trip.setEndPointlongitude(endPointLongitude);
-                trip.setEndPointlatitude(endPointLatitude);
                 trip.setEndPoint(endPoint);
+                trip.setReturnTime(returnTime);
+                trip.setReturnDate(returnDate);
+
                 if (spnTripType.getSelectedItem().toString().equalsIgnoreCase("one direction")) {
                     trip.setTripType(Trip.TYPE_ONE_DIRECTION);
                 } else {

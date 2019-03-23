@@ -150,6 +150,11 @@ public class UpComingTripAdapter extends RecyclerView.Adapter<UpComingTripAdapte
         if (trip != null) {
             if (isTripComming(trip)) {
                 Utilities.startAlert(trip, context, Utilities.TRIP_REMINDER);
+                if (trip.getReturnDate() != null) {
+                    Utilities.startAlert(trip, context, Utilities.RETURN_REMINDER);
+
+                }
+
             }
             holder.txtTitle.setText(trip.getTripName());
             holder.txtStartPoint.setText(trip.getStartPoint());
