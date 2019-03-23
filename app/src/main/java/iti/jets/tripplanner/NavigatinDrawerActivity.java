@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import iti.jets.tripplanner.adapters.UpComingTripAdapter;
 import iti.jets.tripplanner.fragments.HistoryFragment;
+import iti.jets.tripplanner.fragments.ProfileFragment;
+import iti.jets.tripplanner.fragments.ShowNotesFragment;
 import iti.jets.tripplanner.fragments.UpcomingTripFragment;
 import iti.jets.tripplanner.utils.TripHeadService;
 
@@ -33,7 +35,6 @@ public class NavigatinDrawerActivity extends AppCompatActivity
     UpcomingTripFragment upcomingTripFragment;
     HistoryFragment historyFragment;
     FragmentManager fragmentManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,9 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
+//            case R.id.nav_profile:
+//
+//                break;
             case R.id.nav_upComing:
                 if (upcomingTripFragment == null)
                     upcomingTripFragment = new UpcomingTripFragment();

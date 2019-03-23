@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import iti.jets.tripplanner.AuthenticationActivity;
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.adapters.HistoryTripAdapter;
 import iti.jets.tripplanner.adapters.NoteAdapter;
@@ -84,6 +85,12 @@ public class FireBaseData {
                     user.setUserId(uId);
 //                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
                     mRefDatabase.setValue(user);
+                    Constatnts.user = user;
+
+                    Intent main_intent = new Intent(context, AuthenticationActivity.class);
+                    main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(main_intent);
+
                 }
             }
         });
@@ -286,5 +293,28 @@ public class FireBaseData {
         else
             mRefDatabase.child("noteStatus").setValue(!note.isNoteStatus());
         Toast.makeText(context, "Note Updated " + note.isNoteStatus(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateUser(final User user) {
+        mRefDatabase = mDatabase.getReference("Users").child(mAuth.getUid());
+
+        mRefDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateUserEmail(user.getEmail(), user.getPassword());
+                mRefDatabase.child("email").setValue(user.getEmail());
+                mRefDatabase.child("fName").setValue(user.getfName());
+                mRefDatabase.child("lName").setValue(user.getlName());
+                mRefDatabase.child("image").setValue(user.getImage());
+                mRefDatabase.child("password").setValue(user.getPassword());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("User", databaseError.getMessage());
+            }
+        });
+
     }
 }
