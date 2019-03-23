@@ -1,55 +1,40 @@
 package iti.jets.tripplanner.fragments;
 
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.UUID;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import iti.jets.tripplanner.R;
 import iti.jets.tripplanner.pojos.User;
 import iti.jets.tripplanner.utils.Constatnts;
 import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.app.Activity.RESULT_OK;
-import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -59,11 +44,7 @@ public class SignUpFragment extends Fragment {
 
 
     private static final String IMAGE_DIRECTORY = "/demonuts";
-    private int GALLERY = 1, CAMERA = 2;
-    private int PICK_IMAGE_REQUEST = 1;
     private static final int STORAGE_PERMISSION_CODE = 123;
-    private Bitmap bitmap;
-    private Uri filePath;
     FirebaseStorage storage;
     StorageReference storageReference;
     Bundle extras;
@@ -71,6 +52,10 @@ public class SignUpFragment extends Fragment {
     ImageView profileImageView;
     User user;
     FireBaseData fireBaseData;
+    private int GALLERY = 1, CAMERA = 2;
+    private int PICK_IMAGE_REQUEST = 1;
+    private Bitmap bitmap;
+    private Uri filePath;
     private Context context;
 
     @Override
@@ -78,6 +63,7 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
         context = getActivity();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         user = new User();
@@ -153,13 +139,12 @@ public class SignUpFragment extends Fragment {
 
 
     private void uploadImage() {
-        if(filePath != null)
-        {
+        if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            String imageFullPath = UUID.randomUUID().toString()+".png";
-            StorageReference ref = storageReference.child("images/"+imageFullPath );
+            String imageFullPath = UUID.randomUUID().toString() + ".png";
+            StorageReference ref = storageReference.child("images/" + imageFullPath);
 
 
             ref.putFile(filePath)
@@ -167,10 +152,10 @@ public class SignUpFragment extends Fragment {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(context, ""+ storageReference.child("images" ).child(imageFullPath).getDownloadUrl().toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "" + storageReference.child("images").child(imageFullPath).getDownloadUrl().toString(), Toast.LENGTH_SHORT).show();
                             //Toast.makeText(getContext(), "Uploaded"+uri.toString(), Toast.LENGTH_LONG).show();
                             user.setImage(imageFullPath);
-                            Constatnts.uri=imageFullPath;
+                            Constatnts.uri = imageFullPath;
                             fireBaseData.writeNewUser(user);
 
 
@@ -180,21 +165,40 @@ public class SignUpFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(getContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
 
 
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
 
                         }
                     });
         }
     }
+/*
+    public void writeNewUser(final User user) {
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword()).addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uId = current_user.getUid();
+                    //Firebase Database
+                    mRefDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uId);
+//                    user.setUserId(mAuth.getUid());
+                    user.setUserId(uId);
+//                    mRefDatabase.child("Users").child(user.getUserId()).setValue(user);
+                    mRefDatabase.setValue(user);
+                }
+            }
+        });
+    }
+    */
 }

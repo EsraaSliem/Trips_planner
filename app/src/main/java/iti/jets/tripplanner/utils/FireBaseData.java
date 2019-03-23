@@ -3,6 +3,8 @@ package iti.jets.tripplanner.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -87,6 +89,9 @@ public class FireBaseData {
             if (task.isSuccessful()) {
                 Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                 main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                SharedPreferences.Editor prefEditor= context.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE).edit();
+                prefEditor.putBoolean("logined",true);
+                prefEditor.apply();
                 context.startActivity(main_intent);
             } else {
                 Toast.makeText(context, "email or password is invalid", Toast.LENGTH_SHORT).show();
@@ -105,6 +110,7 @@ public class FireBaseData {
         String key = mRefDatabase.push().getKey();
 
         trip.setTripId(key);
+
         trip.setTripName(trip.getTripName());
         trip.setTripDate(trip.getTripDate());
         trip.setTripTime(trip.getTripTime());
@@ -125,6 +131,7 @@ public class FireBaseData {
     public void addNote(Note note, Trip trip) {
         mRefDatabase = mRefDatabase.child("Notes").child(trip.getTripId());
         String key = mRefDatabase.push().getKey();
+
         Toast.makeText(context, "Trip Id " + trip.getTripId(), Toast.LENGTH_SHORT).show();
         note.setNoteId(key);
         note.setNoteName(note.getNoteName());
@@ -155,7 +162,7 @@ public class FireBaseData {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(context, "error for load data", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -181,7 +188,7 @@ public class FireBaseData {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(context, "error for load data", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -200,7 +207,6 @@ public class FireBaseData {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(context, "error for load data", Toast.LENGTH_SHORT).show();
             }
         });
     }

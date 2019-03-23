@@ -3,6 +3,7 @@ package iti.jets.tripplanner.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,7 +35,6 @@ import java.util.Arrays;
 
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
-import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -44,26 +44,28 @@ import static android.support.constraint.Constraints.TAG;
 public class SignInFragment extends Fragment {
 
     private static final int RC_SIGN_IN = 100;
+    private static final String EMAIL = "email";
     Button btnLogin;
     EditText edtEmail, edtPassword;
     FirebaseAuth mAuth;
     DatabaseReference mDatabase;
-    FireBaseData fireBaseData;
+    //FireBaseData fireBaseData;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
     CallbackManager callbackManager;
     LoginButton btnFacebook;
-    private static final String EMAIL = "email";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
         context = getActivity();
+
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
-        fireBaseData = new FireBaseData(getContext());
+        //fireBaseData = new FireBaseData(getContext());
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
@@ -76,7 +78,7 @@ public class SignInFragment extends Fragment {
             public void onClick(View v) {
                 String email = edtEmail.getText().toString();
                 String password = edtPassword.getText().toString();
-                fireBaseData.loginUser(email, password);
+                //fireBaseData.loginUser(email, password);
 
             }
         });
@@ -160,9 +162,9 @@ public class SignInFragment extends Fragment {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 //            setResult(Resource.forSuccess(createIdpResponse(account)));
-            Toast.makeText(context, ""+account.getEmail()+"\n"+account.getServerAuthCode()+"\n"+account.getServerAuthCode()+"\n"+account.getIdToken(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "" + account.getEmail() + "\n" + account.getServerAuthCode() + "\n" + account.getServerAuthCode() + "\n" + account.getIdToken(), Toast.LENGTH_SHORT).show();
 //            Log.i("account",account.getServerAuthCode());
-            Log.i("account",account.getDisplayName());
+            Log.i("account", account.getDisplayName());
 //            Log.i("account",account.getIdToken());
             context.startActivity(new Intent(context, NavigatinDrawerActivity.class));
 
@@ -174,5 +176,17 @@ public class SignInFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(context, "this acount does not exist", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void loginUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                context.startActivity(main_intent);
+            } else {
+                Toast.makeText(context, "Email or Password is invalid", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

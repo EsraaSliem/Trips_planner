@@ -86,13 +86,16 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View view = navigationView.getHeaderView(0);
-        nameTxt=view.findViewById(R.id.navDrawer_nameTxt);
-        emailTxt=view.findViewById(R.id.navDrawer_emailTxt);
-        profileImg=view.findViewById(R.id.navDrawer_profileImage);
-        if (upcomingTripFragment == null) {
-            upcomingTripFragment = new UpcomingTripFragment();
-        }
-        addFragment(upcomingTripFragment, "UpcomingTripFragment");
+        nameTxt = view.findViewById(R.id.navDrawer_nameTxt);
+        emailTxt = view.findViewById(R.id.navDrawer_emailTxt);
+        profileImg = view.findViewById(R.id.navDrawer_profileImage);
+
+        upcomingTripFragment = new UpcomingTripFragment();
+
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction
+                .add(R.id.mainContainerView, upcomingTripFragment, "UpcomingTripFragment")
+                .commit();
         navigationView.getMenu().getItem(0).setChecked(true);
 
     }
