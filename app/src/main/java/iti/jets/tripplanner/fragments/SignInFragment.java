@@ -177,9 +177,7 @@ public class SignInFragment extends Fragment {
             if (task.isSuccessful()) {
                 Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
                 main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                SharedPreferences.Editor prefEditor = context.getSharedPreferences("AppPrefrences", Context.MODE_PRIVATE).edit();
-                prefEditor.putBoolean("logined", true);
-                prefEditor.apply();
+
                 mRegProgress.dismiss();
                 context.startActivity(main_intent);
             } else {

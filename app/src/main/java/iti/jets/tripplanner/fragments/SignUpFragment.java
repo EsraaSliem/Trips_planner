@@ -94,6 +94,7 @@ public class SignUpFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (edtFirstName.getText().toString().trim().length() <= 0) {
                     edtFirstName.setError("please enter a valid name");
+                    fnameValidateFlag = false;
                 } else {
                     fnameValidateFlag = true;
                 }
@@ -116,6 +117,7 @@ public class SignUpFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (edtLastName.getText().toString().trim().length() <= 0) {
                     edtLastName.setError("please enter a valid name");
+                    lnameValidateFlag = false;
                 } else {
                     lnameValidateFlag = true;
                 }
@@ -159,7 +161,7 @@ public class SignUpFragment extends Fragment {
                     emailValidateFlag = true;
                 } else {
                     //Toast.makeText(getApplicationContext(),"Invalid email address",Toast.LENGTH_SHORT).show();
-                    //or
+                    emailValidateFlag = false;
                     edtEmail.setError("Invalid email");
                 }
             }
@@ -184,6 +186,7 @@ public class SignUpFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (edtPassword.getText().toString().trim().length() < 6) {
                     edtPassword.setError("Required at least 6 digit");
+                    passwordFalg = false;
                 } else {
                     passwordFalg = true;
                 }
@@ -205,8 +208,10 @@ public class SignUpFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (edtConfirmPassword.getText().toString().trim().length() == 0) {
                     edtConfirmPassword.setError("Required");
+                    confirmPasswordFlag = false;
                 } else if (!edtConfirmPassword.getText().toString().trim().equals(edtPassword.getText().toString().trim())) {
                     edtConfirmPassword.setError("missmatch password");
+                    confirmPasswordFlag = false;
                 } else {
                     confirmPasswordFlag = true;
                 }
@@ -306,7 +311,7 @@ public class SignUpFragment extends Fragment {
                     mRefDatabase.setValue(user);
                     Intent main_intent = new Intent(context, AuthenticationActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    mRegProgress.dismiss();
+
                     context.startActivity(main_intent);
 
                 }

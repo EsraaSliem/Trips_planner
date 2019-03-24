@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment  {
         emailTxt = view.findViewById(R.id.fragment_profile_user_email);
         passTxt = view.findViewById(R.id.fragment_profile_user_pass);
         image = view.findViewById(R.id.fragment_profile_user_img);
-        editBtn = view.findViewById(R.id.fragment_profile_edit);
+        //editBtn = view.findViewById(R.id.fragment_profile_edit);
         Picasso.with(getActivity())
                 .load(Constatnts.uri)
                 .into(image);
@@ -64,25 +64,25 @@ public class ProfileFragment extends Fragment  {
         passTxt.setText(Constatnts.user.getPassword());
         firstNameTxt.setText(Constatnts.user.getfName());
         lastNameTxt.setText(Constatnts.user.getlName());
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (editBtn.getText().equals("edit")) {
-                    enableTextFields();
-                    editBtn.setText("save");
-                } else {
-
-
-                    user.setEmail(emailTxt.getText().toString());
-                    user.setPassword(passTxt.getText().toString());
-                    user.setfName(firstNameTxt.getText().toString());
-                    user.setlName(lastNameTxt.getText().toString());
-//                    fireBaseData.updateUser(user);
-                    disableTextFields();
-                    editBtn.setText("edit");
-                }
-            }
-        });
+//        editBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (editBtn.getText().equals("edit")) {
+//                    enableTextFields();
+//                    editBtn.setText("save");
+//                } else {
+//
+//
+//                    user.setEmail(emailTxt.getText().toString());
+//                    user.setPassword(passTxt.getText().toString());
+//                    user.setfName(firstNameTxt.getText().toString());
+//                    user.setlName(lastNameTxt.getText().toString());
+////                    fireBaseData.updateUser(user);
+//                    disableTextFields();
+//                    editBtn.setText("edit");
+//                }
+//            }
+//        });
 
         return view;
     }

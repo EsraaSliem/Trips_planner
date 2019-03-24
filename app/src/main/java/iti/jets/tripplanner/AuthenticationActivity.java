@@ -1,6 +1,7 @@
 package iti.jets.tripplanner;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,9 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+        SharedPreferences.Editor prefEditor = this.getSharedPreferences("AppPrefrences", this.MODE_PRIVATE).edit();
+        prefEditor.putBoolean("logined", true);
+        prefEditor.apply();
         getSupportActionBar().hide();
 //        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
