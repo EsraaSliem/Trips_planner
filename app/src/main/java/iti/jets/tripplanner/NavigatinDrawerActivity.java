@@ -223,11 +223,11 @@ public class NavigatinDrawerActivity extends AppCompatActivity
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        Query query = databaseReference.child("Users").orderByKey().equalTo(currentUser.getUid());
+        Query query = databaseReference.child("Users").child(currentUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getChildren().iterator().next().getValue(User.class);
+                User user = dataSnapshot.getValue(User.class);
                 nameTxt.setText(user.getfName());
                 emailTxt.setText(user.getEmail());
                 getUserImage();

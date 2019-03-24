@@ -55,4 +55,5 @@
     <string name="google_key_display"><![CDATA[&key=AIzaSyC4X5tDaquLpuYFDXRsxYAxcl26I1E_KSs]]></string>
     <string name="delete_note">Delete Note</string>
     <string name="emty_trip">no trips available</string>
+    <!--<string name="default_web_client_id">816442432158-advomqirbnaf93krfr8qhvkmg4snhf1m.apps.googleusercontent.com</string>-->
 </resources>

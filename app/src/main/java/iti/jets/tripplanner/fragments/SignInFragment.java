@@ -15,27 +15,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Arrays;
-
 import iti.jets.tripplanner.NavigatinDrawerActivity;
 import iti.jets.tripplanner.R;
+import iti.jets.tripplanner.pojos.User;
+import iti.jets.tripplanner.utils.FireBaseData;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -44,26 +41,27 @@ import static android.support.constraint.Constraints.TAG;
  */
 public class SignInFragment extends Fragment {
 
-    private static final int RC_SIGN_IN = 100;
+    public static final int RC_SIGN_IN = 11100;
     private static final String EMAIL = "email";
     Button btnLogin;
     EditText edtEmail, edtPassword;
-    FirebaseAuth mAuth;
+    DatabaseReference mDatabase;
+    FireBaseData fireBaseData;
+    private FirebaseAuth mAuth;
     DatabaseReference mRefDatabase;
     Context context;
     GoogleSignInClient mGoogleSignInClient;
-    CallbackManager callbackManager;
-    LoginButton btnFacebook;
-    //ProgressDialog
+    //    CallbackManager callbackManager;
+//    LoginButton btnFacebook;
+//ProgressDialog
     ProgressDialog mRegProgress;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);
         context = getActivity();
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         btnLogin = view.findViewById(R.id.signIn_btnSingUp);
         edtEmail = view.findViewById(R.id.signIn_edtEmail);
         edtPassword = view.findViewById(R.id.signUp_edtPassword);
@@ -84,46 +82,21 @@ public class SignInFragment extends Fragment {
             loginUser(email, password);
         });
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("816442432158-45hahcuoo4c1blqucgg1au2jv56c2scs.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
+        // [END config_signin]
+
         mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
-        // Set the dimensions of the sign-in button.
-        SignInButton signInButton = view.findViewById(R.id.signIn_btnGoogle);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-        });
-//        FacebookSdk.sdkInitialize(context);
-//        AppEventsLogger.activateApp(context);
-        callbackManager = CallbackManager.Factory.create();
-        btnFacebook = view.findViewById(R.id.signIn_btnFacebook);
-        btnFacebook.setReadPermissions(Arrays.asList(EMAIL));
-        // If you are using in a fragment, call loginButton.setFragment(this);
 
-        // Callback registration
-        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(context, "onSuccess", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(context, "onCancel", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Toast.makeText(context, "onError", Toast.LENGTH_SHORT).show();
-            }
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+        view.findViewById(R.id.signIn_btnGoogle).setOnClickListener(v -> {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
         });
         return view;
     }
@@ -144,39 +117,59 @@ public class SignInFragment extends Fragment {
         getActivity().finish();
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == SignInFragment.RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+                // ...
+            }
         }
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//            setResult(Resource.forSuccess(createIdpResponse(account)));
-            Toast.makeText(context, "" + account.getEmail() + "\n" + account.getServerAuthCode() + "\n" + account.getServerAuthCode() + "\n" + account.getIdToken(), Toast.LENGTH_SHORT).show();
-//            Log.i("account",account.getServerAuthCode());
-            Log.i("account", account.getDisplayName());
-//            Log.i("account",account.getIdToken());
-            context.startActivity(new Intent(context, NavigatinDrawerActivity.class));
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
+                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        User user = new User();
+                        user.setfName(firebaseUser.getDisplayName());
+                        user.setImage(firebaseUser.getPhotoUrl().toString());
+                        user.setEmail(firebaseUser.getEmail());
+                        user.setPassword(firebaseUser.getProviderId());
+                        String uid = mAuth.getUid();
+                        user.setUserId(uid);
+                        mRefDatabase = mDatabase.child("Users").child(uid);
+                        mRefDatabase.setValue(user);
 
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            e.printStackTrace();
-            Toast.makeText(context, "this acount does not exist", Toast.LENGTH_SHORT).show();
-        }
+                        Intent main_intent = new Intent(context, NavigatinDrawerActivity.class);
+                        main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        context.startActivity(main_intent);
+                        //updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                        //updateUI(null);
+                    }
+
+                    // ...
+                });
     }
 
     private void loginUser(String email, String password) {
@@ -194,4 +187,11 @@ public class SignInFragment extends Fragment {
             }
         });
     }
+
+
+    public boolean verifyUser(final String email, final String password) {
+        Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password);
+        return task.isSuccessful();
+    }
+
 }

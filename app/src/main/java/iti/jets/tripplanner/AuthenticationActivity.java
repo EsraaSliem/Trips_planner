@@ -97,4 +97,5 @@ public class AuthenticationActivity extends AppCompatActivity {
             return AuthenticationActivity.NUM_PAGES;
         }
     }
+
 }

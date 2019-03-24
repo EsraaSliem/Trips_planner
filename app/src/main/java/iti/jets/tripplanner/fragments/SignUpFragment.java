@@ -39,7 +39,6 @@ import iti.jets.tripplanner.pojos.User;
 import iti.jets.tripplanner.utils.Constatnts;
 
 import static android.app.Activity.RESULT_OK;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -255,7 +254,7 @@ public class SignUpFragment extends Fragment {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), filePath);
+                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), filePath);
                 profileImageView.setImageBitmap(bitmap);
 
             } catch (IOException e) {
