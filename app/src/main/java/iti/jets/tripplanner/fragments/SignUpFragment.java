@@ -310,7 +310,7 @@ public class SignUpFragment extends Fragment {
                     mRegProgress.dismiss();
                     context.startActivity(main_intent);
 
-                }
+                } else mRegProgress.dismiss();
             }
         });
     }
